@@ -1,0 +1,102 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
+}
+
+model ai_predictions {
+  id               String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  task_id          String    @db.Uuid
+  overdue_risk     Float?
+  predicted_status String?   @db.VarChar(50)
+  recommendation   String?
+  model_used       String?   @db.VarChar(100)
+  created_at       DateTime? @default(now()) @db.Timestamp(6)
+  tasks            tasks     @relation(fields: [task_id], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "fk_prediction_task")
+}
+
+model notifications {
+  id          String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  receiver_id String    @db.Uuid
+  title       String    @db.VarChar(255)
+  message     String?
+  is_read     Boolean?  @default(false)
+  created_at  DateTime? @default(now()) @db.Timestamp(6)
+  users       users     @relation(fields: [receiver_id], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "fk_receiver")
+}
+
+model task_progress {
+  id         String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  task_id    String    @db.Uuid
+  progress   Int?
+  note       String?
+  updated_by String?   @db.Uuid
+  created_at DateTime? @default(now()) @db.Timestamp(6)
+  tasks      tasks     @relation(fields: [task_id], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "fk_progress_task")
+  users      users?    @relation(fields: [updated_by], references: [id], onUpdate: NoAction, map: "fk_progress_user")
+}
+
+model tasks {
+  id                             String           @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  team_id                        String           @db.Uuid
+  title                          String           @db.VarChar(255)
+  description                    String?
+  assignee_id                    String?          @db.Uuid
+  created_by                     String           @db.Uuid
+  priority                       String?          @default("medium") @db.VarChar(20)
+  status                         String?          @default("todo") @db.VarChar(20)
+  progress                       Int?             @default(0)
+  deadline                       DateTime?        @db.Timestamp(6)
+  estimated_hours                Int?
+  created_at                     DateTime?        @default(now()) @db.Timestamp(6)
+  updated_at                     DateTime?        @default(now()) @db.Timestamp(6)
+  ai_predictions                 ai_predictions[]
+  task_progress                  task_progress[]
+  users_tasks_assignee_idTousers users?           @relation("tasks_assignee_idTousers", fields: [assignee_id], references: [id], onUpdate: NoAction, map: "fk_assignee")
+  users_tasks_created_byTousers  users            @relation("tasks_created_byTousers", fields: [created_by], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "fk_creator")
+  teams                          teams            @relation(fields: [team_id], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "fk_task_team")
+}
+
+model team_members {
+  id        String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  team_id   String    @db.Uuid
+  user_id   String    @db.Uuid
+  role      String?   @default("member") @db.VarChar(20)
+  joined_at DateTime? @default(now()) @db.Timestamp(6)
+  teams     teams     @relation(fields: [team_id], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "fk_team")
+  users     users     @relation(fields: [user_id], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "fk_user")
+}
+
+model teams {
+  id           String         @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  name         String         @db.VarChar(100)
+  description  String?
+  owner_id     String         @db.Uuid
+  created_at   DateTime?      @default(now()) @db.Timestamp(6)
+  updated_at   DateTime?      @default(now()) @db.Timestamp(6)
+  tasks        tasks[]
+  team_members team_members[]
+  users        users          @relation(fields: [owner_id], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "fk_owner")
+}
+
+model users {
+  id                             String          @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  username                       String          @unique @db.VarChar(50)
+  email                          String          @unique @db.VarChar(100)
+  password                       String          @db.VarChar(255)
+  full_name                      String?         @db.VarChar(100)
+  avatar                         String?
+  created_at                     DateTime?       @default(now()) @db.Timestamp(6)
+  updated_at                     DateTime?       @default(now()) @db.Timestamp(6)
+  refresh_token                  String?
+  notifications                  notifications[]
+  task_progress                  task_progress[]
+  tasks_tasks_assignee_idTousers tasks[]         @relation("tasks_assignee_idTousers")
+  tasks_tasks_created_byTousers  tasks[]         @relation("tasks_created_byTousers")
+  team_members                   team_members[]
+  teams                          teams[]
+}
