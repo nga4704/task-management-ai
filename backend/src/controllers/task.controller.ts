@@ -183,7 +183,7 @@ export const updateTaskStatus = async (
 };
 
 export const updateTaskProgress = async (
-  req: Request,
+  req: AuthRequest,
   res: Response
 ) => {
 
@@ -195,7 +195,8 @@ export const updateTaskProgress = async (
 
     const task = await updateTaskProgressService(
       taskId,
-      progress
+      progress,
+      req.userId as string
     );
 
     res.json({

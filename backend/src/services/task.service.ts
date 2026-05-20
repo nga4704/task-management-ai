@@ -108,17 +108,32 @@ export const updateTaskStatusService = async (
 
 export const updateTaskProgressService = async (
   taskId: string,
-  progress: number
+  progress: number,
+  userId: string
 ) => {
 
-  return prisma.tasks.update({
+  // update task progress
+  const updatedTask = await prisma.tasks.update({
     where: {
       id: taskId,
     },
+
     data: {
       progress,
     },
   });
+
+  // create activity log
+  await prisma.task_progress.create({
+    data: {
+      task_id: taskId,
+      progress,
+      note: "Task progress updated",
+      updated_by: userId,
+    },
+  });
+
+  return updatedTask;
 };
 
 export const assignTaskService = async (
