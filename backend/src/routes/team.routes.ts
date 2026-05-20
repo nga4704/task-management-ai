@@ -1,0 +1,46 @@
+import express from "express";
+
+import {
+  createTeam,
+  getTeams,
+  getTeamDetail,
+  updateTeam,
+  deleteTeam,
+  addMember,
+  removeMember,
+} from "../controllers/team.controller";
+
+import { protect } from "../middlewares/auth.middleware";
+
+const router = express.Router();
+
+// create team
+router.post("/", protect, createTeam);
+
+// get all teams
+router.get("/", protect, getTeams);
+
+// get team detail
+router.get("/:teamId", protect, getTeamDetail);
+
+// update team
+router.put("/:teamId", protect, updateTeam);
+
+// delete team
+router.delete("/:teamId", protect, deleteTeam);
+
+// add member
+router.post(
+  "/:teamId/members",
+  protect,
+  addMember
+);
+
+// remove member
+router.delete(
+  "/:teamId/members/:userId",
+  protect,
+  removeMember
+);
+
+export default router;

@@ -4,6 +4,7 @@ import dotenv from "dotenv";
 
 import authRoutes from "./routes/auth.routes";
 import userRoutes from "./routes/user.routes";
+import teamRoutes from "./routes/team.routes";
 
 dotenv.config();
 
@@ -17,10 +18,9 @@ app.use("/api/v1/auth", authRoutes);
 
 app.use("/api/v1/users", userRoutes);
 
-app.use(
-  "/uploads",
-  express.static("uploads")
-);
+app.use("/uploads", express.static("uploads"));
+
+app.use("/api/v1/teams", teamRoutes);
 
 app.get("/", (req, res) => {
   res.send("API running");
