@@ -7,6 +7,7 @@ import userRoutes from "./routes/user.routes";
 import teamRoutes from "./routes/team.routes";
 import taskRoutes from "./routes/task.routes";
 import dashboardRoutes from "./routes/dashboard.routes";
+import notificationRoutes from "./routes/notification.routes";
 
 dotenv.config();
 
@@ -27,6 +28,8 @@ app.use("/api/v1/teams", teamRoutes);
 app.use("/api/v1/tasks", taskRoutes);
 
 app.use("/api/v1/dashboard", dashboardRoutes);
+
+app.use("/api/v1/notifications", notificationRoutes);
 
 app.get("/", (req, res) => {
   res.send("API running");
