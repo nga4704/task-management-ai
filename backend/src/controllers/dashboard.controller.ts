@@ -5,55 +5,38 @@ import {
   getTeamProgressService,
   getWorkloadService,
 } from "../services/dashboard.service";
+import { asyncHandler } from "../utils/asyncHandler";
 
-export const getOverview = async (
+export const getOverview = asyncHandler(async (
   req: Request,
   res: Response
 ) => {
-
-  try {
 
     const overview = await getOverviewService();
 
-    res.json(overview);
+    res.status(200).json(overview);
 
-  } catch (error) {
+  } );
 
-    res.status(500).json({
-      message: "Server error",
-    });
-  }
-};
-
-export const getTeamProgress = async (
+export const getTeamProgress = asyncHandler(async (
   req: Request,
   res: Response
 ) => {
-
-  try {
-
-    const teamId  = req.params.teamId as string;
+    
+  const teamId  = req.params.teamId as string;
 
     const tasks = await getTeamProgressService(
       teamId
     );
 
-    res.json(tasks);
+    res.status(200).json(tasks);
 
-  } catch (error) {
+  } );
 
-    res.status(500).json({
-      message: "Server error",
-    });
-  }
-};
-
-export const getWorkload = async (
+export const getWorkload = asyncHandler(async (
   req: Request,
   res: Response
 ) => {
-
-  try {
 
      const teamId  = req.params.teamId as string;
 
@@ -61,12 +44,6 @@ export const getWorkload = async (
       teamId
     );
 
-    res.json(workload);
+    res.status(200).json(workload);
 
-  } catch (error) {
-
-    res.status(500).json({
-      message: "Server error",
-    });
-  }
-};
+  } );

@@ -5,12 +5,13 @@ import {
   scheduleRecommendationService,
 } from "../services/ai.service";
 
-export const predictOverdue = async (
+import { asyncHandler } from "../utils/asyncHandler";
+
+// PREDICT OVERDUE
+export const predictOverdue = asyncHandler(async (
   req: Request,
   res: Response
 ) => {
-
-  try {
 
     const taskId =
       req.body.taskId as string;
@@ -20,25 +21,17 @@ export const predictOverdue = async (
         taskId
       );
 
-    res.json(result);
+    res.status(200).json(result);
 
-  } catch (error) {
-
-    res.status(500).json({
-      message: "AI prediction failed",
-    });
-  }
-};
+  } );
 
 export const scheduleRecommendation =
-  async (
+  asyncHandler(async (
     req: Request,
     res: Response
   ) => {
 
-    try {
-
-      const teamId =
+    const teamId =
         req.body.teamId as string;
 
       const userId =
@@ -50,13 +43,6 @@ export const scheduleRecommendation =
           userId
         );
 
-      res.json(result);
+      res.status(200).json(result);
 
-    } catch (error) {
-
-      res.status(500).json({
-        message:
-          "Schedule recommendation failed",
-      });
-    }
-  };
+    } );

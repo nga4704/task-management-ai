@@ -3,15 +3,13 @@ import { Request, Response } from "express";
 import {
   getTaskActivityLogsService,
 } from "../services/activityLog.service";
+import { asyncHandler } from "../utils/asyncHandler";
 
 export const getTaskActivityLogs =
-  async (
+  asyncHandler(async (
     req: Request,
     res: Response
   ) => {
-
-    try {
-
       const taskId =
         req.params.taskId as string;
 
@@ -20,12 +18,6 @@ export const getTaskActivityLogs =
           taskId
         );
 
-      res.json(logs);
+      res.status(200).json(logs);
 
-    } catch (error) {
-
-      res.status(500).json({
-        message: "Server error",
-      });
-    }
-  };
+    } );

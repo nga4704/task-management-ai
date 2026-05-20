@@ -1,5 +1,4 @@
 import { Response } from "express";
-
 import { AuthRequest } from "../middlewares/auth.middleware";
 
 import {
@@ -7,51 +6,26 @@ import {
   markAsReadService,
 } from "../services/notification.service";
 
-export const getNotifications = async (
-  req: AuthRequest,
-  res: Response
-) => {
+import { asyncHandler } from "../utils/asyncHandler";
+import { AppError } from "../middlewares/error.middleware";
 
-  try {
-
-    const notifications =
-      await getNotificationsService(
-        req.userId!
-      );
-
-    res.json(notifications);
-
-  } catch (error) {
-
-    res.status(500).json({
-      message: "Server error",
-    });
+export const getNotifications = asyncHandler(async (req: AuthRequest, res: Response) => {
+  if (!req.userId) {
+    throw new AppError("Unauthorized", 401);
   }
-};
 
-export const markAsRead = async (
-  req: AuthRequest,
-  res: Response
-) => {
+  const notifications = await getNotificationsService(req.userId);
 
-  try {
+  res.status(200).json(notifications);
+});
 
-    const notificationId = req.params.notificationId as string;
+export const markAsRead = asyncHandler(async (req: AuthRequest, res: Response) => {
+  const notificationId = req.params.notificationId as string;
 
-    const notification =
-      await markAsReadService(
-        notificationId
-      );
+  const notification = await markAsReadService(notificationId);
 
-    res.json({
-      message: "Notification marked as read",
-      notification,
-    });
-
-  } catch (error) {
-
-    res.status(500).json({
-      message: "Server error",
-    });
-  }
-};
+  res.status(200).json({
+    message: "Notification marked as read",
+    notification,
+  });
+});

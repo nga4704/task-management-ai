@@ -10,6 +10,7 @@ import dashboardRoutes from "./routes/dashboard.routes";
 import notificationRoutes from "./routes/notification.routes";
 import aiRoutes from "./routes/ai.routes";
 import activityLogRoutes from "./routes/activityLog.routes";
+import { errorHandler } from "./middlewares/error.middleware";
 
 dotenv.config();
 
@@ -35,11 +36,13 @@ app.use("/api/v1/notifications", notificationRoutes);
 
 app.use("/api/v1/ai", aiRoutes);
 
-app.use("/api/v1/tasks", activityLogRoutes);
+app.use("/api/v1/activity-logs", activityLogRoutes);
 
 app.get("/", (req, res) => {
   res.send("API running");
 });
+
+app.use(errorHandler);
 
 const PORT = process.env.PORT || 5000;
 

@@ -1,6 +1,6 @@
 import { Request, Response } from "express";
 import { AuthRequest } from "../middlewares/auth.middleware";
-
+import {AppError} from "../middlewares/error.middleware";
 import {
   createTaskService,
   getTasksService,
@@ -12,12 +12,16 @@ import {
   assignTaskService,
 } from "../services/task.service";
 
-export const createTask = async (
+import { asyncHandler } from "../utils/asyncHandler";
+
+export const createTask = asyncHandler(async (
   req: AuthRequest,
   res: Response
 ) => {
 
-  try {
+    if (!req.userId) {
+      throw new AppError("Unauthorized", 401);
+    }
 
     const {
       teamId,
@@ -35,7 +39,7 @@ export const createTask = async (
       priority,
       deadline,
       assigneeId,
-      createdBy: req.userId!,
+      createdBy: req.userId,
     });
 
     res.status(201).json({
@@ -43,20 +47,12 @@ export const createTask = async (
       task,
     });
 
-  } catch (error) {
-    console.log(error);
-    res.status(500).json({
-      message: "Server error",
-    });
-  }
-};
+}); 
 
-export const getTasks = async (
+export const getTasks = asyncHandler(async (
   req: Request,
   res: Response
 ) => {
-
-  try {
 
     const { teamId, status, priority } = req.query;
 
@@ -66,49 +62,31 @@ export const getTasks = async (
       priority: priority as string,
     });
 
-    res.json(tasks);
+    res.status(200).json(tasks);
 
-  } catch (error) {
+  } );
 
-    res.status(500).json({
-      message: "Server error",
-    });
-  }
-};
-
-export const getTaskDetail = async (
+export const getTaskDetail = asyncHandler(async (
   req: Request,
   res: Response
 ) => {
-
-  try {
 
     const taskId = req.params.taskId as string;
 
     const task = await getTaskDetailService(taskId);
 
     if (!task) {
-      return res.status(404).json({
-        message: "Task not found",
-      });
+      throw new AppError("Task not found", 404);
     }
 
     res.json(task);
 
-  } catch (error) {
+});
 
-    res.status(500).json({
-      message: "Server error",
-    });
-  }
-};
-
-export const updateTask = async (
+export const updateTask = asyncHandler(async (
   req: Request,
   res: Response
 ) => {
-
-  try {
 
     const taskId = req.params.taskId as string;
 
@@ -117,48 +95,32 @@ export const updateTask = async (
       req.body
     );
 
-    res.json({
+    res.status(200).json({
       message: "Update task successfully",
       task,
     });
 
-  } catch (error) {
+  } );
 
-    res.status(500).json({
-      message: "Server error",
-    });
-  }
-};
-
-export const deleteTask = async (
+export const deleteTask = asyncHandler(async (
   req: Request,
   res: Response
 ) => {
-
-  try {
 
    const taskId = req.params.taskId as string;
 
     await deleteTaskService(taskId);
 
-    res.json({
+    res.status(200).json({
       message: "Delete task successfully",
     });
 
-  } catch (error) {
+  } );
 
-    res.status(500).json({
-      message: "Server error",
-    });
-  }
-};
-
-export const updateTaskStatus = async (
+export const updateTaskStatus = asyncHandler(async (
   req: Request,
   res: Response
 ) => {
-
-  try {
 
    const taskId = req.params.taskId as string;
 
@@ -169,25 +131,17 @@ export const updateTaskStatus = async (
       status
     );
 
-    res.json({
+    res.status(200).json({
       message: "Update status successfully",
       task,
     });
 
-  } catch (error) {
+  } );
 
-    res.status(500).json({
-      message: "Server error",
-    });
-  }
-};
-
-export const updateTaskProgress = async (
+export const updateTaskProgress = asyncHandler(async (
   req: AuthRequest,
   res: Response
 ) => {
-
-  try {
 
     const taskId = req.params.taskId as string;
 
@@ -199,25 +153,17 @@ export const updateTaskProgress = async (
       req.userId as string
     );
 
-    res.json({
+    res.status(200).json({
       message: "Update progress successfully",
       task,
     });
 
-  } catch (error) {
+  } );
 
-    res.status(500).json({
-      message: "Server error",
-    });
-  }
-};
-
-export const assignTask = async (
+export const assignTask = asyncHandler(async (
   req: Request,
   res: Response
 ) => {
-
-  try {
 
     const taskId = req.params.taskId as string;
 
@@ -228,15 +174,9 @@ export const assignTask = async (
       assigneeId
     );
 
-    res.json({
+    res.status(200).json({
       message: "Assign task successfully",
       task,
     });
 
-  } catch (error) {
-
-    res.status(500).json({
-      message: "Server error",
-    });
-  }
-};
+  } );

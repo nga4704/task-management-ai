@@ -1,107 +1,62 @@
 import { Response } from "express";
 import prisma from "../config/prisma";
 import { AuthRequest } from "../middlewares/auth.middleware";
-import {
-  updateProfileService,
-} from "../services/user.service";
+import { updateProfileService } from "../services/user.service";
+import { AppError } from "../middlewares/error.middleware";
+import { asyncHandler } from "../utils/asyncHandler";
 
-// GET CURRENT USER
-export const getMe = async (
-  req: AuthRequest,
-  res: Response
-) => {
-  try {
-    const user = await prisma.users.findUnique({
-      where: {
-        id: req.userId,
-      },
-    });
-
-    res.json(user);
-  } catch (error) {
-    res.status(500).json({
-      message: "Server error",
-    });
+export const getMe = asyncHandler(async (req: AuthRequest, res: Response) => {
+  if (!req.userId) {
+    throw new AppError("Unauthorized", 401);
   }
-};
 
-// UPDATE PROFILE
-export const updateProfile = async (
-  req: AuthRequest,
-  res: Response
-) => {
+  const user = await prisma.users.findUnique({
+    where: { id: req.userId },
+  });
 
-  try {
-
-    const {
-      fullName,
-      username,
-    } = req.body;
-
-    const updatedUser =
-      await updateProfileService(
-        req.userId!,
-        fullName,
-        username
-      );
-
-    res.status(200).json({
-      message: "Profile updated",
-      user: updatedUser,
-    });
-
-  } catch (error: any) {
-
-    res.status(500).json({
-      message: error.message,
-    });
-
+  if (!user) {
+    throw new AppError("User not found", 404);
   }
-};
 
-// UPLOAD AVATAR
-export const uploadAvatar = async (
-  req: AuthRequest,
-  res: Response
-) => {
+  res.status(200).json(user);
+});
 
-  try {
-
-    // file upload
-    const file = req.file;
-
-    if (!file) {
-
-      return res.status(400).json({
-        message: "No file uploaded",
-      });
-
-    }
-
-    // update avatar url
-    const updatedUser =
-      await prisma.users.update({
-
-        where: {
-          id: req.userId,
-        },
-
-        data: {
-          avatar: file.path,
-        },
-      });
-
-    res.status(200).json({
-      message: "Avatar uploaded",
-      avatar: file.path,
-      user: updatedUser,
-    });
-
-  } catch (error: any) {
-
-    res.status(500).json({
-      message: error.message,
-    });
-
+export const updateProfile = asyncHandler(async (req: AuthRequest, res: Response) => {
+  if (!req.userId) {
+    throw new AppError("Unauthorized", 401);
   }
-};
+
+  const { fullName, username } = req.body;
+
+  const updatedUser = await updateProfileService(
+    req.userId,
+    fullName,
+    username
+  );
+
+  res.status(200).json({
+    message: "Profile updated",
+    user: updatedUser,
+  });
+});
+
+export const uploadAvatar = asyncHandler(async (req: AuthRequest, res: Response) => {
+  if (!req.userId) {
+    throw new AppError("Unauthorized", 401);
+  }
+
+  if (!req.file) {
+    throw new AppError("No file uploaded", 400);
+  }
+
+  const updatedUser = await prisma.users.update({
+    where: { id: req.userId },
+    data: { avatar: req.file.path },
+  });
+
+  res.status(200).json({
+    message: "Avatar uploaded",
+    avatar: req.file.path,
+    user: updatedUser,
+  });
+});

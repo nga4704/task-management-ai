@@ -1,196 +1,98 @@
 import { Request, Response } from "express";
 import {
-    createTeamService,
-    getTeamsService,
-    getTeamDetailService,
-    updateTeamService,
-    deleteTeamService,
-    addMemberService,
-    removeMemberService,
+  createTeamService,
+  getTeamsService,
+  getTeamDetailService,
+  updateTeamService,
+  deleteTeamService,
+  addMemberService,
+  removeMemberService,
 } from "../services/team.service";
+
 import { AuthRequest } from "../middlewares/auth.middleware";
+import { AppError } from "../middlewares/error.middleware";
+import { asyncHandler } from "../utils/asyncHandler";
 
-// CREATE TEAM
-export const createTeam = async (
-    req: AuthRequest,
-    res: Response
-) => {
+// CREATE
+export const createTeam = asyncHandler(async (req: AuthRequest, res: Response) => {
+  if (!req.userId) {
+    throw new AppError("Unauthorized", 401);
+  }
 
-    try {
+  const { name, description } = req.body;
 
-        const { name, description } = req.body;
+  const team = await createTeamService(name, description, req.userId);
 
-        const ownerId = req.userId!;
+  res.status(201).json({
+    message: "Create team successfully",
+    team,
+  });
+});
 
-        const team = await createTeamService(
-            name,
-            description,
-            ownerId
-        );
+// GET ALL
+export const getTeams = asyncHandler(async (req: Request, res: Response) => {
+  const teams = await getTeamsService();
+  res.status(200).json(teams);
+});
 
-        res.status(201).json({
-            message: "Create team successfully",
-            team,
-        });
+// DETAIL
+export const getTeamDetail = asyncHandler(async (req: Request, res: Response) => {
+  const teamId = req.params.teamId as string;
 
-    } catch (error) {
-         
-        res.status(500).json({
-            message: "Server error",
-        });
-    }
-};
+  const team = await getTeamDetailService(teamId);
 
-export const getTeams = async (
-    req: Request,
-    res: Response
-) => {
+  if (!team) {
+    throw new AppError("Team not found", 404);
+  }
 
-    try {
+  res.status(200).json(team);
+});
 
-        const teams = await getTeamsService();
+// UPDATE
+export const updateTeam = asyncHandler(async (req: Request, res: Response) => {
+  const teamId = req.params.teamId as string;
+  const { name, description } = req.body;
 
-        res.json(teams);
+  const team = await updateTeamService(teamId, name, description);
 
-    } catch (error) {
+  res.status(200).json({
+    message: "Update team successfully",
+    team,
+  });
+});
 
-        res.status(500).json({
-            message: "Server error",
-        });
-    }
-};
+// DELETE
+export const deleteTeam = asyncHandler(async (req: Request, res: Response) => {
+  const teamId = req.params.teamId as string;
 
-export const getTeamDetail = async (
-    req: Request,
-    res: Response
-) => {
+  await deleteTeamService(teamId);
 
-    try {
+  res.status(200).json({
+    message: "Delete team successfully",
+  });
+});
 
-        const teamId = req.params.teamId as string;
+// ADD MEMBER
+export const addMember = asyncHandler(async (req: Request, res: Response) => {
+  const teamId = req.params.teamId as string;
+  const { userId } = req.body;
 
-        const team = await getTeamDetailService(teamId);
+  const member = await addMemberService(teamId, userId);
 
-        if (!team) {
-            return res.status(404).json({
-                message: "Team not found",
-            });
-        }
+  res.status(201).json({
+    message: "Add member successfully",
+    member,
+  });
+});
 
-        res.json(team);
+// REMOVE MEMBER
+export const removeMember = asyncHandler(async (req: Request, res: Response) => {
+  const teamId = req.params.teamId as string;
+  const userId = req.params.userId as string;
 
-    } catch (error) {
+  await removeMemberService(teamId, userId);
 
-        res.status(500).json({
-            message: "Server error",
-        });
-    }
-};
-
-export const updateTeam = async (
-    req: Request,
-    res: Response
-) => {
-
-    try {
-
-        const teamId = req.params.teamId as string;
-
-        const { name, description } = req.body;
-
-        const team = await updateTeamService(
-            teamId,
-            name,
-            description
-        );
-
-        res.json({
-            message: "Update team successfully",
-            team,
-        });
-
-    } catch (error) {
-
-        res.status(500).json({
-            message: "Server error",
-        });
-    }
-};
-
-export const deleteTeam = async (
-    req: Request,
-    res: Response
-) => {
-
-    try {
-
-        const teamId = req.params.teamId as string;
-
-        await deleteTeamService(teamId);
-
-        res.json({
-            message: "Delete team successfully",
-        });
-
-    } catch (error) {
-
-        res.status(500).json({
-            message: "Server error",
-        });
-    }
-};
-
-export const addMember = async (
-    req: Request,
-    res: Response
-) => {
-
-    try {
-
-        const teamId = req.params.teamId as string;
-
-        const { userId } = req.body;
-
-        const member = await addMemberService(
-            teamId,
-            userId
-        );
-
-        res.status(201).json({
-            message: "Add member successfully",
-            member,
-        });
-
-    } catch (error) {
-        console.log(error);
-        res.status(500).json({
-            message: "Server error",
-        });
-    }
-};
-
-export const removeMember = async (
-    req: Request,
-    res: Response
-) => {
-
-    try {
-        const teamId = req.params.teamId as string;
-        const userId = req.params.userId as string;
-
-        await removeMemberService(
-            teamId,
-            userId
-        );
-
-        res.json({
-            message: "Remove member successfully",
-        });
-
-    } catch (error) {
-
-        res.status(500).json({
-            message: "Server error",
-        });
-    }
-};
+  res.status(200).json({
+    message: "Remove member successfully",
+  });
+});

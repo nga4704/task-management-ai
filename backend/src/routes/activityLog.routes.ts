@@ -9,10 +9,6 @@ import { protect } from "../middlewares/auth.middleware";
 const router = express.Router();
 
 // get activity logs
-router.get(
-  "/:taskId/activity-logs",
-  protect,
-  getTaskActivityLogs
-);
+router.get("/:taskId", protect, getTaskActivityLogs);
 
 export default router;

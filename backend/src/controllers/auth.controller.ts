@@ -5,110 +5,49 @@ import {
   refreshAccessToken,
   logoutUser,
 } from "../services/auth.service";
-import {
-  AuthRequest,
-} from "../middlewares/auth.middleware";
+
+import { AuthRequest } from "../middlewares/auth.middleware";
+import { asyncHandler } from "../utils/asyncHandler";
+import {AppError} from "../middlewares/error.middleware";
 
 // REGISTER
-export const register = async (
-  req: Request,
-  res: Response
-) => {
-  try {
-    const {
-      username,
-      email,
-      password,
-      fullName,
-    } = req.body;
+export const register = asyncHandler(async (req: Request, res: Response) => {
+  const { username, email, password, fullName } = req.body;
 
-    const user = await registerUser(
-      username,
-      email,
-      password,
-      fullName
-    );
+  const user = await registerUser(username, email, password, fullName);
 
-    res.status(201).json({
-      message: "Register successfully",
-      user,
-    });
-  } catch (error: any) {
-    res.status(400).json({
-      message: error.message,
-    });
-  }
-};
+  res.status(201).json({
+    message: "Register successfully",
+    user,
+  });
+});
 
 // LOGIN
-export const login = async (
-  req: Request,
-  res: Response
-) => {
-  try {
-    const { email, password } = req.body;
+export const login = asyncHandler(async (req: Request, res: Response) => {
+  const { email, password } = req.body;
 
-    const data = await loginUser(
-      email,
-      password
-    );
+  const data = await loginUser(email, password);
 
-    res.status(200).json(data);
-  } catch (error: any) {
-    res.status(400).json({
-      message: error.message,
-    });
-  }
-};
+  res.status(200).json(data);
+});
 
-// REFRESH TOKEN
-export const refresh = async (
-  req: Request,
-  res: Response
-) => {
+// REFRESH
+export const refresh = asyncHandler(async (req: Request, res: Response) => {
+  const { refreshToken } = req.body;
 
-  try {
+  const data = await refreshAccessToken(refreshToken);
 
-    const {
-      refreshToken,
-    } = req.body;
-
-    const data =
-      await refreshAccessToken(
-        refreshToken
-      );
-
-    res.status(200).json(data);
-
-  } catch (error: any) {
-
-    res.status(401).json({
-      message: error.message,
-    });
-
-  }
-};
+  res.status(200).json(data);
+});
 
 // LOGOUT
-export const logout = async (
-  req: AuthRequest,
-  res: Response
-) => {
+export const logout = asyncHandler(async (req: AuthRequest, res: Response) => {
 
-  try {
-
-    const data =
-      await logoutUser(
-        req.userId!
-      );
-
-    res.status(200).json(data);
-
-  } catch (error: any) {
-
-    res.status(500).json({
-      message: error.message,
-    });
-
+  if (!req.userId) {
+    throw new AppError("Unauthorized", 401);
   }
-};
+
+  const data = await logoutUser(req.userId);
+
+  res.status(200).json(data);
+});
