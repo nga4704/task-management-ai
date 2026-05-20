@@ -6,6 +6,7 @@ import authRoutes from "./routes/auth.routes";
 import userRoutes from "./routes/user.routes";
 import teamRoutes from "./routes/team.routes";
 import taskRoutes from "./routes/task.routes";
+import dashboardRoutes from "./routes/dashboard.routes";
 
 dotenv.config();
 
@@ -24,6 +25,8 @@ app.use("/uploads", express.static("uploads"));
 app.use("/api/v1/teams", teamRoutes);
 
 app.use("/api/v1/tasks", taskRoutes);
+
+app.use("/api/v1/dashboard", dashboardRoutes);
 
 app.get("/", (req, res) => {
   res.send("API running");
