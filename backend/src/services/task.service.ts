@@ -1,18 +1,19 @@
 import prisma from "../config/prisma";
+import { getIO } from "../config/socket";
 
-export const createTaskService = async (
-  data: {
-    teamId: string;
-    title: string;
-    description?: string;
-    priority?: string;
-    deadline?: Date;
-    assigneeId?: string;
-    createdBy: string;
-  }
-) => {
-
-  return prisma.tasks.create({
+/* 
+   CREATE TASK
+ */
+export const createTaskService = async (data: {
+  teamId: string;
+  title: string;
+  description?: string;
+  priority?: string;
+  deadline?: Date;
+  assigneeId?: string;
+  createdBy: string;
+}) => {
+  const task = await prisma.tasks.create({
     data: {
       team_id: data.teamId,
       title: data.title,
@@ -23,16 +24,22 @@ export const createTaskService = async (
       created_by: data.createdBy,
     },
   });
+
+  
+  const io = getIO();
+  io.emit("taskCreated", task);
+
+  return task;
 };
 
-export const getTasksService = async (
-  filters: {
-    teamId?: string;
-    status?: string;
-    priority?: string;
-  }
-) => {
-
+/* 
+   GET TASKS
+ */
+export const getTasksService = async (filters: {
+  teamId?: string;
+  status?: string;
+  priority?: string;
+}) => {
   return prisma.tasks.findMany({
     where: {
       team_id: filters.teamId,
@@ -46,10 +53,10 @@ export const getTasksService = async (
   });
 };
 
-export const getTaskDetailService = async (
-  taskId: string
-) => {
-
+/* 
+   GET TASK DETAIL
+ */
+export const getTaskDetailService = async (taskId: string) => {
   return prisma.tasks.findUnique({
     where: {
       id: taskId,
@@ -62,12 +69,11 @@ export const getTaskDetailService = async (
   });
 };
 
-export const updateTaskService = async (
-  taskId: string,
-  data: any
-) => {
-
-  return prisma.tasks.update({
+/* 
+   UPDATE TASK
+ */
+export const updateTaskService = async (taskId: string, data: any) => {
+  const updatedTask = await prisma.tasks.update({
     where: {
       id: taskId,
     },
@@ -78,25 +84,39 @@ export const updateTaskService = async (
       deadline: data.deadline,
     },
   });
+
+  
+  const io = getIO();
+  io.emit("taskUpdated", updatedTask);
+
+  return updatedTask;
 };
 
-export const deleteTaskService = async (
-  taskId: string
-) => {
-
-  return prisma.tasks.delete({
+/* 
+   DELETE TASK
+ */
+export const deleteTaskService = async (taskId: string) => {
+  const deletedTask = await prisma.tasks.delete({
     where: {
       id: taskId,
     },
   });
+
+  
+  const io = getIO();
+  io.emit("taskDeleted", taskId);
+
+  return deletedTask;
 };
 
+/* 
+   UPDATE STATUS
+ */
 export const updateTaskStatusService = async (
   taskId: string,
   status: string
 ) => {
-
-  return prisma.tasks.update({
+  const task = await prisma.tasks.update({
     where: {
       id: taskId,
     },
@@ -104,20 +124,27 @@ export const updateTaskStatusService = async (
       status,
     },
   });
+
+  
+  const io = getIO();
+  io.emit("taskUpdated", task);
+
+  return task;
 };
 
+/* 
+   UPDATE PROGRESS
+ */
 export const updateTaskProgressService = async (
   taskId: string,
   progress: number,
   userId: string
 ) => {
-
   // update task progress
   const updatedTask = await prisma.tasks.update({
     where: {
       id: taskId,
     },
-
     data: {
       progress,
     },
@@ -133,15 +160,21 @@ export const updateTaskProgressService = async (
     },
   });
 
+  
+  const io = getIO();
+  io.emit("taskUpdated", updatedTask);
+
   return updatedTask;
 };
 
+/* 
+   ASSIGN TASK
+ */
 export const assignTaskService = async (
   taskId: string,
   assigneeId: string
 ) => {
-
-  return prisma.tasks.update({
+  const task = await prisma.tasks.update({
     where: {
       id: taskId,
     },
@@ -149,4 +182,10 @@ export const assignTaskService = async (
       assignee_id: assigneeId,
     },
   });
+
+  
+  const io = getIO();
+  io.emit("taskUpdated", task);
+
+  return task;
 };

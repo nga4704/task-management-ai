@@ -1,4 +1,5 @@
 import prisma from "../config/prisma";
+import { getIO } from "../config/socket";
 
 export const createTeamService = async (
     name: string,
@@ -23,6 +24,8 @@ export const createTeamService = async (
             role: "owner",
         },
     });
+    const io = getIO();
+    io.emit("teamCreated", team);
 
     return team;
 };
@@ -55,15 +58,14 @@ export const updateTeamService = async (
     name: string,
     description: string
 ) => {
-    return prisma.teams.update({
-        where: {
-            id: teamId,
-        },
-        data: {
-            name,
-            description,
-        },
+    const team = await prisma.teams.update({
+        where: { id: teamId },
+        data: { name, description },
     });
+    const io = getIO();
+    io.emit("teamUpdated", team);
+
+    return team;
 };
 
 export const deleteTeamService = async (teamId: string) => {
@@ -75,11 +77,15 @@ export const deleteTeamService = async (teamId: string) => {
         },
     });
 
-    return prisma.teams.delete({
-        where: {
-            id: teamId,
-        },
+    const deleted = await prisma.teams.delete({
+        where: { id: teamId },
     });
+
+
+    const io = getIO();
+    io.emit("teamDeleted", teamId);
+
+    return deleted;
 };
 
 export const addMemberService = async (
@@ -87,13 +93,22 @@ export const addMemberService = async (
     userId: string
 ) => {
 
-    return prisma.team_members.create({
+    const member = await prisma.team_members.create({
         data: {
             team_id: teamId,
             user_id: userId,
             role: "member",
         },
     });
+
+    const io = getIO();
+    io.emit("memberAdded", {
+        teamId,
+        userId,
+        member,
+    });
+
+    return member;
 };
 
 export const removeMemberService = async (
@@ -101,10 +116,16 @@ export const removeMemberService = async (
     userId: string
 ) => {
 
-    return prisma.team_members.deleteMany({
+    await prisma.team_members.deleteMany({
         where: {
             team_id: teamId,
             user_id: userId,
         },
+    });
+
+    const io = getIO();
+    io.emit("memberRemoved", {
+        teamId,
+        userId,
     });
 };
