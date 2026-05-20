@@ -4,6 +4,8 @@ import { AuthRequest } from "../middlewares/auth.middleware";
 import { updateProfileService } from "../services/user.service";
 import { AppError } from "../middlewares/error.middleware";
 import { asyncHandler } from "../utils/asyncHandler";
+import { supabase } from "../config/supabase";
+import { v4 as uuidv4 } from "uuid";
 
 export const getMe = asyncHandler(async (req: AuthRequest, res: Response) => {
   if (!req.userId) {
@@ -49,14 +51,35 @@ export const uploadAvatar = asyncHandler(async (req: AuthRequest, res: Response)
     throw new AppError("No file uploaded", 400);
   }
 
+  const file = req.file;
+  const fileName = `${uuidv4()}-${file.originalname}`;
+
+  // upload to supabase
+  const { data, error } = await supabase.storage
+    .from("avatars")
+    .upload(fileName, file.buffer, {
+      contentType: file.mimetype,
+    });
+
+  if (error) {
+    throw new AppError(error.message, 500);
+  }
+
+  // get public url
+  const { data: publicUrlData } = supabase.storage
+    .from("avatars")
+    .getPublicUrl(fileName);
+
+  const avatarUrl = publicUrlData.publicUrl;
+
   const updatedUser = await prisma.users.update({
     where: { id: req.userId },
-    data: { avatar: req.file.path },
+    data: { avatar: avatarUrl },
   });
 
   res.status(200).json({
     message: "Avatar uploaded",
-    avatar: req.file.path,
+    avatar: avatarUrl,
     user: updatedUser,
   });
 });
