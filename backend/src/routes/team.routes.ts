@@ -10,29 +10,58 @@ import {
   removeMember,
 } from "../controllers/team.controller";
 
-import { protect } from "../middlewares/auth.middleware";
+import { protect }
+from "../middlewares/auth.middleware";
+
+import {
+  isTeamMember, isTeamOwner
+} from "../middlewares/team.middleware";
 
 const router = express.Router();
 
 // create team
-router.post("/", protect, createTeam);
+router.post(
+  "/",
+  protect,
+  createTeam
+);
 
 // get all teams
-router.get("/", protect, getTeams);
+router.get(
+  "/",
+  protect,
+  getTeams
+);
 
 // get team detail
-router.get("/:teamId", protect, getTeamDetail);
+router.get(
+  "/:teamId",
+  protect,
+  isTeamMember,
+  getTeamDetail
+);
 
 // update team
-router.put("/:teamId", protect, updateTeam);
+router.put(
+  "/:teamId",
+  protect,
+  isTeamOwner,
+  updateTeam
+);
 
 // delete team
-router.delete("/:teamId", protect, deleteTeam);
+router.delete(
+  "/:teamId",
+  protect,
+  isTeamOwner,
+  deleteTeam
+);
 
 // add member
 router.post(
   "/:teamId/members",
   protect,
+  isTeamOwner,
   addMember
 );
 
@@ -40,6 +69,7 @@ router.post(
 router.delete(
   "/:teamId/members/:userId",
   protect,
+  isTeamOwner,
   removeMember
 );
 
