@@ -3,11 +3,17 @@ import {
   register,
   login,
   refresh,
-   logout,
+  logout,
 } from "../controllers/auth.controller";
 import {
   protect,
 } from "../middlewares/auth.middleware";
+import { validate }
+  from "../middlewares/validate.middleware";
+
+import {
+  registerSchema,
+} from "../validations/auth.validation";
 
 const router = express.Router();
 
@@ -18,6 +24,7 @@ router.post("/login", login);
 // REFRESH ACCESS TOKEN
 router.post(
   "/refresh",
+  validate(registerSchema),
   refresh
 );
 
