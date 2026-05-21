@@ -4,6 +4,7 @@ import {
   Calendar,
   Settings,
 } from "lucide-react";
+import { Link } from "react-router-dom";
 
 function Sidebar() {
   return (
@@ -21,17 +22,19 @@ function Sidebar() {
       </h1>
 
       <nav className="mt-10 space-y-3">
+        <Link to="/dashboard">
         <SidebarItem
           icon={<LayoutDashboard size={20} />}
           title="Dashboard"
           active
         />
-
-        <SidebarItem
-          icon={<FolderKanban size={20} />}
-          title="Workspace"
-        />
-
+        </Link>
+        <Link to="/workspace">
+          <SidebarItem
+            icon={<FolderKanban size={20} />}
+            title="Workspace"
+          />
+        </Link>
         <SidebarItem
           icon={<Calendar size={20} />}
           title="Schedule"
@@ -66,10 +69,9 @@ function SidebarItem({
         cursor-pointer
         transition
         
-        ${
-          active
-            ? "bg-primary font-semibold"
-            : "hover:bg-gray-100"
+        ${active
+          ? "bg-primary font-semibold"
+          : "hover:bg-gray-100"
         }
       `}
     >
