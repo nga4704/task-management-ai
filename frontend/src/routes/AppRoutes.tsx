@@ -8,6 +8,7 @@ import TaskBoardPage from "../pages/task-board/TaskBoardPage";
 import TaskDetailPage from "../pages/task-detail/TaskDetailPage";
 import SchedulePage from "../pages/schedule/SchedulePage";
 import ProjectsPage from "../pages/projects/ProjectsPage";
+import AnalyticsPage from "../pages/analytics/AnalyticsPage";
 
 function AppRoutes() {
   return (
@@ -30,6 +31,7 @@ function AppRoutes() {
 
       <Route path="/projects" element={<ProjectsPage />} />
 
+      <Route path="/analytics" element={<AnalyticsPage />} />
     </Routes>
 
   );
