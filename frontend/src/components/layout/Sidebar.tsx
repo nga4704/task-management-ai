@@ -6,7 +6,8 @@ import {
   FileText,
   CalendarDays,
   FolderOpen,
-  BarChart3
+  BarChart3,
+  BrainCircuit
 } from "lucide-react";
 import { Link } from "react-router-dom";
 
@@ -67,6 +68,12 @@ function Sidebar() {
           <SidebarItem
             icon={<BarChart3 size={20} />}
             title="Analytics"
+          />
+        </Link>
+        <Link to="/ai-insights">
+          <SidebarItem
+            icon={<BrainCircuit size={20} />}
+            title="AI Insights"
           />
         </Link>
         <SidebarItem

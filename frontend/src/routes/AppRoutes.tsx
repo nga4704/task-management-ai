@@ -9,6 +9,7 @@ import TaskDetailPage from "../pages/task-detail/TaskDetailPage";
 import SchedulePage from "../pages/schedule/SchedulePage";
 import ProjectsPage from "../pages/projects/ProjectsPage";
 import AnalyticsPage from "../pages/analytics/AnalyticsPage";
+import AIInsightsPage from "../pages/ai-insights/AIInsightsPage";
 
 function AppRoutes() {
   return (
@@ -32,6 +33,8 @@ function AppRoutes() {
       <Route path="/projects" element={<ProjectsPage />} />
 
       <Route path="/analytics" element={<AnalyticsPage />} />
+
+      <Route path="/ai-insights" element={<AIInsightsPage />} />
     </Routes>
 
   );
