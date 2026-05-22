@@ -7,7 +7,9 @@ import {
   CalendarDays,
   FolderOpen,
   BarChart3,
-  BrainCircuit
+  BrainCircuit,
+  Sparkles,
+  Bell,
 } from "lucide-react";
 import { Link } from "react-router-dom";
 
@@ -58,6 +60,12 @@ function Sidebar() {
             title="Schedule"
           />
         </Link>
+        <Link to="/smart-schedule">
+          <SidebarItem
+            icon={<Sparkles size={20} />}
+            title="Smart Schedule"
+          />
+        </Link>
         <Link to="/projects">
           <SidebarItem
             icon={<FolderOpen size={20} />}
@@ -76,10 +84,18 @@ function Sidebar() {
             title="AI Insights"
           />
         </Link>
-        <SidebarItem
-          icon={<Settings size={20} />}
-          title="Settings"
-        />
+        <Link to="/notifications">
+          <SidebarItem
+            icon={<Bell size={20} />}
+            title="Notifications"
+          />
+        </Link>
+        <Link to="/settings">
+          <SidebarItem
+            icon={<Settings size={20} />}
+            title="Settings"
+          />
+        </Link>
       </nav>
     </aside>
   );

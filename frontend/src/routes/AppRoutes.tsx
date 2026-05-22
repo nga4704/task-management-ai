@@ -10,6 +10,9 @@ import SchedulePage from "../pages/schedule/SchedulePage";
 import ProjectsPage from "../pages/projects/ProjectsPage";
 import AnalyticsPage from "../pages/analytics/AnalyticsPage";
 import AIInsightsPage from "../pages/ai-insights/AIInsightsPage";
+import SmartSchedulePage from "../pages/smart-schedule/SmartSchedulePage";
+import NotificationsPage from "../pages/notifications/NotificationsPage";
+import SettingsPage from "../pages/settings/SettingsPage";
 
 function AppRoutes() {
   return (
@@ -35,6 +38,12 @@ function AppRoutes() {
       <Route path="/analytics" element={<AnalyticsPage />} />
 
       <Route path="/ai-insights" element={<AIInsightsPage />} />
+
+      <Route path="/smart-schedule" element={<SmartSchedulePage />} />
+
+      <Route path="/notifications" element={<NotificationsPage />} />
+
+      <Route path="/settings" element={<SettingsPage />} />
     </Routes>
 
   );
