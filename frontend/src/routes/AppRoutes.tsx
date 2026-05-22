@@ -7,6 +7,7 @@ import WorkspacePage from "../pages/workspace/WorkspacePage";
 import TaskBoardPage from "../pages/task-board/TaskBoardPage";
 import TaskDetailPage from "../pages/task-detail/TaskDetailPage";
 import SchedulePage from "../pages/schedule/SchedulePage";
+import ProjectsPage from "../pages/projects/ProjectsPage";
 
 function AppRoutes() {
   return (
@@ -26,6 +27,8 @@ function AppRoutes() {
       <Route path="/task-detail" element={<TaskDetailPage />} />
 
       <Route path="/schedule" element={<SchedulePage />} />
+
+      <Route path="/projects" element={<ProjectsPage />} />
 
     </Routes>
 

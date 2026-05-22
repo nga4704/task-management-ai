@@ -4,7 +4,8 @@ import {
   Settings,
   KanbanSquare,
   FileText,
-  CalendarDays
+  CalendarDays,
+  FolderOpen
 } from "lucide-react";
 import { Link } from "react-router-dom";
 
@@ -55,7 +56,12 @@ function Sidebar() {
             title="Schedule"
           />
         </Link>
-
+        <Link to="/projects">
+          <SidebarItem
+            icon={<FolderOpen size={20} />}
+            title="Projects"
+          />
+        </Link>
         <SidebarItem
           icon={<Settings size={20} />}
           title="Settings"
