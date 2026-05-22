@@ -5,6 +5,7 @@ import RegisterPage from "../pages/auth/RegisterPage";
 import DashboardPage from "../pages/dashboard/DashboardPage";
 import WorkspacePage from "../pages/workspace/WorkspacePage";
 import TaskBoardPage from "../pages/task-board/TaskBoardPage";
+import TaskDetailPage from "../pages/task-detail/TaskDetailPage";
 
 function AppRoutes() {
   return (
@@ -15,20 +16,13 @@ function AppRoutes() {
 
       <Route path="/register" element={<RegisterPage />} />
 
-      <Route
-        path="/dashboard"
-        element={<DashboardPage />}
-      />
+      <Route path="/dashboard" element={<DashboardPage />} />
 
-      <Route
-        path="/workspace"
-        element={<WorkspacePage />}
-      />
+      <Route path="/workspace" element={<WorkspacePage />} />
 
-      <Route
-        path="/task-board"
-        element={<TaskBoardPage />}
-      />
+      <Route path="/task-board" element={<TaskBoardPage />} />
+
+      <Route path="/task-detail" element={<TaskDetailPage />} />
 
     </Routes>
 

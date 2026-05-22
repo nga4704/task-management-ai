@@ -3,7 +3,8 @@ import {
   FolderKanban,
   Calendar,
   Settings,
-  KanbanSquare
+  KanbanSquare,
+  FileText
 } from "lucide-react";
 import { Link } from "react-router-dom";
 
@@ -40,6 +41,12 @@ function Sidebar() {
           <SidebarItem
             icon={<KanbanSquare size={20} />}
             title="Task Board"
+          />
+        </Link>
+        <Link to="/task-detail">
+          <SidebarItem
+            icon={<FileText size={20} />}
+            title="Task Detail"
           />
         </Link>
         <SidebarItem
