@@ -4,6 +4,7 @@ import LoginPage from "../pages/auth/LoginPage";
 import RegisterPage from "../pages/auth/RegisterPage";
 import DashboardPage from "../pages/dashboard/DashboardPage";
 import WorkspacePage from "../pages/workspace/WorkspacePage";
+import TaskBoardPage from "../pages/task-board/TaskBoardPage";
 
 function AppRoutes() {
   return (
@@ -23,7 +24,14 @@ function AppRoutes() {
         path="/workspace"
         element={<WorkspacePage />}
       />
+
+      <Route
+        path="/task-board"
+        element={<TaskBoardPage />}
+      />
+
     </Routes>
+
   );
 }
 

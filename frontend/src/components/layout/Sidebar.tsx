@@ -3,6 +3,7 @@ import {
   FolderKanban,
   Calendar,
   Settings,
+  KanbanSquare
 } from "lucide-react";
 import { Link } from "react-router-dom";
 
@@ -23,16 +24,22 @@ function Sidebar() {
 
       <nav className="mt-10 space-y-3">
         <Link to="/dashboard">
-        <SidebarItem
-          icon={<LayoutDashboard size={20} />}
-          title="Dashboard"
-          active
-        />
+          <SidebarItem
+            icon={<LayoutDashboard size={20} />}
+            title="Dashboard"
+            active
+          />
         </Link>
         <Link to="/workspace">
           <SidebarItem
             icon={<FolderKanban size={20} />}
             title="Workspace"
+          />
+        </Link>
+        <Link to="/task-board">
+          <SidebarItem
+            icon={<KanbanSquare size={20} />}
+            title="Task Board"
           />
         </Link>
         <SidebarItem
