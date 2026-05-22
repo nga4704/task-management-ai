@@ -6,6 +6,7 @@ import DashboardPage from "../pages/dashboard/DashboardPage";
 import WorkspacePage from "../pages/workspace/WorkspacePage";
 import TaskBoardPage from "../pages/task-board/TaskBoardPage";
 import TaskDetailPage from "../pages/task-detail/TaskDetailPage";
+import SchedulePage from "../pages/schedule/SchedulePage";
 
 function AppRoutes() {
   return (
@@ -23,6 +24,8 @@ function AppRoutes() {
       <Route path="/task-board" element={<TaskBoardPage />} />
 
       <Route path="/task-detail" element={<TaskDetailPage />} />
+
+      <Route path="/schedule" element={<SchedulePage />} />
 
     </Routes>
 

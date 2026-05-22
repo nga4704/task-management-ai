@@ -1,10 +1,10 @@
 import {
   LayoutDashboard,
   FolderKanban,
-  Calendar,
   Settings,
   KanbanSquare,
-  FileText
+  FileText,
+  CalendarDays
 } from "lucide-react";
 import { Link } from "react-router-dom";
 
@@ -49,10 +49,12 @@ function Sidebar() {
             title="Task Detail"
           />
         </Link>
-        <SidebarItem
-          icon={<Calendar size={20} />}
-          title="Schedule"
-        />
+        <Link to="/schedule">
+          <SidebarItem
+            icon={<CalendarDays size={20} />}
+            title="Schedule"
+          />
+        </Link>
 
         <SidebarItem
           icon={<Settings size={20} />}
