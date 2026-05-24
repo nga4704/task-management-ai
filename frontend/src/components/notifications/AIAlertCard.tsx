@@ -3,7 +3,7 @@ function AIAlertCard() {
     <div
       className="
         bg-primary
-        rounded-[28px]
+        rounded-card
         p-6
       "
     >

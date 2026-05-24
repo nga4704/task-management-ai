@@ -26,7 +26,7 @@ function KanbanColumn({
     <div
       className="
         bg-[#EFEFEF]
-        rounded-[28px]
+        rounded-card
         p-4
         min-h-[600px]
       "

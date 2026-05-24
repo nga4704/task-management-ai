@@ -2,7 +2,7 @@
 @tailwind components;
 @tailwind utilities;
 
-body {
+/* body {
   font-family: Inter, sans-serif;
   background: #f5f5f5;
   color: #111;
@@ -35,4 +35,73 @@ body {
 
 .rbc-today {
   background: #f7f7f7 !important;
+} */
+
+body {
+  @apply bg-background text-text font-sans;
+}
+
+* {
+  @apply border-border;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+button {
+  @apply transition-all duration-200;
+}
+
+body {
+  font-family: "Inter", sans-serif;
+  background: #F5F7FB;
+  color: #111827;
+}
+
+@layer components {
+
+  .card {
+    @apply
+      bg-surface
+      rounded-card
+      shadow-card
+      p-6;
+  }
+
+  .card-secondary {
+    @apply
+      bg-surface-secondary
+      rounded-card
+      p-6;
+  }
+
+  .btn-primary {
+    @apply
+      bg-primary
+      text-text
+      rounded-button
+      px-5
+      py-3
+      font-semibold;
+  }
+
+  .btn-dark {
+    @apply
+      bg-black
+      text-white
+      rounded-button
+      px-5
+      py-3
+      font-semibold;
+  }
+}
+
+@layer base {
+
+  * {
+    @apply
+      transition-colors
+      duration-200;
+  }
 }

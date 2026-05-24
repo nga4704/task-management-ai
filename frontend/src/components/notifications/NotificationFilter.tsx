@@ -3,7 +3,7 @@ function NotificationFilter() {
     <div
       className="
         bg-white
-        rounded-[28px]
+        rounded-card
         p-5
         shadow-soft
         flex

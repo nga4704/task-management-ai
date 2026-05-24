@@ -4,15 +4,14 @@ import LoginPage from "../pages/auth/LoginPage";
 import RegisterPage from "../pages/auth/RegisterPage";
 import DashboardPage from "../pages/dashboard/DashboardPage";
 import WorkspacePage from "../pages/workspace/WorkspacePage";
-import TaskBoardPage from "../pages/task-board/TaskBoardPage";
-import TaskDetailPage from "../pages/task-detail/TaskDetailPage";
-import SchedulePage from "../pages/schedule/SchedulePage";
+import TasksPage from "../pages/tasks/TasksPage";
+import CalendarPage from "../pages/calendar/CalendarPage";
 import ProjectsPage from "../pages/projects/ProjectsPage";
-import AnalyticsPage from "../pages/analytics/AnalyticsPage";
-import AIInsightsPage from "../pages/ai-insights/AIInsightsPage";
-import SmartSchedulePage from "../pages/smart-schedule/SmartSchedulePage";
 import NotificationsPage from "../pages/notifications/NotificationsPage";
 import SettingsPage from "../pages/settings/SettingsPage";
+import AIPlannerPage from "../pages/ai-planner/AIPlannerPage";
+import InsightsPage from "../pages/insights/InsightsPage";
+import ProtectedRoute from "./ProtectedRoute";
 
 function AppRoutes() {
   return (
@@ -23,23 +22,26 @@ function AppRoutes() {
 
       <Route path="/register" element={<RegisterPage />} />
 
-      <Route path="/dashboard" element={<DashboardPage />} />
+      <Route
+        path="/dashboard"
+        element={
+          <ProtectedRoute>
+            <DashboardPage />
+          </ProtectedRoute>
+        }
+      />
 
       <Route path="/workspace" element={<WorkspacePage />} />
 
-      <Route path="/task-board" element={<TaskBoardPage />} />
+      <Route path="/tasks" element={<TasksPage />} />
 
-      <Route path="/task-detail" element={<TaskDetailPage />} />
-
-      <Route path="/schedule" element={<SchedulePage />} />
+      <Route path="/calendar" element={<CalendarPage />} />
 
       <Route path="/projects" element={<ProjectsPage />} />
 
-      <Route path="/analytics" element={<AnalyticsPage />} />
+      <Route path="/ai-planner" element={<AIPlannerPage />} />
 
-      <Route path="/ai-insights" element={<AIInsightsPage />} />
-
-      <Route path="/smart-schedule" element={<SmartSchedulePage />} />
+      <Route path="/insights" element={<InsightsPage />} />
 
       <Route path="/notifications" element={<NotificationsPage />} />
 

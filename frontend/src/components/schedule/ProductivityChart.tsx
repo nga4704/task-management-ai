@@ -19,7 +19,7 @@ function ProductivityChart() {
     <div
       className="
         bg-white
-        rounded-[28px]
+        rounded-card
         p-6
         shadow-soft
       "

@@ -8,7 +8,7 @@ import RecommendationCard from "../../components/ai-insights/RecommendationCard"
 import TeamAIStats from "../../components/ai-insights/TeamAIStats";
 import AIActivityItem from "../../components/ai-insights/AIActivityItem";
 
-function AIInsightsPage() {
+function InsightsPage() {
   return (
     <MainLayout>
       <div className="space-y-6">
@@ -164,4 +164,4 @@ function AIInsightsPage() {
   );
 }
 
-export default AIInsightsPage;
+export default InsightsPage;

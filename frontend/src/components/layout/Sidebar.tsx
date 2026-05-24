@@ -3,97 +3,140 @@ import {
   FolderKanban,
   Settings,
   KanbanSquare,
-  FileText,
   CalendarDays,
   FolderOpen,
-  BarChart3,
   BrainCircuit,
   Sparkles,
   Bell,
 } from "lucide-react";
-import { Link } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 
 function Sidebar() {
+  const location = useLocation();
   return (
     <aside
       className="
-        w-[260px]
-        bg-white
+        w-[280px]
+        h-screen
+        sticky
+        top-0
+        bg-white/80
+        backdrop-blur-md
         border-r
+        border-white/50
         border-gray-100
         p-6
       "
     >
-      <h1 className="text-2xl font-bold">
-        WorkFlow
-      </h1>
+      <div className="flex items-center gap-3">
+        <div
+          className="
+      w-10
+      h-10
+      rounded-xl
+      bg-primary
+      flex
+      items-center
+      justify-center
+      font-bold
+    "
+        >
+          W
+        </div>
 
-      <nav className="mt-10 space-y-3">
+        <div>
+          <h1 className="text-xl font-bold">
+            WorkFlow AI
+          </h1>
+
+          <p className="text-xs text-gray-400">
+            Smart Productivity
+          </p>
+        </div>
+      </div>
+
+      <nav className="mt-10 space-y-2">
         <Link to="/dashboard">
           <SidebarItem
             icon={<LayoutDashboard size={20} />}
             title="Dashboard"
-            active
+            active={location.pathname === "/dashboard"}
           />
         </Link>
-        <Link to="/workspace">
-          <SidebarItem
-            icon={<FolderKanban size={20} />}
-            title="Workspace"
-          />
-        </Link>
-        <Link to="/task-board">
+
+        <Link to="/tasks">
           <SidebarItem
             icon={<KanbanSquare size={20} />}
-            title="Task Board"
+            title="My Tasks"
+            active={location.pathname === "/tasks"}
           />
         </Link>
-        <Link to="/task-detail">
-          <SidebarItem
-            icon={<FileText size={20} />}
-            title="Task Detail"
-          />
-        </Link>
-        <Link to="/schedule">
-          <SidebarItem
-            icon={<CalendarDays size={20} />}
-            title="Schedule"
-          />
-        </Link>
-        <Link to="/smart-schedule">
-          <SidebarItem
-            icon={<Sparkles size={20} />}
-            title="Smart Schedule"
-          />
-        </Link>
+
         <Link to="/projects">
           <SidebarItem
             icon={<FolderOpen size={20} />}
             title="Projects"
+            active={location.pathname === "/projects"}
           />
         </Link>
-        <Link to="/analytics">
+
+        <Link to="/calendar">
           <SidebarItem
-            icon={<BarChart3 size={20} />}
-            title="Analytics"
+            icon={<CalendarDays size={20} />}
+            title="Calendar"
+            active={location.pathname === "/calendar"}
           />
         </Link>
-        <Link to="/ai-insights">
+
+        <div className="pt-6 pb-2 px-4">
+          <p className="text-xs font-semibold text-gray-400 uppercase tracking-wider">
+            AI Features
+          </p>
+        </div>
+
+        <Link to="/ai-planner">
+          <SidebarItem
+            icon={<Sparkles size={20} />}
+            title="AI Planner"
+            active={location.pathname === "/ai-planner"}
+          />
+        </Link>
+
+        <Link to="/insights">
           <SidebarItem
             icon={<BrainCircuit size={20} />}
-            title="AI Insights"
+            title="Productivity Insights"
+            active={location.pathname === "/insights"}
           />
         </Link>
+
+        <div className="pt-6 pb-2 px-4">
+          <p className="text-xs font-semibold text-gray-400 uppercase tracking-wider">
+            Workspace
+          </p>
+        </div>
+
+        <Link to="/workspace">
+          <SidebarItem
+            icon={<FolderKanban size={20} />}
+            title="Workspace"
+            active={location.pathname === "/workspace"}
+          />
+        </Link>
+
         <Link to="/notifications">
           <SidebarItem
             icon={<Bell size={20} />}
             title="Notifications"
+            active={location.pathname === "/notifications"}
           />
         </Link>
+
         <Link to="/settings">
           <SidebarItem
             icon={<Settings size={20} />}
             title="Settings"
+            active={location.pathname === "/settings"}
           />
         </Link>
       </nav>
@@ -122,8 +165,8 @@ function SidebarItem({
         transition
         
         ${active
-          ? "bg-primary font-semibold"
-          : "hover:bg-gray-100"
+          ? "bg-primary text-black font-semibold shadow-soft"
+          : "hover:bg-surface-secondary"
         }
       `}
     >

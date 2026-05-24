@@ -4,7 +4,7 @@ function AutoScheduleCard() {
       className="
         bg-black
         text-white
-        rounded-[28px]
+        rounded-card
         p-6
       "
     >

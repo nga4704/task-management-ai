@@ -11,7 +11,7 @@ import KanbanColumn from "../../components/task-board/KanbanColumn";
 
 import { initialData } from "./tasks";
 
-function TaskBoardPage() {
+function TasksPage() {
   const [columns, setColumns] =
     useState(initialData);
 
@@ -112,4 +112,4 @@ function TaskBoardPage() {
   );
 }
 
-export default TaskBoardPage;
+export default TasksPage;

@@ -11,13 +11,20 @@ function MainLayout({
   children,
 }: MainLayoutProps) {
   return (
-    <div className="flex min-h-screen bg-[#F5F5F5]">
+    <div className="flex min-h-screen bg-background">
       <Sidebar />
 
-      <div className="flex-1 p-6">
+      <div
+        className="
+          flex-1
+          px-8
+          py-6
+          overflow-auto
+        "
+      >
         <Topbar />
 
-        <main className="mt-6">
+        <main className="mt-8">
           {children}
         </main>
       </div>

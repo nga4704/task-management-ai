@@ -5,6 +5,8 @@ import {
   generateAccessToken,
   generateRefreshToken,
 } from "../utils/jwt";
+import { verifyGoogleToken }
+  from "./google.service";
 
 export const registerUser = async (
   username: string,
@@ -53,6 +55,13 @@ export const loginUser = async (
 
     throw new Error(
       "User not found"
+    );
+  }
+
+  // User đăng nhập bằng Google
+  if (!user.password) {
+    throw new Error(
+      "Please login with Google"
     );
   }
 
@@ -154,7 +163,7 @@ export const refreshAccessToken =
     return {
       accessToken: newAccessToken,
     };
-};
+  };
 
 // LOGOUT
 export const logoutUser = async (
@@ -177,3 +186,93 @@ export const logoutUser = async (
     message: "Logout successfully",
   };
 };
+
+export const loginGoogle =
+  async (
+    credential: string
+  ) => {
+
+    const payload =
+      await verifyGoogleToken(
+        credential
+      );
+
+    if (!payload) {
+
+      throw new Error(
+        "Invalid Google token"
+      );
+    }
+
+    const email =
+      payload.email;
+
+    if (!email) {
+
+      throw new Error(
+        "Email missing"
+      );
+    }
+
+    let user =
+      await prisma.users.findUnique({
+
+        where: {
+          email,
+        },
+      });
+
+    if (!user) {
+
+      user =
+        await prisma.users.create({
+
+          data: {
+
+            email,
+
+            username:
+              email.split("@")[0],
+
+            full_name:
+              payload.name,
+
+            avatar:
+              payload.picture,
+
+            google_id:
+              payload.sub,
+
+            password: "",
+          },
+        });
+    }
+
+    const accessToken =
+      generateAccessToken(
+        user.id
+      );
+
+    const refreshToken =
+      generateRefreshToken(
+        user.id
+      );
+
+    await prisma.users.update({
+
+      where: {
+        id: user.id,
+      },
+
+      data: {
+        refresh_token:
+          refreshToken,
+      },
+    });
+
+    return {
+      user,
+      accessToken,
+      refreshToken,
+    };
+  };

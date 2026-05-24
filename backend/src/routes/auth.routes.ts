@@ -4,6 +4,8 @@ import {
   login,
   refresh,
   logout,
+  googleLogin,
+  getMe
 } from "../controllers/auth.controller";
 import {
   protect,
@@ -12,20 +14,39 @@ import { validate }
   from "../middlewares/validate.middleware";
 
 import {
-  registerSchema,
+  registerSchema, loginSchema
 } from "../validations/auth.validation";
+import { z } from "zod";
+
+export const refreshSchema = z.object({
+  refreshToken: z.string(),
+});
 
 const router = express.Router();
 
-router.post("/register", register);
+router.post(
+  "/register",
+  validate(registerSchema),
+  register
+);
 
-router.post("/login", login);
+router.post(
+  "/login",
+  validate(loginSchema),
+  login
+);
 
 // REFRESH ACCESS TOKEN
 router.post(
   "/refresh",
-  validate(registerSchema),
+  validate(refreshSchema),
   refresh
+);
+
+router.get(
+  "/me",
+  protect,
+  getMe
 );
 
 // LOGOUT
@@ -33,6 +54,11 @@ router.post(
   "/logout",
   protect,
   logout
+);
+
+router.post(
+  "/google",
+  googleLogin
 );
 
 export default router;

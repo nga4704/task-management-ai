@@ -7,7 +7,7 @@ import AISuggestionCard from "../../components/schedule/AISuggestionCard";
 import WorkloadCard from "../../components/schedule/WorkloadCard";
 import ProductivityChart from "../../components/schedule/ProductivityChart";
 
-function SchedulePage() {
+function CalendarPage() {
   return (
     <MainLayout>
       <div className="space-y-6">
@@ -88,4 +88,4 @@ function SchedulePage() {
   );
 }
 
-export default SchedulePage;
+export default CalendarPage;
