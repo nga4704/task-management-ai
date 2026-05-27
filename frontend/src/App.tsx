@@ -1,7 +1,7 @@
-import AppRoutes from "./routes/AppRoutes";
+import AppRoutes from "./app/routes/AppRoutes";
 
 import { useEffect } from "react";
-import { useAuthStore } from "./store/authStore";
+import { useAuthStore } from "./features/auth/store/authStore";
 import api from "./services/api";
 
 function App() {

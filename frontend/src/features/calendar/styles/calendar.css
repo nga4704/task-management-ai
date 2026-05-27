@@ -1,0 +1,56 @@
+.modern-calendar {
+  border: none;
+  font-family: Inter, sans-serif;
+}
+
+.modern-calendar .rbc-toolbar {
+  display: none;
+}
+
+.modern-calendar .rbc-month-view,
+.modern-calendar .rbc-time-view {
+  overflow: hidden;
+  border: 1px solid #e5e7eb;
+  border-radius: 20px;
+}
+
+.modern-calendar .rbc-header {
+  padding: 14px 0;
+  font-weight: 600;
+  background: #f8fafc;
+  border-bottom: 1px solid #e5e7eb;
+}
+
+.modern-calendar .rbc-date-cell {
+  padding: 10px;
+}
+
+.modern-calendar .rbc-day-bg:hover {
+  background: #f8fafc;
+}
+
+.modern-calendar .rbc-today {
+  background: #f3f9d2;
+}
+
+.modern-calendar .rbc-event {
+  border: none;
+  padding: 4px 10px;
+  font-size: 12px;
+  font-weight: 500;
+  background: #8b5cf6;
+  border-radius: 999px;
+}
+
+.modern-calendar .rbc-off-range-bg {
+  background: #fafafa;
+}
+
+.modern-calendar .rbc-button-link {
+  font-weight: 500;
+}
+
+.modern-calendar .rbc-time-content,
+.modern-calendar .rbc-time-header {
+  border-color: #e5e7eb;
+}
