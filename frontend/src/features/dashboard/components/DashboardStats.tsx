@@ -1,6 +1,6 @@
-import StatCard from "./StatCard";
+import StatCard from "@/shared/components/cards/StatCard";
 
-import { statsData } from "../../data/statsData";
+import { statsData } from "../data/statsData";
 
 function DashboardStats() {
   return (
@@ -9,6 +9,7 @@ function DashboardStats() {
         grid
         grid-cols-1
         gap-6
+
         md:grid-cols-2
         xl:grid-cols-4
       "
@@ -16,10 +17,7 @@ function DashboardStats() {
       {statsData.map((item) => (
         <StatCard
           key={item.title}
-          title={item.title}
-          value={item.value}
-          growth={item.growth}
-          icon={item.icon}
+          {...item}
         />
       ))}
     </section>

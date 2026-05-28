@@ -1,10 +1,10 @@
-// features/notifications/components/NotificationStats.tsx
+// features/ai-planner/components/PlannerStats.tsx
 
 import StatCard from "@/shared/components/cards/StatCard";
 
-import { notificationStats } from "../data/mockNotificationStats";
+import { mockPlannerStats } from "../data/mockPlannerStats";
 
-function NotificationStats() {
+function PlannerStats() {
   return (
     <section
       className="
@@ -16,7 +16,7 @@ function NotificationStats() {
         xl:grid-cols-4
       "
     >
-      {notificationStats.map((stat) => (
+      {mockPlannerStats.map((stat) => (
         <StatCard
           key={stat.title}
           {...stat}
@@ -26,4 +26,4 @@ function NotificationStats() {
   );
 }
 
-export default NotificationStats;
+export default PlannerStats;

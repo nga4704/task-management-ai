@@ -1,36 +1,64 @@
 import {
+  AlertTriangle,
   Brain,
   CheckCircle2,
   Clock3,
-  AlertTriangle,
 } from "lucide-react";
 
-export const statsData = [
+import type {
+  StatCardItem,
+} from "@/shared/types/stat.types";
+
+export const statsData: StatCardItem[] = [
   {
     title: "Total Tasks",
+
     value: "128",
-    growth: "+12%",
+
+    change: "+12%",
+
+    description: "vs last month",
+
     icon: CheckCircle2,
   },
 
   {
     title: "Completed Tasks",
+
     value: "94",
-    growth: "+18%",
+
+    change: "+18%",
+
+    description: "Successfully finished",
+
     icon: Clock3,
   },
 
   {
     title: "Overdue Tasks",
+
     value: "12",
-    growth: "-3%",
+
+    change: "-3%",
+
+    trend: "negative",
+
+    description: "Needs attention",
+
     icon: AlertTriangle,
   },
 
   {
     title: "AI Productivity",
+
     value: "92%",
-    growth: "+5%",
+
+    change: "+5%",
+
+    description: "AI optimized",
+
+    // highlighted: true,
+
     icon: Brain,
   },
 ];

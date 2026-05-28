@@ -1,8 +1,8 @@
 import AppRoutes from "./app/routes/AppRoutes";
 
 import { useEffect } from "react";
-import { useAuthStore } from "./features/auth/store/authStore";
-import api from "./services/api";
+import { useAuthStore } from "./store/authStore";
+import api from "./config/api";
 
 function App() {
   const setUser = useAuthStore((s) => s.setUser);

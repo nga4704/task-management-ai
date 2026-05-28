@@ -11,12 +11,12 @@ import AuthLayout from "../../../app/layouts/AuthLayout";
 import Button from "../../../shared/components/common/Button";
 import Input from "../../../shared/components/common/Input";
 
-import api from "../../../services/api";
+import api from "../../../config/api";
 import { login } from "../services/auth.service";
 
 import {
   useAuthStore,
-} from "../store/authStore";
+} from "../../../store/authStore";
 
 function LoginPage() {
   const navigate = useNavigate();

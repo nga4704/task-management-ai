@@ -1,71 +1,28 @@
+// features/calendar/components/CalendarStats.tsx
+
+import StatCard from "@/shared/components/cards/StatCard";
+
+import { mockCalendarStats } from "../data/mockCalendarStats";
+
 function CalendarStats() {
   return (
     <section
       className="
         grid
         grid-cols-1
-        md:grid-cols-2
+        gap-5
+
+        sm:grid-cols-2
         xl:grid-cols-4
-        gap-6
       "
     >
-      <StatCard
-        title="Meetings"
-        value="18"
-      />
-
-      <StatCard
-        title="Focus Hours"
-        value="42h"
-      />
-
-      <StatCard
-        title="Deadlines"
-        value="6"
-      />
-
-      <StatCard
-        title="AI Efficiency"
-        value="91%"
-      />
+      {mockCalendarStats.map((stat) => (
+        <StatCard
+          key={stat.title}
+          {...stat}
+        />
+      ))}
     </section>
-  );
-}
-
-type StatCardProps = {
-  title: string;
-  value: string;
-};
-
-function StatCard({
-  title,
-  value,
-}: StatCardProps) {
-  return (
-    <div
-      className="
-        rounded-xl
-        border
-        border-border
-        bg-surface
-        p-6
-        shadow-soft
-      "
-    >
-      <p className="text-muted">
-        {title}
-      </p>
-
-      <h2
-        className="
-          mt-3
-          text-4xl
-          font-bold
-        "
-      >
-        {value}
-      </h2>
-    </div>
   );
 }
 

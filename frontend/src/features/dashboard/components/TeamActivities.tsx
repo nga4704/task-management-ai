@@ -1,6 +1,6 @@
 import ActivityCard from "./ActivityCard";
 
-import { activityData } from "../../data/activityData";
+import { activityData } from "../data/activityData";
 
 function TeamActivities() {
   return (

@@ -1,349 +1,239 @@
 import {
-  LayoutDashboard,
-  KanbanSquare,
-  CalendarDays,
-  BrainCircuit,
-  BarChart3,
-  Bell,
-  Settings,
-  FolderKanban,
-  Sparkles,
-  ChevronRight,
+  useState,
+} from "react";
+
+import {
+  X,
 } from "lucide-react";
 
 import {
-  Link,
   useLocation,
 } from "react-router-dom";
 
-const menuSections = [
-  {
-    title: "MAIN",
-    items: [
-      {
-        title: "Dashboard",
-        icon: LayoutDashboard,
-        path: "/dashboard",
-      },
+import { sidebarSections } from "../constants/sidebar";
 
-      {
-        title: "Tasks",
-        icon: KanbanSquare,
-        path: "/tasks",
-      },
+import SidebarItem from "./sidebar/SidebarItem";
 
-      {
-        title: "Workspace",
-        icon: FolderKanban,
-        path: "/workspace",
-      },
+import AIStatusCard from "@/shared/components/cards/AIStatusCard";
 
-      {
-        title: "Calendar",
-        icon: CalendarDays,
-        path: "/calendar",
-      },
-    ],
-  },
+type SidebarProps = {
+  mobileOpen: boolean;
+  onClose: () => void;
+};
 
-  {
-    title: "AI SYSTEM",
-    items: [
-      {
-        title: "AI Planner",
-        icon: Sparkles,
-        path: "/ai-planner",
-      },
-
-      // {
-      //   title: "AI Insights",
-      //   icon: BrainCircuit,
-      //   path: "/insights",
-      // },
-
-      {
-        title: "Analytics",
-        icon: BarChart3,
-        path: "/analytics",
-      },
-    ],
-  },
-
-  {
-    title: "SYSTEM",
-    items: [
-      {
-        title: "Notifications",
-        icon: Bell,
-        path: "/notifications",
-      },
-
-      {
-        title: "Settings",
-        icon: Settings,
-        path: "/settings",
-      },
-    ],
-  },
-];
-
-function Sidebar() {
+function Sidebar({
+  mobileOpen,
+  onClose,
+}: SidebarProps) {
   const location = useLocation();
 
+  const [collapsed] =
+    useState(false);
+
   return (
-    <aside
-      className="
-        hidden
-        xl:flex
-        flex-col
-        w-[290px]
-        shrink-0
-        sticky
-        top-0
-        h-screen
-        border-r
-        border-border/60
-        bg-white/70
-        backdrop-blur-xl
-        px-5
-        py-6
-      "
-    >
-      {/* LOGO */}
-      <div
-        className="
-          flex
-          items-center
-          gap-4
-          px-3
-        "
-      >
+    <>
+      {/* OVERLAY */}
+      {mobileOpen && (
         <div
+          onClick={onClose}
           className="
-            w-14
-            h-14
-            rounded-[20px]
-            bg-primary
-            flex
-            items-center
-            justify-center
-            text-xl
-            font-black
-            shadow-soft
-          "
-        >
-          AI
-        </div>
+            fixed
+            inset-0
+            z-40
 
-        <div>
-          <h1 className="text-lg font-bold">
-            WorkFlow AI
-          </h1>
+            bg-black/40
+            backdrop-blur-sm
 
-          <p className="text-sm text-muted">
-            Productivity Platform
-          </p>
-        </div>
-      </div>
-
-      {/* AI STATUS */}
-      <div
-        className="
-          mt-8
-          bg-primaryLight
-          rounded-[28px]
-          p-5
-          relative
-          overflow-hidden
-        "
-      >
-        <div
-          className="
-            absolute
-            right-[-30px]
-            top-[-30px]
-            w-[120px]
-            h-[120px]
-            rounded-full
-            bg-white/20
+            xl:hidden
           "
         />
+      )}
 
-        <div className="relative z-10">
+      <aside
+        className={`
+          fixed
+          left-0
+          top-0
+          z-50
 
-          <div
-            className="
-              inline-flex
-              items-center
-              gap-2
-              bg-black
-              text-white
-              text-xs
-              font-semibold
-              px-3
-              py-2
-              rounded-full
-            "
-          >
-            <Sparkles size={14} />
-
-            AI ACTIVE
-          </div>
-
-          <h3
-            className="
-              mt-4
-              text-xl
-              font-bold
-              leading-snug
-            "
-          >
-            Smart productivity insights enabled
-          </h3>
-
-          <p
-            className="
-              mt-3
-              text-sm
-              leading-6
-              text-black/70
-            "
-          >
-            AI is monitoring workload,
-            deadlines and team performance.
-          </p>
-        </div>
-      </div>
-
-      {/* NAVIGATION */}
-      <div
-        className="
-          mt-8
-          flex-1
-          overflow-y-auto
-          pr-1
-        "
-      >
-        {menuSections.map((section) => (
-          <div
-            key={section.title}
-            className="mb-8"
-          >
-            <p
-              className="
-                px-3
-                mb-3
-                text-xs
-                font-bold
-                tracking-[0.2em]
-                text-muted
-              "
-            >
-              {section.title}
-            </p>
-
-            <div className="space-y-2">
-
-              {section.items.map((item) => {
-                const Icon = item.icon;
-
-                const active =
-                  location.pathname === item.path;
-
-                return (
-                  <Link
-                    key={item.title}
-                    to={item.path}
-                  >
-                    <div
-                      className={`
-                        group
-                        flex
-                        items-center
-                        justify-between
-                        rounded-2xl
-                        px-4
-                        py-3.5
-                        transition-all
-                        duration-200
-
-                        ${
-                          active
-                            ? `
-                              bg-primary
-                              text-black
-                              shadow-soft
-                              font-semibold
-                            `
-                            : `
-                              text-muted
-                              hover:bg-surface-secondary
-                              hover:text-text
-                            `
-                        }
-                      `}
-                    >
-                      <div className="flex items-center gap-3">
-
-                        <Icon size={20} />
-
-                        <span className="text-sm">
-                          {item.title}
-                        </span>
-                      </div>
-
-                      {active && (
-                        <ChevronRight size={16} />
-                      )}
-                    </div>
-                  </Link>
-                );
-              })}
-            </div>
-          </div>
-        ))}
-      </div>
-
-      {/* USER */}
-      {/* <div
-        className="
-          border
-          border-border/60
-          bg-white
-          rounded-[28px]
-          p-4
           flex
-          items-center
-          gap-4
-          shadow-soft
-        "
+          h-screen
+          flex-col
+
+          border-r
+          border-border/60
+
+          bg-white/80
+          backdrop-blur-xl
+
+          transition-all
+          duration-300
+
+          ${
+            collapsed
+              ? "w-[90px]"
+              : "w-[280px]"
+          }
+
+          ${
+            mobileOpen
+              ? "translate-x-0"
+              : "-translate-x-full"
+          }
+
+          xl:sticky
+          xl:translate-x-0
+        `}
       >
+        {/* HEADER */}
         <div
           className="
-            w-14
-            h-14
-            rounded-2xl
-            bg-primary
             flex
             items-center
-            justify-center
-            font-bold
+            justify-between
+
+            px-5
+            py-6
           "
         >
-          N
+          <div className="flex items-center gap-3">
+
+            {/* LOGO */}
+            <div
+              className="
+                flex
+                h-12
+                w-12
+                shrink-0
+                items-center
+                justify-center
+
+                rounded-2xl
+
+                bg-primary
+
+                text-lg
+                font-black
+              "
+            >
+              AI
+            </div>
+
+            {/* BRAND */}
+            {!collapsed && (
+              <div className="min-w-0">
+
+                <h1
+                  className="
+                    truncate
+                    text-base
+                    font-bold
+                  "
+                >
+                  WorkFlow AI
+                </h1>
+
+                <p
+                  className="
+                    truncate
+                    text-xs
+                    text-muted
+                  "
+                >
+                  Productivity Platform
+                </p>
+              </div>
+            )}
+          </div>
+
+          {/* CLOSE */}
+          <button
+            onClick={onClose}
+            className="
+              flex
+              xl:hidden
+
+              h-9
+              w-9
+
+              items-center
+              justify-center
+
+              rounded-xl
+
+              hover:bg-surfaceSecondary
+            "
+          >
+            <X size={18} />
+          </button>
         </div>
 
-        <div className="flex-1 min-w-0">
-          <h4 className="font-semibold truncate">
-            Nga
-          </h4>
-
-          <p className="text-sm text-muted truncate">
-            Fullstack Developer
-          </p>
+        {/* AI STATUS */}
+        <div className="px-4">
+          <AIStatusCard
+            collapsed={collapsed}
+          />
         </div>
-      </div> */}
-    </aside>
+
+        {/* NAVIGATION */}
+        <div
+          className="
+            mt-6
+            flex-1
+            overflow-y-auto
+
+            px-4
+            pb-6
+          "
+        >
+          {sidebarSections.map(
+            (section) => (
+              <div
+                key={section.title}
+                className="mb-8"
+              >
+                {!collapsed && (
+                  <p
+                    className="
+                      mb-3
+                      px-3
+
+                      text-xs
+                      font-bold
+                      uppercase
+                      tracking-[0.18em]
+
+                      text-muted
+                    "
+                  >
+                    {section.title}
+                  </p>
+                )}
+
+                <div className="space-y-2">
+
+                  {section.items.map(
+                    (item) => (
+                      <SidebarItem
+                        key={item.path}
+                        {...item}
+                        collapsed={
+                          collapsed
+                        }
+                        active={
+                          location.pathname ===
+                          item.path
+                        }
+                      />
+                    )
+                  )}
+                </div>
+              </div>
+            )
+          )}
+        </div>
+      </aside>
+    </>
   );
 }
 

@@ -1,6 +1,6 @@
 import TaskCard from "./TaskCard";
 
-import { taskData } from "../../data/mockDashboard";
+import { taskData } from "../data/mockDashboard";
 
 function PrioritizedTasks() {
   return (

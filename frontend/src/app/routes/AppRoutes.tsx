@@ -8,7 +8,7 @@ import TasksPage from "../../features/tasks/pages/TasksPage";
 import CalendarPage from "../../features/calendar/pages/CalendarPage";
 import NotificationsPage from "../../features/notifications/pages/NotificationsPage";
 import SettingsPage from "../../features/settings/pages/SettingsPage";
-import AIPlannerPage from "../../features/ai-planner/pages/AIPlannerPage";
+import AIInsightsPage from "../../features/ai-insights/pages/AIInsightsPage";
 import AnalyticsPage from "../../features/analytics/pages/AnalyticsPage";
 import ProtectedRoute from "./ProtectedRoute";
 
@@ -36,7 +36,7 @@ function AppRoutes() {
 
       <Route path="/calendar" element={<CalendarPage />} />
 
-      <Route path="/ai-planner" element={<AIPlannerPage />} />
+      <Route path="/ai-insights" element={<AIInsightsPage />} />
 
       <Route path="/analytics" element={<AnalyticsPage />} />
 

@@ -1,4 +1,8 @@
-import WorkspaceStatCard from "./WorkspaceStatCard";
+// features/workspace/components/WorkspaceStats.tsx
+
+import StatCard from "@/shared/components/cards/StatCard";
+
+import { workspaceStats } from "../data/mockWorkspaceStats";
 
 function WorkspaceStats() {
   return (
@@ -6,30 +10,18 @@ function WorkspaceStats() {
       className="
         grid
         grid-cols-1
-        gap-6
-        md:grid-cols-2
+        gap-5
+
+        sm:grid-cols-2
         xl:grid-cols-4
       "
     >
-      <WorkspaceStatCard
-        title="Active Projects"
-        value="12"
-      />
-
-      <WorkspaceStatCard
-        title="Team Members"
-        value="34"
-      />
-
-      <WorkspaceStatCard
-        title="AI Productivity"
-        value="91%"
-      />
-
-      <WorkspaceStatCard
-        title="Completed Sprints"
-        value="18"
-      />
+      {workspaceStats.map((stat) => (
+        <StatCard
+          key={stat.title}
+          {...stat}
+        />
+      ))}
     </section>
   );
 }

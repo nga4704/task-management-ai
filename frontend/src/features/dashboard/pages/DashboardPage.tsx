@@ -1,14 +1,14 @@
 import MainLayout from "../../../app/layouts/MainLayout";
 
-import DashboardHero from "../components/hero/DashboardHero";
+import DashboardHero from "../components/DashboardHero";
 
-import DashboardStats from "../components/stats/DashboardStats";
+import DashboardStats from "../components/DashboardStats";
 
-import DashboardInsights from "../components/insights/DashboardInsights";
+import DashboardInsights from "../components/DashboardInsights";
 
-import PrioritizedTasks from "../components/tasks/PrioritizedTasks";
+import PrioritizedTasks from "../components/PrioritizedTasks";
 
-import TeamActivities from "../components/activities/TeamActivities";
+import TeamActivities from "../components/TeamActivities";
 
 function DashboardPage() {
   return (

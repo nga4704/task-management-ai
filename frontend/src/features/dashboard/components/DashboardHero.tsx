@@ -1,6 +1,6 @@
 import { Sparkles } from "lucide-react";
 
-import Button from "../../../../shared/components/common/Button";
+import Button from "../../../shared/components/common/Button";
 
 function DashboardHero() {
   return (
