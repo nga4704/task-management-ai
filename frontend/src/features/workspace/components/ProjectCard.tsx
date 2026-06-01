@@ -3,7 +3,7 @@ import {
   CheckCircle2,
 } from "lucide-react";
 
-import type { Project } from "../types/workspace.types";
+import type { Project } from "../types/project.types";
 
 import { projectStatusStyles } from "../constants/workspaceStyles";
 

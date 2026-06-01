@@ -8,6 +8,8 @@ import Button from "../../../shared/components/common/Button";
 import Input from "../../../shared/components/common/Input";
 import { register } from "../services/auth.service";
 
+import GoogleAuthButton from "../components/GoogleAuthButton";
+
 function RegisterPage() {
   const navigate = useNavigate();
 
@@ -23,12 +25,29 @@ function RegisterPage() {
   const [password, setPassword] =
     useState("");
 
+  const [
+    confirmPassword,
+    setConfirmPassword,
+  ] = useState("");
+
   const [loading,
     setLoading]
     = useState(false);
 
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
+
+    if (
+      password !==
+      confirmPassword
+    ) {
+
+      alert(
+        "Passwords do not match"
+      );
+
+      return;
+    }
 
     try {
       setLoading(true);
@@ -102,6 +121,17 @@ function RegisterPage() {
           }
         />
 
+        <Input
+          placeholder="Confirm Password"
+          type="password"
+          value={confirmPassword}
+          onChange={(e) =>
+            setConfirmPassword(
+              e.target.value
+            )
+          }
+        />
+
         <Button
           title={
             loading
@@ -111,6 +141,14 @@ function RegisterPage() {
           type="submit"
           disabled={loading}
         />
+          <div className="h-px flex-1 bg-gray-200" />
+
+
+        {/* <GoogleAuthButton
+          onClick={() => {
+            // trigger google login
+          }}
+        /> */}
       </form>
 
       <p className="text-center text-sm text-gray-500 mt-6">

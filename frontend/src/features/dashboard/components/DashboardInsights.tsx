@@ -4,15 +4,33 @@ import RiskAlertCard from "./RiskAlertCard";
 
 function DashboardInsights() {
   return (
-    <div className="space-y-6 h-full">
+    <section
+      className="
+        grid
+        gap-5
 
-      <AIInsightCard />
+        grid-cols-1
+        xl:grid-cols-3
+      "
+    >
+      {/* MAIN AI INSIGHT */}
+      <div className="xl:col-span-2">
+        <AIInsightCard />
+      </div>
 
-      <RiskAlertCard />
+      {/* SIDE CARDS */}
+      <div
+        className="
+          flex
+          flex-col
+          gap-5
+        "
+      >
+        <RiskAlertCard />
 
-      <RecommendationCard />
-
-    </div>
+        <RecommendationCard />
+      </div>
+    </section>
   );
 }
 

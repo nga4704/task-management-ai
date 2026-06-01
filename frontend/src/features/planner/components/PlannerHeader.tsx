@@ -3,7 +3,7 @@ import {
   BrainCircuit,
 } from "lucide-react";
 
-function AIPlannerHeader() {
+function PlannerHeader() {
   return (
     <section
       className="
@@ -88,4 +88,4 @@ function AIPlannerHeader() {
   );
 }
 
-export default AIPlannerHeader;
+export default PlannerHeader;

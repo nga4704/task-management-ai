@@ -18,6 +18,8 @@ import {
   useAuthStore,
 } from "../../../store/authStore";
 
+import GoogleAuthButton from "../components/GoogleAuthButton";
+
 function LoginPage() {
   const navigate = useNavigate();
 
@@ -160,6 +162,24 @@ function LoginPage() {
           }
         />
 
+        <div
+          className="
+    flex
+    justify-end
+  "
+        >
+          <Link
+            to="/forgot-password"
+            className="
+      text-sm
+      text-secondary
+      font-medium
+    "
+          >
+            Forgot Password?
+          </Link>
+        </div>
+
         <Button
           title={
             loading
@@ -172,8 +192,10 @@ function LoginPage() {
           }
         />
 
+          <div className="h-px flex-1 bg-gray-200" />
+
         <div className="flex justify-center pt-2">
-          <GoogleLogin
+          <GoogleAuthButton
             onSuccess={
               handleGoogleLogin
             }

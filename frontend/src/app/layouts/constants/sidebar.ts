@@ -1,7 +1,7 @@
 import {
   LayoutDashboard,
   KanbanSquare,
-  CalendarDays,
+  CalendarDays, Brain,
   BarChart3,
   Bell,
   Settings,
@@ -29,11 +29,11 @@ export const sidebarSections = [
         icon: KanbanSquare,
         path: "/tasks",
       },
-      {
-        title: "Calendar",
-        icon: CalendarDays,
-        path: "/calendar",
-      },
+      // {
+      //   title: "Calendar",
+      //   icon: CalendarDays,
+      //   path: "/calendar",
+      // },
     ],
   },
 
@@ -42,16 +42,21 @@ export const sidebarSections = [
 
     items: [
       {
+        title: "AI Planner",
+        icon: Brain,
+        path: "/planner",
+      },
+      {
         title: "AI Insights",
         icon: Sparkles,
-        path: "/ai-insights",
+        path: "/insights",
       },
 
-      {
-        title: "Analytics",
-        icon: BarChart3,
-        path: "/analytics",
-      },
+      // {
+      //   title: "Analytics",
+      //   icon: BarChart3,
+      //   path: "/analytics",
+      // },
     ],
   },
 

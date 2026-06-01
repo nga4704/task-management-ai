@@ -1,65 +1,200 @@
 import {
   BrainCircuit,
   TrendingUp,
+  Sparkles,
 } from "lucide-react";
 
 function AIInsightCard() {
   return (
     <div
       className="
-        rounded-xl
+        relative
+        overflow-hidden
+
+        rounded-[28px]
+
         bg-primaryLight
-        p-6
+
+        p-5
+        md:p-6
+
+        shadow-card
       "
     >
-      <div className="flex items-center gap-3">
-
-        <div
-          className="
-            w-12
-            h-12
-            rounded-xl
-            bg-black
-            text-white
-            flex
-            items-center
-            justify-center
-          "
-        >
-          <BrainCircuit size={20} />
-        </div>
-
-        <div>
-          <h3 className="font-bold text-lg">
-            AI Productivity Insight
-          </h3>
-
-          <p className="text-sm text-black/60">
-            Smart workload analysis
-          </p>
-        </div>
-      </div>
-
+      {/* DECORATION */}
       <div
         className="
-          mt-6
-          rounded-xl
-          bg-white/50
-          p-5
+          absolute
+          -right-8
+          -top-8
+
+          h-28
+          w-28
+
+          rounded-full
+
+          bg-white/20
         "
-      >
-        <div className="flex items-start gap-3">
+      />
 
-          <TrendingUp
-            size={18}
-            className="mt-1"
-          />
+      <div className="relative z-10">
+        {/* HEADER */}
+        <div className="flex items-center justify-between">
+          <div
+            className="
+              inline-flex
+              items-center
+              gap-2
 
-          <p className="leading-7 text-black/80">
-            Your productivity is 24% higher
-            during morning focus sessions.
-            AI recommends scheduling backend
-            development tasks before 1PM.
+              rounded-full
+
+              bg-black/10
+
+              px-3
+              py-1.5
+
+              text-xs
+              font-medium
+            "
+          >
+            <Sparkles size={14} />
+            AI Insight
+          </div>
+
+          <div
+            className="
+              flex
+              h-10
+              w-10
+              items-center
+              justify-center
+
+              rounded-xl
+
+              bg-black
+
+              text-white
+            "
+          >
+            <BrainCircuit size={18} />
+          </div>
+        </div>
+
+        {/* SCORE */}
+        <div className="mt-5">
+          <p className="text-sm text-black/60">
+            Productivity Score
+          </p>
+
+          <div className="mt-2 flex items-end gap-3">
+            <h2
+              className="
+                text-5xl
+                font-black
+                leading-none
+              "
+            >
+              92%
+            </h2>
+
+            <div
+              className="
+                mb-1
+
+                flex
+                items-center
+                gap-1
+
+                rounded-full
+
+                bg-successLight
+
+                px-2.5
+                py-1
+
+                text-xs
+                font-semibold
+                text-success
+              "
+            >
+              <TrendingUp size={12} />
+              +24%
+            </div>
+          </div>
+        </div>
+
+        {/* METRICS */}
+        <div
+          className="
+            mt-5
+
+            grid
+            grid-cols-2
+            gap-3
+          "
+        >
+          <div
+            className="
+              rounded-xl
+
+              bg-white/40
+
+              px-4
+              py-3
+            "
+          >
+            <p className="text-xs text-black/60">
+              Focus Window
+            </p>
+
+            <h4 className="mt-1 font-semibold">
+              08:00–12:00
+            </h4>
+          </div>
+
+          <div
+            className="
+              rounded-xl
+
+              bg-white/40
+
+              px-4
+              py-3
+            "
+          >
+            <p className="text-xs text-black/60">
+              Sprint Success
+            </p>
+
+            <h4 className="mt-1 font-semibold">
+              89%
+            </h4>
+          </div>
+        </div>
+
+        {/* INSIGHT */}
+        <div
+          className="
+            mt-5
+
+            rounded-xl
+
+            bg-white/50
+
+            px-4
+            py-3
+          "
+        >
+          <p
+            className="
+              text-sm
+              leading-6
+              text-black/75
+            "
+          >
+            Schedule backend development
+            tasks before 1 PM for maximum
+            productivity.
           </p>
         </div>
       </div>

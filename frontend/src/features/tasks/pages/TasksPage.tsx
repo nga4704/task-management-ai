@@ -8,7 +8,7 @@ import {
 import MainLayout from "../../../app/layouts/MainLayout";
 
 import BoardHeader from "../components/BoardHeader";
-import BoardFilter from "../components/BoardFilter";
+import BoardFilter from "@/shared/components/cards/BoardFilter";
 import KanbanColumn from "../components/KanbanColumn";
 import TaskStats from "../components/TaskStats";
 

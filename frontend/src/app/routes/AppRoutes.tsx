@@ -1,15 +1,16 @@
 import { Routes, Route, Navigate } from "react-router-dom";
 
-import LoginPage from "../../features/auth/pages/LoginPage";
-import RegisterPage from "../../features/auth/pages/RegisterPage";
-import DashboardPage from "../../features/dashboard/pages/DashboardPage";
-import WorkspacePage from "../../features/workspace/pages/WorkspacePage";
-import TasksPage from "../../features/tasks/pages/TasksPage";
-import CalendarPage from "../../features/calendar/pages/CalendarPage";
-import NotificationsPage from "../../features/notifications/pages/NotificationsPage";
-import SettingsPage from "../../features/settings/pages/SettingsPage";
-import AIInsightsPage from "../../features/ai-insights/pages/AIInsightsPage";
-import AnalyticsPage from "../../features/analytics/pages/AnalyticsPage";
+import { LoginPage, RegisterPage, ForgotPasswordPage, ResetPasswordPage } from "@/features/auth";
+import DashboardPage from "@/features/dashboard/pages/DashboardPage";
+import WorkspacePage from "@/features/workspace/pages/WorkspacePage";
+import TasksPage from "@/features/tasks/pages/TasksPage";
+import CalendarPage from "@/features/calendar/pages/CalendarPage";
+import NotificationsPage from "@/features/notifications/pages/NotificationsPage";
+import SettingsPage from "@/features/settings/pages/SettingsPage";
+import AIInsightsPage from "@/features/insights/pages/AIInsightsPage";
+import PlannerPage from "@/features/planner/pages/PlannerPage";
+import AnalyticsPage from "@/features/analytics/pages/AnalyticsPage";
+import ProjectDetailPage from "@/features/project-detail/pages/ProjectDetailPage";
 import ProtectedRoute from "./ProtectedRoute";
 
 function AppRoutes() {
@@ -22,21 +23,42 @@ function AppRoutes() {
       <Route path="/register" element={<RegisterPage />} />
 
       <Route
+        path="/forgot-password"
+        element={
+          <ForgotPasswordPage />
+        }
+      />
+
+      <Route
+        path="/reset-password"
+        element={
+          <ResetPasswordPage />
+        }
+      />
+
+      <Route
         path="/dashboard"
         element={
           // <ProtectedRoute>
-            <DashboardPage />
+          <DashboardPage />
           // </ProtectedRoute>
         }
       />
 
       <Route path="/workspace" element={<WorkspacePage />} />
 
+      <Route
+        path="/projects/:projectId"
+        element={<ProjectDetailPage />}
+      />
+
       <Route path="/tasks" element={<TasksPage />} />
 
       <Route path="/calendar" element={<CalendarPage />} />
 
-      <Route path="/ai-insights" element={<AIInsightsPage />} />
+      <Route path="/planner" element={<PlannerPage />} />
+
+      <Route path="/insights" element={<AIInsightsPage />} />
 
       <Route path="/analytics" element={<AnalyticsPage />} />
 

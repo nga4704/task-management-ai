@@ -1,56 +1,83 @@
 import {
   AlertTriangle,
+  ArrowRight,
 } from "lucide-react";
 
 function RiskAlertCard() {
   return (
     <div
       className="
-        rounded-xl
+        rounded-[28px]
+
         border
         border-danger/20
+
         bg-dangerLight
+
         p-5
       "
     >
       <div className="flex items-start gap-4">
-
         <div
           className="
-            w-12
-            h-12
-            rounded-xl
-            bg-danger
-            text-white
             flex
+            h-12
+            w-12
+            shrink-0
             items-center
             justify-center
-            shrink-0
+
+            rounded-2xl
+
+            bg-danger
+
+            text-white
           "
         >
           <AlertTriangle size={20} />
         </div>
 
         <div>
-          <h3 className="font-bold text-lg">
-            High Risk Task Detected
+          <h3
+            className="
+              text-lg
+              font-bold
+            "
+          >
+            High Risk Task
           </h3>
 
-          <p className="mt-3 leading-7 text-black/70">
-            Backend API Integration has
-            82% overdue probability due
-            to high team workload and
-            tight deadline estimation.
+          <p
+            className="
+              mt-3
+
+              text-sm
+              leading-7
+
+              text-black/70
+            "
+          >
+            Backend API Integration has an
+            82% overdue probability.
           </p>
 
           <button
             className="
-              mt-5
-              text-danger
+              mt-4
+
+              inline-flex
+              items-center
+              gap-2
+
+              text-sm
               font-semibold
+
+              text-danger
             "
           >
-            View AI Recommendation
+            View details
+
+            <ArrowRight size={14} />
           </button>
         </div>
       </div>

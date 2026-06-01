@@ -4,7 +4,13 @@ import {
   Users,
 } from "lucide-react";
 
-function WorkspaceHeader() {
+interface Props {
+  onCreateProject: () => void;
+}
+
+function WorkspaceHeader({
+  onCreateProject,
+}: Props) {
   return (
     <section
       className="
@@ -93,6 +99,9 @@ function WorkspaceHeader() {
           </button>
 
           <button
+            onClick={
+              onCreateProject
+            }
             className="
               flex
               items-center

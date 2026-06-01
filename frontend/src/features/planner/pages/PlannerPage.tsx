@@ -1,6 +1,6 @@
 import MainLayout from "../../../app/layouts/MainLayout";
 
-import AIPlannerHeader from "../components/AIPlannerHeader";
+import PlannerHeader from "../components/PlannerHeader";
 
 import PlannerStats from "../components/PlannerStats";
 
@@ -18,7 +18,7 @@ import {
   useAIPlanner,
 } from "../hooks/useAIPlanner";
 
-function AIPlannerPage() {
+function PlannerPage() {
   const {
     plans,
 
@@ -38,7 +38,7 @@ function AIPlannerPage() {
       <div className="space-y-6">
 
         {/* HERO */}
-        <AIPlannerHeader />
+        <PlannerHeader />
 
         {/* STATS */}
         <PlannerStats />
@@ -101,4 +101,4 @@ function AIPlannerPage() {
   );
 }
 
-export default AIPlannerPage;
+export default PlannerPage;

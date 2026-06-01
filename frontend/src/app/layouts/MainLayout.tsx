@@ -73,7 +73,7 @@ function MainLayout({
           <div
             className="
               mx-auto
-              max-w-[1600px]
+              max-w-[1800px]
             "
           >
             {children}

@@ -6,13 +6,25 @@ import WorkspaceStats from "../components/WorkspaceStats";
 
 import ProjectCard from "../components/ProjectCard";
 
+import CreateProjectModal from "../components/CreateProjectModal";
+
 import WorkspaceActivity from "../components/WorkspaceActivity";
+import BoardFilter from "@/shared/components/cards/BoardFilter";
 
 import {
   mockProjects,
 } from "../data/mockWorkspace";
+import {
+  useState,
+} from "react";
 
 function WorkspacePage() {
+
+  const [
+    isCreateModalOpen,
+    setIsCreateModalOpen,
+  ] = useState(false);
+
   return (
     <MainLayout
       title="Workspace"
@@ -24,7 +36,14 @@ function WorkspacePage() {
       <div className="space-y-6">
 
         {/* HERO */}
-        <WorkspaceHeader />
+        <WorkspaceHeader
+          onCreateProject={() =>
+            setIsCreateModalOpen(true)
+          }
+        />
+
+        {/* FILTER */}
+        <BoardFilter />
 
         {/* STATS */}
         <WorkspaceStats />
@@ -70,9 +89,17 @@ function WorkspacePage() {
           >
             <WorkspaceActivity />
           </div>
+
         </section>
       </div>
+      <CreateProjectModal
+        open={isCreateModalOpen}
+        onClose={() =>
+          setIsCreateModalOpen(false)
+        }
+      />
     </MainLayout>
+
   );
 }
 
