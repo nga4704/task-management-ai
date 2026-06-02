@@ -11,7 +11,7 @@ import {
   assignTask,
 } from "../controllers/task.controller";
 
-import { protect } from "../middlewares/auth.middleware";
+import { protect } from "../../middlewares/auth.middleware";
 
 const router = express.Router();
 

@@ -6,7 +6,7 @@ import {
   logout,
   googleLogin,
   getMe
-} from "../controllers/auth.controller";
+} from "../modules/auth/auth.controller";
 import {
   protect,
 } from "../middlewares/auth.middleware";

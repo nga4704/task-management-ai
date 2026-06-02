@@ -5,12 +5,12 @@ import {
   refreshAccessToken,
   logoutUser,
   loginGoogle
-} from "../services/auth.service";
+} from "./auth.service";
 
-import { AuthRequest } from "../middlewares/auth.middleware";
-import { asyncHandler } from "../utils/asyncHandler";
-import { AppError } from "../middlewares/error.middleware";
-import prisma from "../config/prisma";
+import { AuthRequest } from "../../middlewares/auth.middleware";
+import { asyncHandler } from "../../utils/asyncHandler";
+import { AppError } from "../../middlewares/error.middleware";
+import prisma from "../../config/prisma";
 
 // REGISTER
 export const register = asyncHandler(async (req: Request, res: Response) => {

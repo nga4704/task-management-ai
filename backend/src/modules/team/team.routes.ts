@@ -11,11 +11,11 @@ import {
 } from "../controllers/team.controller";
 
 import { protect }
-from "../middlewares/auth.middleware";
+from "../../middlewares/auth.middleware";
 
 import {
   isTeamMember, isTeamOwner
-} from "../middlewares/team.middleware";
+} from "../../middlewares/team.middleware";
 
 const router = express.Router();
 

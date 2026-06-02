@@ -4,7 +4,7 @@ import {
   getTaskActivityLogs,
 } from "../controllers/activityLog.controller";
 
-import { protect } from "../middlewares/auth.middleware";
+import { protect } from "../../middlewares/auth.middleware";
 
 const router = express.Router();
 

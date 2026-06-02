@@ -5,13 +5,13 @@ import { createServer } from "http";
 import { initSocket } from "./config/socket";
 
 import authRoutes from "./routes/auth.routes";
-import userRoutes from "./routes/user.routes";
-import teamRoutes from "./routes/team.routes";
-import taskRoutes from "./routes/task.routes";
+import userRoutes from "./modules/user/user.routes";
+import teamRoutes from "./modules/team/team.routes";
+import taskRoutes from "./modules/task/task.routes";
 import dashboardRoutes from "./routes/dashboard.routes";
-import notificationRoutes from "./routes/notification.routes";
-import aiRoutes from "./routes/ai.routes";
-import activityLogRoutes from "./routes/activityLog.routes";
+import notificationRoutes from "./modules/notification/notification.routes";
+import aiRoutes from "./modules/ai/ai.routes";
+import activityLogRoutes from "./modules/activityLog/activityLog.routes";
 import { errorHandler } from "./middlewares/error.middleware";
 
 dotenv.config();
