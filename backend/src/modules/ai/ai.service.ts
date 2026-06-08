@@ -1,6 +1,6 @@
-import prisma from "../config/prisma";
+import prisma from "../../config/prisma";
 
-import aiClient from "../utils/aiClient";
+import aiClient from "../../utils/aiClient";
 
 export const predictOverdueService = async (
   taskId: string

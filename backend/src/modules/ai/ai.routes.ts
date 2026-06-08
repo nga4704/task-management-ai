@@ -3,7 +3,7 @@ import express from "express";
 import {
   predictOverdue,
   scheduleRecommendation,
-} from "../controllers/ai.controller";
+} from "./ai.controller";
 
 import { protect } from "../../middlewares/auth.middleware";
 

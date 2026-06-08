@@ -1,5 +1,5 @@
 import express from "express";
-import { getMe, updateProfile, uploadAvatar, } from "../controllers/user.controller";
+import { getMe, updateProfile, uploadAvatar, } from "./user.controller";
 import { protect } from "../../middlewares/auth.middleware";
 import upload from "../../config/multer";
 

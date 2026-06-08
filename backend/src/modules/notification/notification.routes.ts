@@ -3,7 +3,7 @@ import express from "express";
 import {
   getNotifications,
   markAsRead,
-} from "../controllers/notification.controller";
+} from "./notification.controller";
 
 import { protect } from "../../middlewares/auth.middleware";
 

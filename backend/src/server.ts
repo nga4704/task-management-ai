@@ -4,11 +4,11 @@ import dotenv from "dotenv";
 import { createServer } from "http";
 import { initSocket } from "./config/socket";
 
-import authRoutes from "./routes/auth.routes";
+import authRoutes from "./modules/auth/auth.routes";
 import userRoutes from "./modules/user/user.routes";
 import teamRoutes from "./modules/team/team.routes";
 import taskRoutes from "./modules/task/task.routes";
-import dashboardRoutes from "./routes/dashboard.routes";
+import dashboardRoutes from "./modules/dashboard/dashboard.routes";
 import notificationRoutes from "./modules/notification/notification.routes";
 import aiRoutes from "./modules/ai/ai.routes";
 import activityLogRoutes from "./modules/activityLog/activityLog.routes";

@@ -4,9 +4,9 @@ import {
   getOverview,
   getTeamProgress,
   getWorkload,
-} from "../controllers/dashboard.controller";
+} from "./dashboard.controller";
 
-import { protect } from "../middlewares/auth.middleware";
+import { protect } from "../../middlewares/auth.middleware";
 
 const router = express.Router();
 

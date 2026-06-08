@@ -1,20 +1,24 @@
-import prisma from "../config/prisma";
+import prisma from "../../config/prisma";
 
-export const getOverviewService = async () => {
+export const getOverviewService = async (
+  teamId: string
+) => {
+  const totalTasks = await prisma.tasks.count({
+    where: {
+      team_id: teamId,
+    },
+  });
 
-  // total tasks
-  const totalTasks = await prisma.tasks.count();
-
-  // completed tasks
   const completedTasks = await prisma.tasks.count({
     where: {
+      team_id: teamId,
       status: "done",
     },
   });
 
-  // overdue tasks
   const overdueTasks = await prisma.tasks.count({
     where: {
+      team_id: teamId,
       deadline: {
         lt: new Date(),
       },
@@ -24,14 +28,22 @@ export const getOverviewService = async () => {
     },
   });
 
-  // in-progress tasks
   const inProgressTasks = await prisma.tasks.count({
     where: {
+      team_id: teamId,
       status: "in-progress",
     },
   });
 
+  const totalProjects =
+    await prisma.projects.count({
+      where: {
+        team_id: teamId,
+      },
+    });
+
   return {
+    totalProjects,
     totalTasks,
     completedTasks,
     overdueTasks,
@@ -43,19 +55,41 @@ export const getTeamProgressService = async (
   teamId: string
 ) => {
 
-  const tasks = await prisma.tasks.findMany({
-    where: {
-      team_id: teamId,
-    },
-    select: {
-      id: true,
-      title: true,
-      progress: true,
-      status: true,
-    },
-  });
+  const tasks =
+    await prisma.tasks.findMany({
+      where: {
+        team_id: teamId,
+      },
+      select: {
+        id: true,
+        title: true,
+        progress: true,
+        status: true,
+      },
+    });
 
-  return tasks;
+  const completedTasks =
+    tasks.filter(
+      task => task.status === "done"
+    ).length;
+
+  const overallProgress =
+    tasks.length === 0
+      ? 0
+      : Math.round(
+        tasks.reduce(
+          (sum, task) =>
+            sum + (task.progress || 0),
+          0
+        ) / tasks.length
+      );
+
+  return {
+    totalTasks: tasks.length,
+    completedTasks,
+    overallProgress,
+    tasks,
+  };
 };
 
 export const getWorkloadService = async (
@@ -75,23 +109,32 @@ export const getWorkloadService = async (
     },
   });
 
-  return members.map((member) => {
+  return members.map(member => {
 
-    const tasks =
-      member.users.tasks_tasks_assignee_idTousers;
+  const tasks =
+    member.users
+      .tasks_tasks_assignee_idTousers
+      .filter(
+        task =>
+          task.team_id === teamId
+      );
 
-    return {
-      userId: member.users.id,
-      fullName: member.users.full_name,
-      totalTasks: tasks.length,
+  return {
+    userId: member.users.id,
+    fullName: member.users.full_name,
 
-      completedTasks: tasks.filter(
-        (task) => task.status === "done"
+    totalTasks: tasks.length,
+
+    completedTasks:
+      tasks.filter(
+        task => task.status === "done"
       ).length,
 
-      inProgressTasks: tasks.filter(
-        (task) => task.status === "in-progress"
+    inProgressTasks:
+      tasks.filter(
+        task =>
+          task.status === "in-progress"
       ).length,
-    };
-  });
+  };
+});
 };

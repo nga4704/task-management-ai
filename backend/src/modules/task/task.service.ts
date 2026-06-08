@@ -1,11 +1,12 @@
-import prisma from "../config/prisma";
-import { getIO } from "../config/socket";
+import prisma from "../../config/prisma";
+import { getIO } from "../../config/socket";
 
 /* 
    CREATE TASK
  */
 export const createTaskService = async (data: {
   teamId: string;
+  projectId: string;
   title: string;
   description?: string;
   priority?: string;
@@ -16,6 +17,7 @@ export const createTaskService = async (data: {
   const task = await prisma.tasks.create({
     data: {
       team_id: data.teamId,
+       project_id: data.projectId, 
       title: data.title,
       description: data.description,
       priority: data.priority,

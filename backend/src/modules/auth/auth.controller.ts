@@ -4,7 +4,9 @@ import {
   loginUser,
   refreshAccessToken,
   logoutUser,
-  loginGoogle
+  loginGoogle,
+  forgotPassword,
+  resetPassword
 } from "./auth.service";
 
 import { AuthRequest } from "../../middlewares/auth.middleware";
@@ -100,3 +102,48 @@ export const getMe =
       res.json(user);
     }
   );
+
+// FORGOT PASSWORD
+export const forgotPasswordController =
+asyncHandler(async (
+  req,
+  res
+) => {
+
+  const { email } =
+    req.body;
+
+  const token =
+    await forgotPassword(
+      email
+    );
+
+  res.json({
+    message:
+      "Reset link sent",
+    token
+  });
+});
+
+// RESET PASSWORD
+export const resetPasswordController =
+asyncHandler(async (
+  req,
+  res
+) => {
+
+  const {
+    token,
+    password
+  } = req.body;
+
+  await resetPassword(
+    token,
+    password
+  );
+
+  res.json({
+    message:
+      "Password updated"
+  });
+});

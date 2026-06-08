@@ -1,13 +1,13 @@
 import { Response } from "express";
-import { AuthRequest } from "../middlewares/auth.middleware";
+import { AuthRequest } from "../../middlewares/auth.middleware";
 
 import {
   getNotificationsService,
   markAsReadService,
-} from "../services/notification.service";
+} from "./notification.service";
 
-import { asyncHandler } from "../utils/asyncHandler";
-import { AppError } from "../middlewares/error.middleware";
+import { asyncHandler } from "../../utils/asyncHandler";
+import { AppError } from "../../middlewares/error.middleware";
 
 export const getNotifications = asyncHandler(async (req: AuthRequest, res: Response) => {
   if (!req.userId) {

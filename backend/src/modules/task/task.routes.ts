@@ -9,7 +9,7 @@ import {
   updateTaskStatus,
   updateTaskProgress,
   assignTask,
-} from "../controllers/task.controller";
+} from "./task.controller";
 
 import { protect } from "../../middlewares/auth.middleware";
 

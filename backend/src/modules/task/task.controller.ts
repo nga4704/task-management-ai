@@ -1,6 +1,6 @@
 import { Request, Response } from "express";
-import { AuthRequest } from "../middlewares/auth.middleware";
-import {AppError} from "../middlewares/error.middleware";
+import { AuthRequest } from "../../middlewares/auth.middleware";
+import {AppError} from "../../middlewares/error.middleware";
 import {
   createTaskService,
   getTasksService,
@@ -10,9 +10,9 @@ import {
   updateTaskStatusService,
   updateTaskProgressService,
   assignTaskService,
-} from "../services/task.service";
+} from "./task.service";
 
-import { asyncHandler } from "../utils/asyncHandler";
+import { asyncHandler } from "../../utils/asyncHandler";
 
 export const createTask = asyncHandler(async (
   req: AuthRequest,
@@ -25,6 +25,7 @@ export const createTask = asyncHandler(async (
 
     const {
       teamId,
+      projectId,
       title,
       description,
       priority,
@@ -34,6 +35,7 @@ export const createTask = asyncHandler(async (
 
     const task = await createTaskService({
       teamId,
+      projectId,
       title,
       description,
       priority,

@@ -7,11 +7,11 @@ import {
   deleteTeamService,
   addMemberService,
   removeMemberService,
-} from "../services/team.service";
+} from "./team.service";
 
-import { AuthRequest } from "../middlewares/auth.middleware";
-import { AppError } from "../middlewares/error.middleware";
-import { asyncHandler } from "../utils/asyncHandler";
+import { AuthRequest } from "../../middlewares/auth.middleware";
+import { AppError } from "../../middlewares/error.middleware";
+import { asyncHandler } from "../../utils/asyncHandler";
 
 // CREATE
 export const createTeam = asyncHandler(async (req: AuthRequest, res: Response) => {

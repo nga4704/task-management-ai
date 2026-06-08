@@ -1,10 +1,10 @@
 import { Response } from "express";
-import prisma from "../config/prisma";
-import { AuthRequest } from "../middlewares/auth.middleware";
-import { updateProfileService } from "../services/user.service";
-import { AppError } from "../middlewares/error.middleware";
-import { asyncHandler } from "../utils/asyncHandler";
-import { supabase } from "../config/supabase";
+import prisma from "../../config/prisma";
+import { AuthRequest } from "../../middlewares/auth.middleware";
+import { updateProfileService } from "./user.service";
+import { AppError } from "../../middlewares/error.middleware";
+import { asyncHandler } from "../../utils/asyncHandler";
+import { supabase } from "../../config/supabase";
 import { v4 as uuidv4 } from "uuid";
 
 export const getMe = asyncHandler(async (req: AuthRequest, res: Response) => {

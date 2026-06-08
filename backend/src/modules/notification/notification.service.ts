@@ -1,5 +1,5 @@
-import prisma from "../config/prisma";
-import { getIO } from "../config/socket";
+import prisma from "../../config/prisma";
+import { getIO } from "../../config/socket";
 
 export const getNotificationsService = async (
   userId: string

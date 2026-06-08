@@ -8,7 +8,7 @@ import {
   deleteTeam,
   addMember,
   removeMember,
-} from "../controllers/team.controller";
+} from "./team.controller";
 
 import { protect }
 from "../../middlewares/auth.middleware";

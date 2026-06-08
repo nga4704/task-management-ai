@@ -2,8 +2,8 @@ import { Request, Response } from "express";
 
 import {
   getTaskActivityLogsService,
-} from "../services/activityLog.service";
-import { asyncHandler } from "../utils/asyncHandler";
+} from "./activityLog.service";
+import { asyncHandler } from "../../utils/asyncHandler";
 
 export const getTaskActivityLogs =
   asyncHandler(async (

@@ -2,7 +2,7 @@ import express from "express";
 
 import {
   getTaskActivityLogs,
-} from "../controllers/activityLog.controller";
+} from "./activityLog.controller";
 
 import { protect } from "../../middlewares/auth.middleware";
 

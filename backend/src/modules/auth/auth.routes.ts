@@ -5,17 +5,19 @@ import {
   refresh,
   logout,
   googleLogin,
-  getMe
-} from "../modules/auth/auth.controller";
+  getMe,
+  forgotPasswordController,
+  resetPasswordController
+} from "./auth.controller";
 import {
   protect,
-} from "../middlewares/auth.middleware";
+} from "../../middlewares/auth.middleware";
 import { validate }
-  from "../middlewares/validate.middleware";
+  from "../../middlewares/validate.middleware";
 
 import {
   registerSchema, loginSchema
-} from "../validations/auth.validation";
+} from "./auth.validation";
 import { z } from "zod";
 
 export const refreshSchema = z.object({
@@ -59,6 +61,16 @@ router.post(
 router.post(
   "/google",
   googleLogin
+);
+
+router.post(
+  "/forgot-password",
+  forgotPasswordController
+);
+
+router.post(
+  "/reset-password",
+  resetPasswordController
 );
 
 export default router;

@@ -3,9 +3,9 @@ import { Request, Response } from "express";
 import {
   predictOverdueService,
   scheduleRecommendationService,
-} from "../services/ai.service";
+} from "./ai.service";
 
-import { asyncHandler } from "../utils/asyncHandler";
+import { asyncHandler } from "../../utils/asyncHandler";
 
 // PREDICT OVERDUE
 export const predictOverdue = asyncHandler(async (
