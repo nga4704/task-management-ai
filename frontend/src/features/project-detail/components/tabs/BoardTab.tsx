@@ -1,10 +1,10 @@
-import TaskFilters from "../board/TaskFilters";
+import ProjectTaskFilters from "../board/ProjectTaskFilters";
 import KanbanBoard from "../board/KanbanBoard";
 
 function BoardTab() {
   return (
     <div className="space-y-6">
-      <TaskFilters />
+      <ProjectTaskFilters />
 
       <KanbanBoard />
     </div>

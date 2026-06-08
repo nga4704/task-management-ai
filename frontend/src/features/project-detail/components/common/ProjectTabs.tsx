@@ -1,6 +1,14 @@
 import {
-  PROJECT_TABS,
-  type ProjectTab,
+  LayoutDashboard,
+  KanbanSquare,
+  CalendarDays,
+  GitBranch,
+  Users,
+  BarChart3,
+} from "lucide-react";
+
+import type {
+  ProjectTab,
 } from "../../constants/projectTabs";
 
 type Props = {
@@ -11,6 +19,44 @@ type Props = {
   ) => void;
 };
 
+const tabs = [
+  {
+    key: "overview",
+    label: "Overview",
+    icon: LayoutDashboard,
+  },
+
+  {
+    key: "board",
+    label: "Board",
+    icon: KanbanSquare,
+  },
+
+  {
+    key: "calendar",
+    label: "Calendar",
+    icon: CalendarDays,
+  },
+
+  {
+    key: "timeline",
+    label: "Timeline",
+    icon: GitBranch,
+  },
+
+  {
+    key: "members",
+    label: "Members",
+    icon: Users,
+  },
+
+  {
+    key: "analytics",
+    label: "Analytics",
+    icon: BarChart3,
+  },
+] as const;
+
 function ProjectTabs({
   activeTab,
   onChange,
@@ -18,41 +64,68 @@ function ProjectTabs({
   return (
     <div
       className="
-        flex
-        gap-2
-        overflow-x-auto
+        rounded-3xl
+        border
+        border-border
+        bg-surface
+        p-2
       "
     >
-      {PROJECT_TABS.map((tab) => (
-        <button
-          key={tab}
-          onClick={() =>
-            onChange(tab)
-          }
-          className={`
-            px-5
-            py-3
-            rounded-2xl
-            whitespace-nowrap
-            transition-all
+      <div
+        className="
+          flex
+          flex-wrap
+          gap-2
+        "
+      >
+        {tabs.map((tab) => {
+          const Icon = tab.icon;
 
-            ${
-              activeTab === tab
-                ? `
-                  bg-primary
-                  font-semibold
-                `
-                : `
-                  bg-surface
-                  border
-                  border-border
-                `
-            }
-          `}
-        >
-          {tab}
-        </button>
-      ))}
+          const active =
+            activeTab === tab.key;
+
+          return (
+            <button
+              key={tab.key}
+              onClick={() =>
+                onChange(
+                  tab.key as ProjectTab
+                )
+              }
+              className={`
+                flex
+                items-center
+                gap-2
+
+                rounded-2xl
+
+                px-5
+                py-3
+
+                font-medium
+
+                transition-all
+
+                ${
+                  active
+                    ? `
+                      bg-primary
+                      text-black
+                    `
+                    : `
+                      text-muted
+                      hover:bg-surfaceSecondary
+                    `
+                }
+              `}
+            >
+              <Icon size={18} />
+
+              {tab.label}
+            </button>
+          );
+        })}
+      </div>
     </div>
   );
 }

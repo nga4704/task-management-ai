@@ -1,8 +1,20 @@
 import { Sparkles } from "lucide-react";
 
 import Button from "@/shared/components/common/Button";
+import {
+  useNavigate,
+} from "react-router-dom";
 
-function DashboardHero() {
+type DashboardHeroProps = {
+  projectId: string | null;
+  projectName: string | null;
+};
+
+function DashboardHero({
+  projectId, projectName
+}: DashboardHeroProps) {
+  const navigate =
+    useNavigate();
   return (
     <section
       className="
@@ -100,17 +112,18 @@ function DashboardHero() {
 
           <p
             className="
-              mt-3
-
-              text-sm
-              md:text-base
-
-              text-black/65
-            "
+    mt-3
+    text-sm
+    md:text-base
+    text-black/65
+  "
           >
-            AI predicts 3 tasks may miss deadlines this
-            week and suggests workload rebalancing to
-            improve sprint completion.
+            Current Project:
+
+            {" "}
+
+            {projectName ??
+              "No project selected"}
           </p>
         </div>
 
@@ -126,12 +139,18 @@ function DashboardHero() {
             title="Generate Plan"
             variant="dark"
             fullWidth={false}
+            onClick={() =>
+              navigate("/planner")
+            }
           />
 
           <Button
             title="View Insights"
             variant="secondary"
             fullWidth={false}
+            onClick={() =>
+              navigate("/insights")
+            }
           />
         </div>
       </div>

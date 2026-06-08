@@ -1,19 +1,19 @@
 import MemberTable from "../members/MemberTable";
-import InviteMemberModal from "../members/InviteMemberModal";
+import InviteMemberPanel from "../members/InviteMemberPanel";
 
 function MembersTab() {
   return (
-    <div
+    <section
       className="
         grid
         gap-6
-        xl:grid-cols-[2fr_1fr]
+        xl:grid-cols-[2.2fr_1fr]
       "
     >
       <MemberTable />
 
-      <InviteMemberModal />
-    </div>
+      <InviteMemberPanel />
+    </section>
   );
 }
 

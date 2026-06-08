@@ -2,7 +2,15 @@ import StatCard from "@/shared/components/cards/StatCard";
 
 import { statsData } from "../data/statsData";
 
-function DashboardStats() {
+type DashboardStatsProps = {
+  overview: any;
+};
+
+function DashboardStats({
+  overview,
+}: DashboardStatsProps) {
+  console.log(overview);
+
   return (
     <section
       className="

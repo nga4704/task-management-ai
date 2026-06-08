@@ -141,12 +141,15 @@ function RegisterPage() {
           type="submit"
           disabled={loading}
         />
-          <div className="h-px flex-1 bg-gray-200" />
+        <div className="h-px flex-1 bg-gray-200" />
 
-
-        {/* <GoogleAuthButton
-          onClick={() => {
-            // trigger google login
+{/* 
+        <GoogleAuthButton
+          onSuccess={(res) => {
+            console.log(res);
+          }}
+          onError={() => {
+            alert("Google login failed");
           }}
         /> */}
       </form>

@@ -1,3 +1,7 @@
+import {
+  CalendarClock,
+} from "lucide-react";
+
 type EventCardProps = {
   title: string;
   time: string;
@@ -12,41 +16,67 @@ function EventCard({
   return (
     <div
       className="
+        flex
+        items-center
+        justify-between
+
         rounded-2xl
         border
         border-border
-        bg-white
+
+        bg-surface
         p-4
-        shadow-soft
+
+        transition-all
+        hover:shadow-soft
       "
     >
-      <div className="flex items-center justify-between">
-        <h4 className="font-semibold">
-          {title}
-        </h4>
+      <div className="flex items-center gap-4">
 
-        <span
+        <div
           className="
-            rounded-full
+            flex
+            h-11
+            w-11
+            items-center
+            justify-center
+
+            rounded-xl
+
             bg-primaryLight
-            px-2.5
-            py-1
-            text-xs
           "
         >
-          {type}
-        </span>
+          <CalendarClock size={18} />
+        </div>
+
+        <div>
+          <h4 className="font-semibold">
+            {title}
+          </h4>
+
+          <p
+            className="
+              text-sm
+              text-muted
+            "
+          >
+            {time}
+          </p>
+        </div>
       </div>
 
-      <p
+      <span
         className="
-          mt-2
-          text-sm
-          text-muted
+          rounded-full
+          bg-primaryLight
+          px-3
+          py-1
+          text-xs
+          font-semibold
         "
       >
-        {time}
-      </p>
+        {type}
+      </span>
     </div>
   );
 }

@@ -5,7 +5,7 @@ import {
 } from "react";
 
 import {
-  useNavigate,
+  useNavigate, useParams
 } from "react-router-dom";
 
 import AuthLayout from "../../../app/layouts/AuthLayout";
@@ -13,6 +13,10 @@ import AuthLayout from "../../../app/layouts/AuthLayout";
 import Input from "../../../shared/components/common/Input";
 
 import Button from "../../../shared/components/common/Button";
+import {
+  resetPassword
+}
+from "../services/auth.service";
 
 function ResetPasswordPage() {
 
@@ -31,6 +35,10 @@ function ResetPasswordPage() {
   const [loading,
     setLoading]
     = useState(false);
+
+  const {
+    token
+  } = useParams();
 
   const handleSubmit =
     async (
@@ -55,7 +63,10 @@ function ResetPasswordPage() {
 
         setLoading(true);
 
-        // await resetPassword()
+        await resetPassword(
+          token!,
+          password
+        );
 
         alert(
           "Password updated successfully"

@@ -18,4 +18,5 @@ export interface Notification {
   read: boolean;
 
   type: NotificationType;
+  projectId?: string;
 }

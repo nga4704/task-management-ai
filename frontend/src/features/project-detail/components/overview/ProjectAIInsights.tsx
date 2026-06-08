@@ -1,5 +1,6 @@
 import {
   BrainCircuit,
+  AlertTriangle,
   Sparkles,
 } from "lucide-react";
 
@@ -8,12 +9,9 @@ function ProjectAIInsights() {
     <div
       className="
         rounded-[32px]
-
         bg-primaryLight
-
         p-6
-
-        shadow-card
+        shadow-soft
       "
     >
       <div
@@ -21,26 +19,21 @@ function ProjectAIInsights() {
           inline-flex
           items-center
           gap-2
-
           rounded-full
-
           bg-black/10
-
           px-3
           py-2
-
           text-xs
           font-semibold
         "
       >
         <Sparkles size={14} />
-        AI Insight
+        AI Analysis
       </div>
 
       <h3
         className="
           mt-5
-
           text-xl
           font-bold
         "
@@ -50,8 +43,7 @@ function ProjectAIInsights() {
 
       <div
         className="
-          mt-5
-
+          mt-6
           flex
           items-center
           gap-4
@@ -64,11 +56,8 @@ function ProjectAIInsights() {
             w-16
             items-center
             justify-center
-
             rounded-2xl
-
             bg-black
-
             text-white
           "
         >
@@ -76,36 +65,43 @@ function ProjectAIInsights() {
         </div>
 
         <div>
-          <p className="text-sm text-black/70">
-            Success Rate
+          <p className="text-sm">
+            Success Probability
           </p>
 
-          <h2
-            className="
-              text-4xl
-              font-black
-            "
-          >
+          <h2 className="text-5xl font-black">
             89%
           </h2>
         </div>
       </div>
 
-      <p
-        className="
-          mt-6
+      <div className="mt-8 space-y-4">
+        <div
+          className="
+            rounded-2xl
+            bg-white/40
+            p-4
+          "
+        >
+          Team productivity remains above
+          baseline by 11%.
+        </div>
 
-          text-sm
-          leading-7
+        <div
+          className="
+            flex
+            gap-3
+            rounded-2xl
+            bg-white/40
+            p-4
+          "
+        >
+          <AlertTriangle size={18} />
 
-          text-black/80
-        "
-      >
-        AI predicts this sprint is
-        likely to finish on schedule.
-        Current team velocity remains
-        above the planned baseline.
-      </p>
+          Backend API tasks may exceed
+          estimated completion time.
+        </div>
+      </div>
     </div>
   );
 }

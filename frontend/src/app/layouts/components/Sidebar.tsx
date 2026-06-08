@@ -15,6 +15,8 @@ import { sidebarSections } from "../constants/sidebar";
 import SidebarItem from "./sidebar/SidebarItem";
 
 import AIStatusCard from "@/shared/components/cards/AIStatusCard";
+import ProjectSwitcher
+  from "./ProjectSwitcher";
 
 type SidebarProps = {
   mobileOpen: boolean;
@@ -69,16 +71,14 @@ function Sidebar({
           transition-all
           duration-300
 
-          ${
-            collapsed
-              ? "w-[90px]"
-              : "w-[280px]"
+          ${collapsed
+            ? "w-[90px]"
+            : "w-[280px]"
           }
 
-          ${
-            mobileOpen
-              ? "translate-x-0"
-              : "-translate-x-full"
+          ${mobileOpen
+            ? "translate-x-0"
+            : "-translate-x-full"
           }
 
           xl:sticky
@@ -174,6 +174,13 @@ function Sidebar({
             collapsed={collapsed}
           />
         </div>
+
+        {/* PROJECT SWITCHER */}
+        {!collapsed && (
+          <div className="px-4">
+            <ProjectSwitcher />
+          </div>
+        )}
 
         {/* NAVIGATION */}
         <div

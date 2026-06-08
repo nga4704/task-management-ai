@@ -6,6 +6,13 @@ import {
 import type { Project } from "../types/project.types";
 
 import { projectStatusStyles } from "../constants/workspaceStyles";
+import { useNavigate } from "react-router-dom";
+import {
+  useProjectStore,
+} from "@/store/projectStore";
+import {
+  useWorkspaceStore,
+} from "@/store/workspaceStore";
 
 type ProjectCardProps = {
   project: Project;
@@ -14,8 +21,30 @@ type ProjectCardProps = {
 function ProjectCard({
   project,
 }: ProjectCardProps) {
+
+  const navigate =
+    useNavigate();
+
+  const setSelectedProject =
+    useProjectStore(
+      (state) =>
+        state.setSelectedProject
+    );
+  const handleOpenProject =
+    () => {
+
+      setSelectedProject(
+        project.id,
+        project.name
+      );
+
+      navigate(
+        `/projects/${project.id}`
+      );
+    };
   return (
     <article
+      onClick={handleOpenProject}
       className="
         rounded-xl
         border
@@ -26,6 +55,7 @@ function ProjectCard({
         transition-all
         duration-200
         hover:-translate-y-1
+        cursor-pointer
       "
     >
       <div className="flex items-start justify-between gap-4">
@@ -40,7 +70,7 @@ function ProjectCard({
               font-medium
 
               ${projectStatusStyles[
-                project.status
+              project.status
               ]}
             `}
           >

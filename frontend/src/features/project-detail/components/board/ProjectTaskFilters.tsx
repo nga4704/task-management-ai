@@ -1,4 +1,4 @@
-function TaskFilters() {
+function ProjectTaskFilters() {
   return (
     <div
       className="
@@ -26,4 +26,4 @@ function TaskFilters() {
   );
 }
 
-export default TaskFilters;
+export default ProjectTaskFilters;

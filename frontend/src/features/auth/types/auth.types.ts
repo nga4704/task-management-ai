@@ -1,3 +1,4 @@
+// @/feature/auth/types/auth.types.ts
 export interface RegisterPayload {
   fullName: string;
   username: string;

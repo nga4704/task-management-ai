@@ -4,6 +4,10 @@ import {
 } from "react";
 
 import {
+  useParams,
+} from "react-router-dom";
+
+import {
   getProjectDetail,
 } from "../services/projectDetail.service";
 
@@ -12,28 +16,53 @@ import type {
 } from "../types/projectDetail.types";
 
 export function useProjectDetail() {
-  const [project, setProject] =
+
+  const { projectId } =
+    useParams();
+
+  const [
+    project,
+    setProject,
+  ] =
     useState<ProjectDetail | null>(
       null
     );
 
-  const [loading, setLoading] =
+  const [
+    loading,
+    setLoading,
+  ] =
     useState(true);
 
   useEffect(() => {
-    async function load() {
-      try {
-        const data =
-          await getProjectDetail();
 
-        setProject(data);
+    async function load() {
+
+      try {
+
+        if (!projectId)
+          return;
+
+        const data =
+          await getProjectDetail(
+            projectId
+          );
+
+        setProject(
+          data
+        );
+
       } finally {
-        setLoading(false);
+
+        setLoading(
+          false
+        );
       }
     }
 
     load();
-  }, []);
+
+  }, [projectId]);
 
   return {
     project,

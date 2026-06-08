@@ -1,8 +1,6 @@
 // src/features/notifications/components/NotificationCard.tsx
 
-import {
-  Bell,
-} from "lucide-react";
+import { Bell } from "lucide-react";
 
 import {
   notificationLabels,
@@ -13,6 +11,10 @@ import type {
   Notification,
 } from "../types/notification.types";
 
+import {
+  useNavigate,
+} from "react-router-dom";
+
 type Props = Notification;
 
 function NotificationCard({
@@ -21,10 +23,22 @@ function NotificationCard({
   time,
   type,
   read,
+  projectId,
 }: Props) {
+  const navigate =
+    useNavigate();
+
   return (
     <div
+      onClick={() => {
+        if (!projectId) return;
+
+        navigate(
+          `/projects/${projectId}`
+        );
+      }}
       className={`
+        cursor-pointer
         rounded-2xl
         border
         border-border
@@ -40,7 +54,6 @@ function NotificationCard({
       `}
     >
       <div className="flex gap-4">
-
         <div
           className={`
             flex
@@ -58,9 +71,7 @@ function NotificationCard({
         </div>
 
         <div className="flex-1">
-
           <div className="flex items-start justify-between gap-4">
-
             <div>
               <div
                 className="

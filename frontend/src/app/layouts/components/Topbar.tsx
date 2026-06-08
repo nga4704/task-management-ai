@@ -6,6 +6,9 @@ import {
 } from "lucide-react";
 
 import UserProfile from "@/shared/components/cards/UserProfile";
+import {
+  useNavigate,
+} from "react-router-dom";
 
 type TopbarProps = {
   title: string;
@@ -18,6 +21,9 @@ function Topbar({
   description,
   onOpenSidebar,
 }: TopbarProps) {
+  const navigate =
+    useNavigate();
+
   return (
     <header
       className="
@@ -226,6 +232,11 @@ function Topbar({
 
             {/* AI BUTTON */}
             <button
+              onClick={() =>
+                navigate(
+                  "/planner"
+                )
+              }
               className="
                 group
                 flex
@@ -291,6 +302,11 @@ function Topbar({
 
             {/* NOTIFICATION */}
             <button
+              onClick={() =>
+                navigate(
+                  "/notifications"
+                )
+              }
               className="
                 relative
                 flex

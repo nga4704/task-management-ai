@@ -1,39 +1,65 @@
 type Props = {
   task: string;
+  start: string;
+  end: string;
   width: number;
+  offset: number;
 };
 
 function TaskDurationBar({
   task,
+  start,
+  end,
   width,
+  offset,
 }: Props) {
   return (
-    <div>
-      <p
-        className="
-          mb-2
-          text-sm
-          font-medium
-        "
-      >
-        {task}
-      </p>
+    <div
+      className="
+        grid
+        grid-cols-[220px_1fr]
+        gap-4
+      "
+    >
+      <div>
+        <h4 className="font-semibold">
+          {task}
+        </h4>
+
+        <p
+          className="
+            text-xs
+            text-muted
+          "
+        >
+          {start} - {end}
+        </p>
+      </div>
 
       <div
         className="
-          h-10
+          relative
+          h-12
           rounded-xl
-          bg-border
+          bg-surfaceSecondary
         "
       >
         <div
           style={{
             width: `${width}%`,
+            marginLeft: `${offset}%`,
           }}
           className="
-            h-full
+            absolute
+            top-1/2
+            h-8
+            -translate-y-1/2
+
             rounded-xl
+
             bg-primary
+
+            shadow-soft
           "
         />
       </div>

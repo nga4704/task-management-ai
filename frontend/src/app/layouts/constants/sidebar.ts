@@ -20,9 +20,9 @@ export const sidebarSections = [
         path: "/dashboard",
       },
       {
-        title: "Workspace",
+        title: "Projects",
         icon: FolderKanban,
-        path: "/workspace",
+        path: "/projects",
       },
       {
         title: "My Tasks",

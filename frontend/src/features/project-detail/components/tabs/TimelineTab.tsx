@@ -1,33 +1,27 @@
 import TimelineChart from "../timeline/TimelineChart";
-import MilestoneMarker from "../timeline/MilestoneMarker";
+import MilestonePanel from "../timeline/MilestonePanel";
+import TimelineInsights from "../timeline/TimelineInsights";
 
 function TimelineTab() {
   return (
     <div className="space-y-6">
+
       <TimelineChart />
 
-      <div
+      <section
         className="
-          rounded-3xl
-          border
-          border-border
-          bg-white
-          p-6
-          shadow-soft
+          grid
+          gap-6
+          xl:grid-cols-3
         "
       >
-        <h3 className="font-bold">
-          Milestones
-        </h3>
-
-        <div className="mt-5 space-y-4">
-          <MilestoneMarker title="Sprint 1 Completed" />
-
-          <MilestoneMarker title="AI Integration" />
-
-          <MilestoneMarker title="Production Release" />
+        <div className="xl:col-span-2">
+          <MilestonePanel />
         </div>
-      </div>
+
+        <TimelineInsights />
+      </section>
+
     </div>
   );
 }

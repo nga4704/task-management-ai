@@ -40,12 +40,12 @@ function AppRoutes() {
         path="/dashboard"
         element={
           // <ProtectedRoute>
-          <DashboardPage />
+            <DashboardPage />
           // </ProtectedRoute>
         }
       />
 
-      <Route path="/workspace" element={<WorkspacePage />} />
+      <Route path="/projects" element={<WorkspacePage />} />
 
       <Route
         path="/projects/:projectId"

@@ -5,25 +5,44 @@ type Props = {
 function WorkloadIndicator({
   workload,
 }: Props) {
+  const color =
+    workload >= 85
+      ? "bg-red-500"
+      : workload >= 70
+      ? "bg-amber-500"
+      : "bg-emerald-500";
+
   return (
-    <div
-      className="
-        h-2
-        w-full
-        rounded-full
-        bg-border
-      "
-    >
+    <div className="flex items-center gap-3">
       <div
-        style={{
-          width: `${workload}%`,
-        }}
         className="
-          h-full
+          h-2.5
+          flex-1
           rounded-full
-          bg-primary
+          bg-surfaceSecondary
         "
-      />
+      >
+        <div
+          style={{
+            width: `${workload}%`,
+          }}
+          className={`
+            h-full
+            rounded-full
+            ${color}
+          `}
+        />
+      </div>
+
+      <span
+        className="
+          min-w-[48px]
+          text-sm
+          font-semibold
+        "
+      >
+        {workload}%
+      </span>
     </div>
   );
 }

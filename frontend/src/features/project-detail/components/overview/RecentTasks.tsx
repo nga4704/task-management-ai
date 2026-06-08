@@ -1,22 +1,24 @@
 const tasks = [
   {
-    title: "Dashboard UI",
-    status: "Done",
-  },
-
-  {
-    title: "Analytics API",
+    title: "Implement Dashboard",
+    assignee: "John",
+    priority: "High",
     status: "In Progress",
+    due: "Jun 10",
   },
-
   {
-    title: "AI Prediction",
+    title: "AI Prediction Service",
+    assignee: "Anna",
+    priority: "Critical",
     status: "Review",
+    due: "Jun 12",
   },
-
   {
-    title: "Database Design",
+    title: "Database Optimization",
+    assignee: "David",
+    priority: "Medium",
     status: "Done",
+    due: "Jun 08",
   },
 ];
 

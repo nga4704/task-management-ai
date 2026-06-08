@@ -13,6 +13,10 @@ import AuthLayout from "../../../app/layouts/AuthLayout";
 import Input from "../../../shared/components/common/Input";
 
 import Button from "../../../shared/components/common/Button";
+import {
+  forgotPassword
+}
+from "../services/auth.service";
 
 function ForgotPasswordPage() {
 
@@ -35,7 +39,7 @@ function ForgotPasswordPage() {
 
         setLoading(true);
 
-        // await forgotPassword(email)
+        await forgotPassword(email)
 
         alert(
           "Reset link sent"
