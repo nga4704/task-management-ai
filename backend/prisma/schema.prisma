@@ -87,7 +87,9 @@ model team_members {
 model teams {
   id           String         @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
   name         String         @db.VarChar(100)
+  slug         String         @unique @db.VarChar(120)
   description  String?
+  avatar_url   String?
   owner_id     String         @db.Uuid
   created_at   DateTime?      @default(now()) @db.Timestamp(6)
   updated_at   DateTime?      @default(now()) @db.Timestamp(6)
@@ -104,7 +106,7 @@ model projects {
   name        String  @db.VarChar(255)
   description String?
 
-  status String? @default("active") @db.VarChar(20)
+  status String? @default("PLANNING") @db.VarChar(20)
 
   start_date DateTime? @db.Timestamp(6)
   end_date   DateTime? @db.Timestamp(6)
@@ -120,22 +122,20 @@ model projects {
 }
 
 model users {
-  id                             String          @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
-  username                       String          @unique @db.VarChar(50)
-  email                          String          @unique @db.VarChar(100)
-  password                       String?         @db.VarChar(255)
-  google_id                      String?         @unique @db.VarChar(255)
-  full_name                      String?         @db.VarChar(100)
-  avatar                         String?
-  created_at                     DateTime?       @default(now()) @db.Timestamp(6)
-  updated_at                     DateTime?       @default(now()) @db.Timestamp(6)
-  refresh_token                  String?
-  reset_token                    String?
-  reset_token_expiry             DateTime?
+  id         String    @id @db.Uuid
+  email      String    @unique @db.VarChar(100)
+  username   String    @unique @db.VarChar(50)
+
+  full_name  String?   @db.VarChar(100)
+  avatar     String?
+
+  created_at DateTime? @default(now()) @db.Timestamp(6)
+  updated_at DateTime? @default(now()) @db.Timestamp(6)
+
   notifications                  notifications[]
   task_progress                  task_progress[]
-  tasks_tasks_assignee_idTousers tasks[]         @relation("tasks_assignee_idTousers")
-  tasks_tasks_created_byTousers  tasks[]         @relation("tasks_created_byTousers")
+  tasks_tasks_assignee_idTousers tasks[] @relation("tasks_assignee_idTousers")
+  tasks_tasks_created_byTousers  tasks[] @relation("tasks_created_byTousers")
   team_members                   team_members[]
   teams                          teams[]
 }

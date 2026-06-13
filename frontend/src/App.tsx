@@ -1,24 +1,93 @@
-import AppRoutes from "./app/routes/AppRoutes";
+// src/App.tsx
 
 import { useEffect } from "react";
+
+import AppRoutes from "./app/routes/AppRoutes";
+
+import { supabase } from "./lib/supabase";
+
 import { useAuthStore } from "./store/authStore";
-import api from "./config/api";
 
 function App() {
-  const setUser = useAuthStore((s) => s.setUser);
+
+  const setUser =
+    useAuthStore(
+      (state) => state.setUser
+    );
 
   useEffect(() => {
-    const fetchMe = async () => {
-      try {
-        const res = await api.get("/auth/me");
-        setUser(res.data);
-      } catch (err) {
-        setUser(null);
-      }
+
+    // restore session
+    const restoreSession =
+      async () => {
+
+        const {
+          data: { session },
+        } =
+          await supabase.auth.getSession();
+
+        if (session?.user) {
+
+          setUser({
+            id: session.user.id,
+
+            email:
+              session.user.email || "",
+
+            full_name:
+              session.user.user_metadata
+                ?.full_name || "",
+
+            username:
+              session.user.user_metadata
+                ?.username || "",
+          });
+
+        } else {
+
+          setUser(null);
+        }
+      };
+
+    restoreSession();
+
+    // listen auth changes
+    const {
+      data: listener,
+    } =
+      supabase.auth.onAuthStateChange(
+        (_event, session) => {
+
+          if (session?.user) {
+
+            setUser({
+              id: session.user.id,
+
+              email:
+                session.user.email || "",
+
+              full_name:
+                session.user.user_metadata
+                  ?.full_name || "",
+
+              username:
+                session.user.user_metadata
+                  ?.username || "",
+            });
+
+          } else {
+
+            setUser(null);
+          }
+        }
+      );
+
+    return () => {
+
+      listener.subscription.unsubscribe();
     };
 
-    fetchMe();
-  }, []);
+  }, [setUser]);
 
   return <AppRoutes />;
 }

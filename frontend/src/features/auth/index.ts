@@ -9,3 +9,6 @@ export { default as ForgotPasswordPage }
 
 export { default as ResetPasswordPage }
   from "./pages/ResetPasswordPage";
+
+export { default as AuthCallback }
+  from "./pages/AuthCallback";

@@ -10,6 +10,7 @@ export const createProject = async (
       name,
       description,
       teamId,
+      status,
       startDate,
       endDate,
     } = req.body;
@@ -19,14 +20,17 @@ export const createProject = async (
         name,
         description,
         teamId,
+        status,
         startDate,
         endDate
       );
 
     res.status(201).json(project);
-  } catch (error) {
+  } catch (error: any) {
     res.status(500).json({
-      message: "Create project failed",
+      message:
+        error.message ||
+        "Create project failed",
     });
   }
 };
@@ -78,3 +82,25 @@ export const deleteProject = async (
     message: "Project deleted",
   });
 };
+
+export const getProjectsDashboard =
+  async (
+    req: Request,
+    res: Response
+  ) => {
+    const data =
+      await projectService.getProjectsDashboardService();
+
+    res.json(data);
+  };
+
+export const getProjectsActivity =
+  async (
+    req: Request,
+    res: Response
+  ) => {
+    const data =
+      await projectService.getProjectsActivityService();
+
+    res.json(data);
+  };

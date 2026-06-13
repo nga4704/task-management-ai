@@ -1,4 +1,4 @@
-import MainLayout from "../../layouts/MainLayout";
+import MainLayout from "@/app/layouts/MainLayout";
 
 import TaskHeader from "../../components/task-detail/TaskHeader";
 import TaskInfoCard from "../../components/task-detail/TaskInfoCard";

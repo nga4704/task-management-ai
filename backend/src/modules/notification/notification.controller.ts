@@ -10,11 +10,11 @@ import { asyncHandler } from "../../utils/asyncHandler";
 import { AppError } from "../../middlewares/error.middleware";
 
 export const getNotifications = asyncHandler(async (req: AuthRequest, res: Response) => {
-  if (!req.userId) {
+  if (!req.user) {
     throw new AppError("Unauthorized", 401);
   }
 
-  const notifications = await getNotificationsService(req.userId);
+  const notifications = await getNotificationsService(req.user.id);
 
   res.status(200).json(notifications);
 });

@@ -2,33 +2,106 @@ import prisma from "../../config/prisma";
 import { getIO } from "../../config/socket";
 
 export const createTeamService = async (
-    name: string,
-    description: string,
-    ownerId: string
+  payload: {
+    name: string;
+    slug: string;
+    description?: string;
+    invitedMembers?: string[];
+  },
+  ownerId: string
 ) => {
+  const {
+    name,
+    slug,
+    description,
+    invitedMembers = [],
+  } = payload;
 
-    // create new team
-    const team = await prisma.teams.create({
-        data: {
-            name,
-            description,
-            owner_id: ownerId,
-        },
+  /*
+  -----------------------------
+  CHECK SLUG EXISTS
+  -----------------------------
+  */
+
+  const existing =
+    await prisma.teams.findUnique({
+      where: {
+        slug,
+      },
     });
 
-    // add owner into team_members
-    await prisma.team_members.create({
-        data: {
-            team_id: team.id,
-            user_id: ownerId,
-            role: "owner",
-        },
-    });
-    const io = getIO();
-    io.emit("teamCreated", team);
+  if (existing) {
+    throw new Error(
+      "Workspace slug already exists"
+    );
+  }
 
-    return team;
+  /*
+  -----------------------------
+  CREATE TEAM
+  -----------------------------
+  */
+
+  const team =
+    await prisma.teams.create({
+      data: {
+        name,
+        slug,
+        description,
+        owner_id: ownerId,
+      },
+    });
+
+  /*
+  -----------------------------
+  ADD OWNER
+  -----------------------------
+  */
+
+  await prisma.team_members.create({
+    data: {
+      team_id: team.id,
+      user_id: ownerId,
+      role: "owner",
+    },
+  });
+
+  /*
+  -----------------------------
+  INVITE MEMBERS
+  -----------------------------
+  */
+
+  if (invitedMembers.length > 0) {
+    const users =
+      await prisma.users.findMany({
+        where: {
+          email: {
+            in: invitedMembers,
+          },
+        },
+      });
+
+    if (users.length > 0) {
+      await prisma.team_members.createMany({
+        data: users.map((user) => ({
+          team_id: team.id,
+          user_id: user.id,
+          role: "member",
+        })),
+        skipDuplicates: true,
+      });
+    }
+  }
+
+  const io = getIO();
+
+  io.emit("teamCreated", team);
+
+  return team;
 };
+
+
 
 export const getTeamsService = async () => {
     return prisma.teams.findMany({

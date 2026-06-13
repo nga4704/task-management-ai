@@ -19,7 +19,7 @@ export const createTask = asyncHandler(async (
   res: Response
 ) => {
 
-    if (!req.userId) {
+    if (!req.user) {
       throw new AppError("Unauthorized", 401);
     }
 
@@ -41,7 +41,7 @@ export const createTask = asyncHandler(async (
       priority,
       deadline,
       assigneeId,
-      createdBy: req.userId,
+      createdBy: req.user.id,
     });
 
     res.status(201).json({
@@ -152,7 +152,7 @@ export const updateTaskProgress = asyncHandler(async (
     const task = await updateTaskProgressService(
       taskId,
       progress,
-      req.userId as string
+      req.user?.id as string
     );
 
     res.status(200).json({

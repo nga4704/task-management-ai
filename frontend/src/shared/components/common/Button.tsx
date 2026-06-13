@@ -1,4 +1,8 @@
-import type { ButtonHTMLAttributes } from "react";
+
+import type {
+  ButtonHTMLAttributes,
+  ReactNode,
+} from "react";
 
 type ButtonVariant =
   | "primary"
@@ -6,12 +10,14 @@ type ButtonVariant =
   | "dark"
   | "ghost";
 
-type ButtonProps =
-  ButtonHTMLAttributes<HTMLButtonElement> & {
-    title: string;
-    variant?: ButtonVariant;
-    fullWidth?: boolean;
-  };
+interface ButtonProps
+  extends ButtonHTMLAttributes<HTMLButtonElement> {
+  title?: string;
+  children?: ReactNode;
+  variant?: ButtonVariant;
+  fullWidth?: boolean;
+  loading?: boolean;
+}
 
 const variants = {
   primary: `
@@ -40,20 +46,34 @@ const variants = {
 
 function Button({
   title,
+  children,
   variant = "primary",
   fullWidth = true,
+  loading = false,
+  disabled,
+  type = "button",
   className = "",
   ...props
 }: ButtonProps) {
   return (
     <button
+      type={type}
+      disabled={disabled || loading}
       className={`
+        flex
+        items-center
+        justify-center
+        gap-2
+
         h-[54px]
         px-5
         rounded-2xl
+
         font-semibold
+
         transition-all
         duration-200
+
         disabled:opacity-50
         disabled:cursor-not-allowed
 
@@ -65,9 +85,24 @@ function Button({
       `}
       {...props}
     >
-      {title}
+      {loading && (
+        <span
+          className="
+            h-4
+            w-4
+            animate-spin
+            rounded-full
+            border-2
+            border-current
+            border-t-transparent
+          "
+        />
+      )}
+
+      {children || title}
     </button>
   );
 }
 
 export default Button;
+

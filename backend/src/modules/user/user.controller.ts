@@ -1,85 +1,299 @@
-import { Response } from "express";
-import prisma from "../../config/prisma";
-import { AuthRequest } from "../../middlewares/auth.middleware";
-import { updateProfileService } from "./user.service";
-import { AppError } from "../../middlewares/error.middleware";
-import { asyncHandler } from "../../utils/asyncHandler";
-import { supabase } from "../../config/supabase";
+// src/modules/user/user.controller.ts
+
+import { Request, Response } from "express";
 import { v4 as uuidv4 } from "uuid";
 
-export const getMe = asyncHandler(async (req: AuthRequest, res: Response) => {
-  if (!req.userId) {
-    throw new AppError("Unauthorized", 401);
-  }
+import prisma from "../../config/prisma";
+import { supabase } from "../../config/supabase";
 
-  const user = await prisma.users.findUnique({
-    where: { id: req.userId },
-  });
+import { AuthRequest } from "../../middlewares/auth.middleware";
+import { AppError } from "../../middlewares/error.middleware";
 
-  if (!user) {
-    throw new AppError("User not found", 404);
-  }
+import { asyncHandler } from "../../utils/asyncHandler";
 
-  res.status(200).json(user);
-});
+import {
+  updateProfileService,
+} from "./user.service";
 
-export const updateProfile = asyncHandler(async (req: AuthRequest, res: Response) => {
-  if (!req.userId) {
-    throw new AppError("Unauthorized", 401);
-  }
+export const createProfile =
+  asyncHandler(
+    async (
+      req: AuthRequest,
+      res: Response
+    ) => {
 
-  const { fullName, username } = req.body;
+      if (!req.user?.id) {
+        throw new AppError(
+          "Unauthorized",
+          401
+        );
+      }
 
-  const updatedUser = await updateProfileService(
-    req.userId,
-    fullName,
-    username
+      const {
+        email,
+        username,
+        fullName,
+      } = req.body;
+
+      const id =
+        req.user.id;
+
+      // check user already exists
+      const existing =
+        await prisma.users.findUnique({
+          where: {
+            id,
+          },
+        });
+
+      if (existing) {
+        return res.status(200).json(
+          existing
+        );
+      }
+
+      // generate username fallback
+      const finalUsername =
+        username?.trim()
+          ? username
+          : email.split("@")[0];
+
+      // check username exists
+      const usernameExists =
+        await prisma.users.findUnique({
+          where: {
+            username:
+              finalUsername,
+          },
+        });
+
+      if (usernameExists) {
+        throw new AppError(
+          "Username already exists",
+          400
+        );
+      }
+
+      const user =
+        await prisma.users.create({
+          data: {
+            id,
+            email,
+            username:
+              finalUsername,
+            full_name:
+              fullName || "",
+          },
+        });
+
+      res.status(201).json(
+        user
+      );
+    }
   );
 
-  res.status(200).json({
-    message: "Profile updated",
-    user: updatedUser,
-  });
-});
+// ==============================
+// GET CURRENT USER
+// ==============================
 
-export const uploadAvatar = asyncHandler(async (req: AuthRequest, res: Response) => {
-  if (!req.userId) {
-    throw new AppError("Unauthorized", 401);
+export const getMe = asyncHandler(
+  async (
+    req: AuthRequest,
+    res: Response
+  ) => {
+
+    if (!req.user?.id) {
+      throw new AppError(
+        "Unauthorized",
+        401
+      );
+    }
+
+    const user =
+      await prisma.users.findUnique({
+        where: {
+          id: req.user.id,
+        },
+      });
+
+    if (!user) {
+      throw new AppError(
+        "User not found",
+        404
+      );
+    }
+
+    res.status(200).json(user);
   }
+);
 
-  if (!req.file) {
-    throw new AppError("No file uploaded", 400);
-  }
+// ==============================
+// UPDATE PROFILE
+// ==============================
 
-  const file = req.file;
-  const fileName = `${uuidv4()}-${file.originalname}`;
+export const updateProfile =
+  asyncHandler(
+    async (
+      req: AuthRequest,
+      res: Response
+    ) => {
 
-  // upload to supabase
-  const { data, error } = await supabase.storage
-    .from("avatars")
-    .upload(fileName, file.buffer, {
-      contentType: file.mimetype,
-    });
+      if (!req.user?.id) {
+        throw new AppError(
+          "Unauthorized",
+          401
+        );
+      }
 
-  if (error) {
-    throw new AppError(error.message, 500);
-  }
+      const {
+        fullName,
+        username,
+      } = req.body;
 
-  // get public url
-  const { data: publicUrlData } = supabase.storage
-    .from("avatars")
-    .getPublicUrl(fileName);
+      if (!fullName || !username) {
+        throw new AppError(
+          "Full name and username are required",
+          400
+        );
+      }
 
-  const avatarUrl = publicUrlData.publicUrl;
+      const updatedUser =
+        await updateProfileService(
+          req.user.id,
+          fullName,
+          username
+        );
 
-  const updatedUser = await prisma.users.update({
-    where: { id: req.userId },
-    data: { avatar: avatarUrl },
-  });
+      res.status(200).json({
+        message:
+          "Profile updated successfully",
 
-  res.status(200).json({
-    message: "Avatar uploaded",
-    avatar: avatarUrl,
-    user: updatedUser,
-  });
-});
+        user:
+          updatedUser,
+      });
+    }
+  );
+
+// ==============================
+// UPLOAD AVATAR
+// ==============================
+
+export const uploadAvatar =
+  asyncHandler(
+    async (
+      req: AuthRequest,
+      res: Response
+    ) => {
+
+      if (!req.user?.id) {
+        throw new AppError(
+          "Unauthorized",
+          401
+        );
+      }
+
+      if (!req.file) {
+        throw new AppError(
+          "No file uploaded",
+          400
+        );
+      }
+
+      const file =
+        req.file;
+
+      // validate file type
+      const allowedMimeTypes = [
+        "image/png",
+        "image/jpeg",
+        "image/jpg",
+        "image/webp",
+      ];
+
+      if (
+        !allowedMimeTypes.includes(
+          file.mimetype
+        )
+      ) {
+        throw new AppError(
+          "Invalid image format",
+          400
+        );
+      }
+
+      // validate file size (2MB)
+      const maxSize =
+        2 * 1024 * 1024;
+
+      if (file.size > maxSize) {
+        throw new AppError(
+          "Image size must be less than 2MB",
+          400
+        );
+      }
+
+      const fileName =
+        `${uuidv4()}-${file.originalname}`;
+
+      // upload image to supabase storage
+      const {
+        error,
+      } = await supabase.storage
+
+        .from("avatars")
+
+        .upload(
+          fileName,
+          file.buffer,
+          {
+            contentType:
+              file.mimetype,
+          }
+        );
+
+      if (error) {
+        throw new AppError(
+          error.message,
+          500
+        );
+      }
+
+      // get public url
+      const {
+        data: publicUrlData,
+      } = supabase.storage
+
+        .from("avatars")
+
+        .getPublicUrl(
+          fileName
+        );
+
+      const avatarUrl =
+        publicUrlData.publicUrl;
+
+      // update database
+      const updatedUser =
+        await prisma.users.update({
+          where: {
+            id: req.user.id,
+          },
+
+          data: {
+            avatar:
+              avatarUrl,
+          },
+        });
+
+      res.status(200).json({
+        message:
+          "Avatar uploaded successfully",
+
+        avatar:
+          avatarUrl,
+
+        user:
+          updatedUser,
+      });
+    }
+  );

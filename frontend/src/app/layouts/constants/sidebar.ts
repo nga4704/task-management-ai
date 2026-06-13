@@ -7,6 +7,7 @@ import {
   Settings,
   FolderKanban,
   Sparkles,
+  Users
 } from "lucide-react";
 
 export const sidebarSections = [
@@ -20,10 +21,15 @@ export const sidebarSections = [
         path: "/dashboard",
       },
       {
-        title: "Projects",
-        icon: FolderKanban,
-        path: "/projects",
+        title: "Teams",
+        icon: Users,
+        path: "/teams",
       },
+      // {
+      //   title: "Projects",
+      //   icon: FolderKanban,
+      //   path: "/projects",
+      // },
       {
         title: "My Tasks",
         icon: KanbanSquare,

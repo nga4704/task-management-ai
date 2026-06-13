@@ -1,57 +1,34 @@
-//@/store/authStore.ts
 import { create } from "zustand";
 
 interface User {
   id: string;
   email: string;
-  username: string;
+  username?: string;
   full_name?: string;
+  avatar?: string;
 }
 
 interface AuthState {
   user: User | null;
 
-  accessToken: string | null;
-  refreshToken: string | null;
-
-  setUser: (user: User | null) => void;
-
-  setTokens: (
-    access: string,
-    refresh: string
+  setUser: (
+    user: User | null
   ) => void;
 
   logout: () => void;
 }
 
-export const useAuthStore = create<AuthState>(
-  (set) => ({
+export const useAuthStore =
+  create<AuthState>((set) => ({
+
     user: null,
 
-    accessToken: localStorage.getItem("accessToken"),
-    refreshToken: localStorage.getItem("refreshToken"),
+    setUser: (user) =>
+      set({ user }),
 
-    setUser: (user) => set({ user }),
-
-    setTokens: (access, refresh) => {
-      localStorage.setItem("accessToken", access);
-      localStorage.setItem("refreshToken", refresh);
-
-      set({
-        accessToken: access,
-        refreshToken: refresh,
-      });
-    },
-
-    logout: () => {
-      localStorage.removeItem("accessToken");
-      localStorage.removeItem("refreshToken");
-
+    logout: () =>
       set({
         user: null,
-        accessToken: null,
-        refreshToken: null,
-      });
-    },
-  })
-);
+      }),
+
+  }));

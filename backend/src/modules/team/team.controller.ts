@@ -15,14 +15,27 @@ import { asyncHandler } from "../../utils/asyncHandler";
 
 // CREATE
 export const createTeam = asyncHandler(async (req: AuthRequest, res: Response) => {
-  if (!req.userId) {
+  if (!req.user) {
     throw new AppError("Unauthorized", 401);
   }
 
-  const { name, description } = req.body;
+  const {
+    name,
+    slug,
+    description,
+    invitedMembers,
+  } = req.body;
 
-  const team = await createTeamService(name, description, req.userId);
-
+  const team =
+    await createTeamService(
+      {
+        name,
+        slug,
+        description,
+        invitedMembers,
+      },
+      req.user.id
+    );
   res.status(201).json({
     message: "Create team successfully",
     team,

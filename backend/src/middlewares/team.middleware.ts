@@ -20,7 +20,7 @@ export const isTeamMember =
       req.params.teamId as string;
 
     const userId =
-      req.userId as string;
+      req.user?.id as string;
 
     const member =
       await prisma.team_members.findFirst({
@@ -51,7 +51,7 @@ export const isTeamMember =
       req.params.teamId as string;
 
     const userId =
-      req.userId as string;
+      req.user?.id as string;
 
     const team =
       await prisma.teams.findUnique({
