@@ -43,9 +43,20 @@ export const createTeam = asyncHandler(async (req: AuthRequest, res: Response) =
 });
 
 // GET ALL
-export const getTeams = asyncHandler(async (req: Request, res: Response) => {
-  const teams = await getTeamsService();
-  res.status(200).json(teams);
+export const getTeams =
+asyncHandler(async (
+  req: AuthRequest,
+  res: Response
+) => {
+
+  const teams =
+    await getTeamsService(
+      req.user!.id
+    );
+
+  res.status(200).json(
+    teams
+  );
 });
 
 // DETAIL

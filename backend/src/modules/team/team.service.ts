@@ -103,11 +103,22 @@ export const createTeamService = async (
 
 
 
-export const getTeamsService = async () => {
+export const getTeamsService =
+  async (userId: string) => {
+
     return prisma.teams.findMany({
-        include: {
-            team_members: true,
+
+      where: {
+        team_members: {
+          some: {
+            user_id: userId,
+          },
         },
+      },
+
+      include: {
+        team_members: true,
+      },
     });
 };
 

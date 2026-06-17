@@ -7,20 +7,32 @@ import {
 } from "./dashboard.service";
 import { asyncHandler } from "../../utils/asyncHandler";
 
-export const getOverview = asyncHandler(async (
-  req: Request,
-  res: Response
-) => {
+export const getOverview =
+  asyncHandler(async (
+    req: Request,
+    res: Response
+  ) => {
 
-  const teamId =
-    req.query.teamId as string;
+    const teamId =
+      req.query.teamId as string;
 
-  const overview =
-    await getOverviewService(teamId);
+    if (!teamId) {
 
-  res.status(200).json(overview);
+      return res.status(400).json({
+        message:
+          "teamId is required",
+      });
+    }
 
-});
+    const overview =
+      await getOverviewService(
+        teamId
+      );
+
+    res.status(200).json(
+      overview
+    );
+  });
 
 export const getTeamProgress = asyncHandler(async (
   req: Request,
