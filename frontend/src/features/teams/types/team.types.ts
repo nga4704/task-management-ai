@@ -1,3 +1,19 @@
+export interface TeamMember {
+  id: string;
+
+  role: string;
+
+  user_id: string;
+
+  users: {
+    id: string;
+    email: string;
+    username: string;
+    full_name?: string;
+    avatar?: string;
+  };
+}
+
 export interface Team {
   id: string;
 
@@ -16,4 +32,10 @@ export interface Team {
   updated_at: string;
 
   members_count?: number;
+
+  team_members?: TeamMember[];
+}
+
+export interface TeamDetail extends Team {
+  team_members: TeamMember[];
 }

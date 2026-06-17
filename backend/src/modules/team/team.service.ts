@@ -104,9 +104,10 @@ export const createTeamService = async (
 
 
 export const getTeamsService =
-  async (userId: string) => {
+async (userId: string) => {
 
-    return prisma.teams.findMany({
+  const teams =
+    await prisma.teams.findMany({
 
       where: {
         team_members: {
@@ -117,9 +118,23 @@ export const getTeamsService =
       },
 
       include: {
-        team_members: true,
+        _count: {
+          select: {
+            team_members: true,
+          },
+        },
       },
     });
+
+  return teams.map(
+    (team) => ({
+      ...team,
+
+      members_count:
+        team._count
+          .team_members,
+    })
+  );
 };
 
 export const getTeamDetailService = async (teamId: string) => {
@@ -172,27 +187,32 @@ export const deleteTeamService = async (teamId: string) => {
     return deleted;
 };
 
-export const addMemberService = async (
-    teamId: string,
-    userId: string
+export const addMemberService =
+async (
+  teamId: string,
+  email: string
 ) => {
 
-    const member = await prisma.team_members.create({
-        data: {
-            team_id: teamId,
-            user_id: userId,
-            role: "member",
-        },
+  const user =
+    await prisma.users.findUnique({
+      where: {
+        email,
+      },
     });
 
-    const io = getIO();
-    io.emit("memberAdded", {
-        teamId,
-        userId,
-        member,
-    });
+  if (!user) {
+    throw new Error(
+      "User not found"
+    );
+  }
 
-    return member;
+  return prisma.team_members.create({
+    data: {
+      team_id: teamId,
+      user_id: user.id,
+      role: "member",
+    },
+  });
 };
 
 export const removeMemberService = async (

@@ -99,9 +99,13 @@ export const deleteTeam = asyncHandler(async (req: Request, res: Response) => {
 // ADD MEMBER
 export const addMember = asyncHandler(async (req: Request, res: Response) => {
   const teamId = req.params.teamId as string;
-  const { userId } = req.body;
+  const { email } = req.body; 
 
-  const member = await addMemberService(teamId, userId);
+  const member =
+  await addMemberService(
+    teamId,
+    email
+  );
 
   res.status(201).json({
     message: "Add member successfully",
