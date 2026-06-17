@@ -1,4 +1,3 @@
-
 import { Link, useNavigate } from "react-router-dom";
 import { useState } from "react";
 
@@ -23,10 +22,6 @@ import { useAuthStore } from "@/store/authStore";
 function LoginPage() {
   const navigate = useNavigate();
 
-  // =========================
-  // STATES
-  // =========================
-
   const [email, setEmail] =
     useState("");
 
@@ -36,9 +31,10 @@ function LoginPage() {
   const [loading, setLoading] =
     useState(false);
 
-  const [googleLoading,
-    setGoogleLoading]
-    = useState(false);
+  const [
+    googleLoading,
+    setGoogleLoading,
+  ] = useState(false);
 
   const [error, setError] =
     useState("");
@@ -49,12 +45,12 @@ function LoginPage() {
       password: "",
     });
 
-  // =========================
-  // VALIDATE FORM
-  // =========================
+  const setUser =
+    useAuthStore(
+      (state) => state.setUser
+    );
 
   const validateForm = () => {
-
     const newErrors = {
       email:
         validateEmail(email),
@@ -69,20 +65,6 @@ function LoginPage() {
       newErrors
     ).some(Boolean);
   };
-
-  // =========================
-  // LOGIN
-  // =========================
-
-  // const setTokens =
-  //   useAuthStore(
-  //     (state) => state.setTokens
-  //   );
-
-  const setUser =
-    useAuthStore(
-      (state) => state.setUser
-    );
 
   const handleSubmit = async (
     e: React.FormEvent
@@ -114,51 +96,71 @@ function LoginPage() {
         return;
       }
 
-      // save supabase token
-      // setTokens(
-      //   session.access_token,
-      //   session.refresh_token
-      // );
+      const authHeader = {
+        Authorization: `Bearer ${session.access_token}`,
+      };
 
-      // create profile if not exists
+      // tạo profile nếu chưa tồn tại
       await api.post(
         "/users/profile",
         {
-          id: user.id,
           email: user.email,
+
           fullName:
             user.user_metadata
               ?.full_name || "",
+
           username:
             user.user_metadata
-              ?.username || "",
+              ?.username ||
+            user.email
+              ?.split("@")[0] ||
+            "",
+        },
+        {
+          headers: authHeader,
         }
       );
 
-      // get profile from backend
+      // lấy profile backend
       const profile =
         await api.get(
-          "/users/me"
+          "/users/me",
+          {
+            headers: authHeader,
+          }
         );
 
-      setUser(profile.data);
+      setUser(
+        profile.data
+      );
 
       navigate(
         "/dashboard"
       );
+
     } catch (err) {
+
+      console.error(err);
+
       if (err instanceof Error) {
-        setError(err.message);
+
+        setError(
+          err.message
+        );
+
       } else {
-        setError("Login failed");
+
+        setError(
+          "Login failed"
+        );
       }
+
     } finally {
+
       setLoading(false);
     }
   };
-  // =========================
-  // GOOGLE LOGIN
-  // =========================
 
   const handleGoogleSignIn =
     async () => {
@@ -167,7 +169,9 @@ function LoginPage() {
 
         setError("");
 
-        setGoogleLoading(true);
+        setGoogleLoading(
+          true
+        );
 
         await signInWithGoogle();
 
@@ -188,7 +192,9 @@ function LoginPage() {
 
       } finally {
 
-        setGoogleLoading(false);
+        setGoogleLoading(
+          false
+        );
       }
     };
 
@@ -201,8 +207,6 @@ function LoginPage() {
         onSubmit={handleSubmit}
         className="space-y-4"
       >
-
-        {/* GLOBAL ERROR */}
         {error && (
           <div
             className="
@@ -220,7 +224,6 @@ function LoginPage() {
           </div>
         )}
 
-        {/* EMAIL */}
         <div>
           <Input
             id="email"
@@ -230,17 +233,20 @@ function LoginPage() {
             autoComplete="email"
             value={email}
             onChange={(e) => {
-
               setEmail(
                 e.target.value
               );
 
-              if (errors.email) {
-
+              if (
+                errors.email
+              ) {
                 setErrors(
-                  (prev) => ({
+                  (
+                    prev
+                  ) => ({
                     ...prev,
-                    email: "",
+                    email:
+                      "",
                   })
                 );
               }
@@ -250,17 +256,16 @@ function LoginPage() {
           {errors.email && (
             <p
               className="
-        mt-1
-        text-sm
-        text-red-500
-      "
+                mt-1
+                text-sm
+                text-red-500
+              "
             >
               {errors.email}
             </p>
           )}
         </div>
 
-        {/* PASSWORD */}
         <div>
           <Input
             id="password"
@@ -270,17 +275,20 @@ function LoginPage() {
             autoComplete="current-password"
             value={password}
             onChange={(e) => {
-
               setPassword(
                 e.target.value
               );
 
-              if (errors.password) {
-
+              if (
+                errors.password
+              ) {
                 setErrors(
-                  (prev) => ({
+                  (
+                    prev
+                  ) => ({
                     ...prev,
-                    password: "",
+                    password:
+                      "",
                   })
                 );
               }
@@ -290,17 +298,16 @@ function LoginPage() {
           {errors.password && (
             <p
               className="
-        mt-1
-        text-sm
-        text-red-500
-      "
+                mt-1
+                text-sm
+                text-red-500
+              "
             >
               {errors.password}
             </p>
           )}
         </div>
 
-        {/* FORGOT PASSWORD */}
         <div
           className="
             flex
@@ -320,7 +327,6 @@ function LoginPage() {
           </Link>
         </div>
 
-        {/* LOGIN BUTTON */}
         <Button
           type="submit"
           loading={loading}
@@ -328,7 +334,6 @@ function LoginPage() {
           title="Login"
         />
 
-        {/* DIVIDER */}
         <div
           className="
             flex
@@ -350,18 +355,18 @@ function LoginPage() {
           <div className="h-px flex-1 bg-gray-200" />
         </div>
 
-        {/* GOOGLE BUTTON */}
         <Button
           type="button"
           variant="secondary"
           loading={googleLoading}
           disabled={googleLoading}
-          onClick={handleGoogleSignIn}
+          onClick={
+            handleGoogleSignIn
+          }
           title="Continue with Google"
         />
       </form>
 
-      {/* REGISTER */}
       <p
         className="
           mt-6
@@ -388,4 +393,3 @@ function LoginPage() {
 }
 
 export default LoginPage;
-

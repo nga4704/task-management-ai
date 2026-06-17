@@ -1,8 +1,9 @@
 import type { ReactNode } from "react";
 import {
-  TrendingUp,
-  Clock3,
   BrainCircuit,
+  CheckCircle2,
+  Users,
+  AlertTriangle,
 } from "lucide-react";
 
 type AuthLayoutProps = {

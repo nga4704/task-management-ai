@@ -2,6 +2,9 @@
 
 import { supabase } from "../../../lib/supabase";
 
+const APP_URL =
+  import.meta.env.VITE_APP_URL;
+
 const getAuthErrorMessage = (
   message: string
 ): string => {
@@ -67,7 +70,7 @@ export const register = async (
         },
 
         emailRedirectTo:
-          "http://localhost:5173/login",
+          `${APP_URL}/login`,
       },
     });
 
@@ -92,7 +95,7 @@ export const signInWithGoogle =
 
         options: {
           redirectTo:
-            "http://localhost:5173/auth/callback",
+            `${APP_URL}/auth/callback`,
         },
       });
 
@@ -126,7 +129,7 @@ export const forgotPassword =
         email,
         {
           redirectTo:
-            "http://localhost:5173/reset-password",
+            `${APP_URL}/reset-password`,
         }
       );
 

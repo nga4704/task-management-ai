@@ -21,13 +21,14 @@ api.interceptors.request.use(
 
     const {
       data: { session },
-    } =
-      await supabase.auth.getSession();
+    } = await supabase.auth.getSession();
 
-    if (
-      session?.access_token
-    ) {
+    // console.log(
+    //   "TOKEN:",
+    //   session?.access_token
+    // );
 
+    if (session?.access_token) {
       config.headers.Authorization =
         `Bearer ${session.access_token}`;
     }

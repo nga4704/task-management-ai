@@ -21,12 +21,25 @@ export const validateEmail = (
 export const validatePassword = (
   password: string
 ): string => {
+
   if (!password) {
     return "Password is required";
   }
 
-  if (password.length < 6) {
-    return "Password must be at least 6 characters";
+  if (password.length < 8) {
+    return "Password must be at least 8 characters";
+  }
+
+  if (!/[A-Z]/.test(password)) {
+    return "Must contain at least one uppercase letter";
+  }
+
+  if (!/[a-z]/.test(password)) {
+    return "Must contain at least one lowercase letter";
+  }
+
+  if (!/[0-9]/.test(password)) {
+    return "Must contain at least one number";
   }
 
   return "";
@@ -41,20 +54,6 @@ export const validateFullName = (
 
   if (fullName.length < 2) {
     return "Full name is too short";
-  }
-
-  return "";
-};
-
-export const validateUsername = (
-  username: string
-): string => {
-  if (!username.trim()) {
-    return "Username is required";
-  }
-
-  if (username.length < 3) {
-    return "Username must be at least 3 characters";
   }
 
   return "";
