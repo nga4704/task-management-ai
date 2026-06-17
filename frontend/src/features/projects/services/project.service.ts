@@ -1,4 +1,5 @@
 import { projectApi } from "../api/projectApi.ts";
+import api from "@/lib/api";
 
 export const projectService = {
   getProjects: async () => {
@@ -18,4 +19,12 @@ export const projectService = {
 
     return res.data;
   },
+};
+
+export const getProjectsByTeam = (
+  teamId: string
+) => {
+  return api.get(
+    `/projects/team/${teamId}`
+  );
 };

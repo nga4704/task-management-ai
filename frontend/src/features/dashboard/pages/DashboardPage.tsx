@@ -11,11 +11,18 @@ import {
   useActiveProject,
 } from "@/shared/hooks/useActiveProject";
 
+import {
+  useWorkspaceStore,
+} from "@/store/workspaceStore";
+import { useParams } from "react-router-dom";
+
 function DashboardPage() {
-  const teamId = "123";
+   const { teamId } = useParams();
 
   const { overview } =
-    useDashboard(teamId);
+    useDashboard(
+      teamId || ""
+    );
 
   const {
     projectId,
@@ -30,6 +37,7 @@ function DashboardPage() {
       <div className="space-y-6">
         <DashboardHero
           projectId={projectId}
+          projectName="Project Alpha"
         />
 
         <DashboardStats

@@ -1,9 +1,11 @@
 import { useNavigate } from "react-router-dom";
-
 import { Users } from "lucide-react";
 
-import type { Team }
-  from "../types/team.types";
+import {
+  useWorkspaceStore,
+} from "@/store/workspaceStore";
+
+import type { Team } from "../types/team.types";
 
 interface Props {
   team: Team;
@@ -12,11 +14,21 @@ interface Props {
 function TeamCard({ team }: Props) {
   const navigate = useNavigate();
 
+  const setSelectedTeam =
+    useWorkspaceStore(
+      (state) => state.setSelectedTeam
+    );
+
+  const handleClick = () => {
+
+    setSelectedTeam(team.id);
+
+    navigate(`/teams/${team.id}`);
+  };
+
   return (
     <button
-      onClick={() =>
-        navigate(`/teams/${team.id}`)
-      }
+      onClick={handleClick}
       className="
         w-full
         rounded-3xl
@@ -25,8 +37,6 @@ function TeamCard({ team }: Props) {
         bg-surface
         p-6
         text-left
-        transition-all
-        hover:scale-[1.01]
       "
     >
       <div className="space-y-4">
@@ -44,7 +54,9 @@ function TeamCard({ team }: Props) {
           <Users size={16} />
 
           <span>
-            {team.members_count ?? 0} members
+            {team.members_count ?? 0}
+            {" "}
+            members
           </span>
         </div>
       </div>

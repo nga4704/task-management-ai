@@ -1,4 +1,6 @@
-import axiosClient from "@/shared/lib/apiClient";
+// @/features/teams/constants/team.constants.ts
+
+import axiosClient from "@/lib/api";
 
 import type { Team }
   from "../types/team.types";

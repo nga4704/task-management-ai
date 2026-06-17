@@ -9,12 +9,16 @@ export default function useDashboard(
     useState<any>(null);
 
   useEffect(() => {
-    if (!teamId) return;
 
-    getOverview(teamId).then((res) =>
+  if (!teamId) return;
+
+  getOverview(teamId)
+    .then((res) =>
       setOverview(res.data)
-    );
-  }, [teamId]);
+    )
+    .catch(console.error);
+
+}, [teamId]);
 
   return {
     overview,

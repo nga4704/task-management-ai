@@ -14,4 +14,6 @@ export interface Team {
   created_at: string;
 
   updated_at: string;
+
+  members_count?: number;
 }
