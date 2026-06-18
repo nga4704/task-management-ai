@@ -21,13 +21,16 @@ import MembersTab from "../components/tabs/MembersTab";
 import AnalyticsTab from "../components/tabs/AnalyticsTab";
 
 function ProjectDetailPage() {
-  const { project } =
-    useProjectDetail();
+  const { data: project, isLoading } = useProjectDetail();
 
   const [activeTab, setActiveTab] =
     useState<ProjectTab>(
       "overview"
     );
+
+  if (isLoading) {
+    return <div>Loading...</div>;
+  }
 
   if (!project) return null;
 
@@ -38,10 +41,9 @@ function ProjectDetailPage() {
     >
       <div className="space-y-6">
         <ProjectHeader
+          projectId={project.id}
           name={project.name}
-          description={
-            project.description
-          }
+          description={project.description}
           progress={project.progress}
           status={project.status}
         />

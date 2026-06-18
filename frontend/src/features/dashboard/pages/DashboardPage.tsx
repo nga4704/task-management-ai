@@ -7,17 +7,19 @@ import PrioritizedTasks from "../components/PrioritizedTasks";
 import TeamActivities from "../components/TeamActivities";
 
 import useDashboard from "../hooks/useDashboard";
+
 import {
   useActiveProject,
 } from "@/shared/hooks/useActiveProject";
 
 import {
-  useWorkspaceStore,
-} from "@/store/workspaceStore";
-import { useParams } from "react-router-dom";
+  useParams,
+} from "react-router-dom";
 
 function DashboardPage() {
-   const { teamId } = useParams();
+
+  const { teamId } =
+    useParams();
 
   const { overview } =
     useDashboard(
@@ -26,6 +28,7 @@ function DashboardPage() {
 
   const {
     projectId,
+    projectName,
   } =
     useActiveProject();
 
@@ -35,9 +38,13 @@ function DashboardPage() {
       description="AI-powered productivity overview"
     >
       <div className="space-y-6">
+
         <DashboardHero
           projectId={projectId}
-          projectName="Project Alpha"
+          projectName={
+            projectName ||
+            "No Project Selected"
+          }
         />
 
         <DashboardStats
@@ -61,6 +68,7 @@ function DashboardPage() {
             <TeamActivities />
           </div>
         </section>
+
       </div>
     </MainLayout>
   );

@@ -3,42 +3,45 @@ import {
   calculateProgress,
 } from "./project.utils";
 
-export const mapProjectList =
-(
-  project: any
+export const mapProjectList = (
+ project: any
 ) => ({
-  id: project.id,
+ id: project.id,
 
-  name: project.name,
+ name: project.name,
 
-  description:
-    project.description,
+ description:
+   project.description,
 
-  status: project.status,
+ status: project.status,
 
-  progress:
-    calculateProgress(
-      project.tasks
-    ),
+ team_id:
+   project.team_id,
 
-  taskCount:
-    project.tasks.length,
+ progress:
+   calculateProgress(
+     project.tasks
+   ),
 
-  memberCount:
-    project.teams
-      ?.team_members?.length || 0,
+ taskCount:
+   project.tasks.length,
 
-  aiScore:
-    calculateAIScore(
-      project.tasks
-    ),
+ memberCount:
+   project.teams
+     ?.team_members
+     ?.length || 0,
 
-  startDate:
-    project.start_date,
+ aiScore:
+   calculateAIScore(
+     project.tasks
+   ),
 
-  endDate:
-    project.end_date,
+ startDate:
+   project.start_date,
 
-  createdAt:
-    project.created_at,
+ endDate:
+   project.end_date,
+
+ createdAt:
+   project.created_at,
 });

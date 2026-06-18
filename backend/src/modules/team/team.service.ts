@@ -1,5 +1,6 @@
 import prisma from "../../config/prisma";
 import { getIO } from "../../config/socket";
+import {mapProjectList} from "../../modules/project/project.mapper";
 
 export const createTeamService = async (
   payload: {
@@ -233,3 +234,31 @@ export const removeMemberService = async (
         userId,
     });
 };
+
+export const getTeamProjectsService =
+ async (teamId: string) => {
+   const projects =
+     await prisma.projects.findMany({
+       where: {
+         team_id: teamId,
+       },
+
+       include: {
+         tasks: true,
+
+         teams: {
+           include: {
+             team_members: true,
+           },
+         },
+       },
+
+       orderBy: {
+         created_at: "desc",
+       },
+     });
+
+   return projects.map(
+     mapProjectList
+   );
+ };

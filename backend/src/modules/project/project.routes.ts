@@ -7,38 +7,35 @@ import {
   updateProject,
   deleteProject,
   getProjectsDashboard,
-  getProjectsActivity
+  getProjectsActivity,
 } from "./project.controller";
+
+import { protect } from "../../middlewares/auth.middleware";
+import { isTeamMember } from "../../middlewares/team.middleware";
 
 const router = Router();
 
-router.post("/", createProject);
-
-router.get("/", getProjects);
-
-router.get(
-  "/dashboard",
-  getProjectsDashboard
+// TEAM SCOPED PROJECTS (IMPORTANT)
+router.post(
+  "/teams/:teamId/projects",
+  protect,
+  isTeamMember,
+  createProject
 );
 
 router.get(
-  "/activity",
-  getProjectsActivity
+  "/teams/:teamId/projects",
+  protect,
+  isTeamMember,
+  getProjects
 );
 
-router.get(
-  "/:projectId",
-  getProjectDetail
-);
+// GLOBAL (optional)
+router.get("/dashboard", getProjectsDashboard);
+router.get("/activity", getProjectsActivity);
 
-router.put(
-  "/:projectId",
-  updateProject
-);
-
-router.delete(
-  "/:projectId",
-  deleteProject
-);
+router.get("/:projectId", getProjectDetail);
+router.put("/:projectId", updateProject);
+router.delete("/:projectId", deleteProject);
 
 export default router;

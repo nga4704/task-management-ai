@@ -13,6 +13,9 @@ import {
   useCreateProject,
 } from "../hooks/useCreateProject";
 import toast from "react-hot-toast";
+import { useParams } from "react-router-dom";
+
+import { useQueryClient } from "@tanstack/react-query";
 
 interface Props {
   open: boolean;
@@ -23,6 +26,10 @@ function CreateProjectModal({
   open,
   onClose,
 }: Props) {
+
+  const queryClient = useQueryClient();
+
+  const { teamId } = useParams();
 
   const [name, setName] =
     useState("");
@@ -99,64 +106,39 @@ function CreateProjectModal({
       );
     };
 
-  const handleSubmit = async (
-    e: React.FormEvent
-  ) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+
+    if (!teamId) {
+      toast.error("Missing team context");
+      return;
+    }
 
     createProject(
       {
         name,
-
         description,
-
-        teamId:
-          "YOUR_TEAM_ID",
-
+        teamId,
         status,
-
-        startDate: new Date(
-          startDate
-        ).toISOString(),
-
-        endDate: new Date(
-          endDate
-        ).toISOString(),
+        startDate: startDate ? new Date(startDate).toISOString() : undefined,
+        endDate: endDate ? new Date(endDate).toISOString() : undefined,
       },
-
       {
         onSuccess: () => {
-          toast.success(
-            "Project created successfully"
-          );
+          toast.success("Project created successfully");
 
-          onClose();
+           queryClient.invalidateQueries({
+            queryKey: ["team-projects", teamId],
+          });
+
 
           setName("");
           setDescription("");
-          setStatus(
-            "PLANNING"
-          );
+          setStatus("PLANNING");
           setStartDate("");
           setEndDate("");
-          setMemberEmails([]);
-        },
 
-        onError: (
-          error: any
-        ) => {
-          const message =
-            error?.response?.data
-              ?.message ||
-            "Failed to create project";
-
-          toast.error(
-            message
-          );
-
-          console.error(
-            error
-          );
+          onClose();
         },
       }
     );
@@ -318,35 +300,13 @@ function CreateProjectModal({
             <select
               value={status}
               onChange={(e) =>
-                setStatus(
-                  e.target
-                    .value as ProjectStatus
-                )
+                setStatus(e.target.value as ProjectStatus)
               }
-              className="
-                w-full
-                rounded-xl
-                border
-                border-border
-                px-4
-                py-3
-              "
             >
-              <option value="Planning">
-                Planning
-              </option>
-
-              <option value="In Progress">
-                In Progress
-              </option>
-
-              <option value="Review">
-                Review
-              </option>
-
-              <option value="Completed">
-                Completed
-              </option>
+              <option value="PLANNING">Planning</option>
+              <option value="IN_PROGRESS">In Progress</option>
+              <option value="REVIEW">Review</option>
+              <option value="COMPLETED">Completed</option>
             </select>
           </div>
 

@@ -8,8 +8,8 @@ import {
 import MainLayout from "@/app/layouts/MainLayout";
 
 import {
-  useWorkspaceStore,
-} from "@/store/workspaceStore";
+  useTeamStore,
+} from "@/store/teamStore";
 
 import {
   Users,
@@ -27,7 +27,7 @@ function TeamDetailPage() {
   const navigate = useNavigate();
 
   const setSelectedTeam =
-    useWorkspaceStore(
+    useTeamStore(
       (state) => state.setSelectedTeam
     );
 
@@ -37,11 +37,14 @@ function TeamDetailPage() {
     isError,
   } = useTeamDetail(teamId || "");
 
-  useEffect(() => {
-    if (teamId) {
-      setSelectedTeam(teamId);
-    }
-  }, [teamId, setSelectedTeam]);
+useEffect(() => {
+  if (teamId) {
+    setSelectedTeam(
+      teamId,
+      team?.name || ""
+    );
+  }
+}, [teamId]);
 
   if (isLoading) {
     return (

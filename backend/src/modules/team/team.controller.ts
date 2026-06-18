@@ -7,6 +7,7 @@ import {
   deleteTeamService,
   addMemberService,
   removeMemberService,
+  getTeamProjectsService,
 } from "./team.service";
 
 import { AuthRequest } from "../../middlewares/auth.middleware";
@@ -123,4 +124,15 @@ export const removeMember = asyncHandler(async (req: Request, res: Response) => 
   res.status(200).json({
     message: "Remove member successfully",
   });
+});
+
+export const getTeamProjects = asyncHandler(async (req: Request, res: Response) => {
+  const teamId = req.params.teamId;
+
+if (!teamId || Array.isArray(teamId)) {
+  throw new AppError("Invalid teamId", 400);
+}
+
+const projects = await getTeamProjectsService(teamId);
+  res.json(projects);
 });

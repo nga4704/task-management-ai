@@ -1,21 +1,12 @@
 import apiClient from "@/lib/api";
 
-import type { Project } from "../types/project.types";
-
-export const getTeamProjects =
-  async (
-    teamId: string
-  ): Promise<Project[]> => {
-    const response =
-      await apiClient.get(
-        `/teams/${teamId}/projects`
-      );
-
-    return response.data;
-  };
 export const projectApi = {
-  getProjects: () =>
-    apiClient.get("/projects"),
+  getTeamProjects: (
+    teamId: string
+  ) =>
+    apiClient.get(
+      `/teams/${teamId}/projects`
+    ),
 
   getProjectById: (
     projectId: string
@@ -25,17 +16,17 @@ export const projectApi = {
     ),
 
   createProject: (
+    teamId: string,
     payload: {
       name: string;
       description?: string;
-      teamId: string;
       status: string;
       startDate?: string;
       endDate?: string;
     }
   ) =>
     apiClient.post(
-      "/projects",
+      `/projects/teams/${teamId}/projects`,
       payload
     ),
 
@@ -55,4 +46,3 @@ export const projectApi = {
       `/projects/${projectId}`
     ),
 };
-

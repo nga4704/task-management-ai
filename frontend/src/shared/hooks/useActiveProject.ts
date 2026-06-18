@@ -1,17 +1,24 @@
 import {
-  useWorkspaceStore,
-} from "@/store/workspaceStore";
+  useProjectStore,
+} from "@/store/projectStore";
 
 export const useActiveProject =
   () => {
 
     const projectId =
-      useWorkspaceStore(
+      useProjectStore(
         (state) =>
           state.selectedProjectId
       );
 
+    const projectName =
+      useProjectStore(
+        (state) =>
+          state.selectedProjectName
+      );
+
     return {
       projectId,
+      projectName,
     };
   };

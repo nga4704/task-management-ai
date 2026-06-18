@@ -1,19 +1,28 @@
-import { useQuery } from "@tanstack/react-query";
+import { useQuery }
+from "@tanstack/react-query";
 
-import { getTeamProjects } from "../api/projectApi";
+import {
+  projectApi,
+} from "../api/projectApi";
 
-export const useTeamProjects = (
-  teamId?: string
-) => {
-  return useQuery({
-    queryKey: [
-      "team-projects",
-      teamId,
-    ],
+export const useTeamProjects =
+  (teamId?: string) => {
 
-    queryFn: () =>
-      getTeamProjects(teamId!),
+    return useQuery({
+      queryKey: [
+        "team-projects",
+        teamId,
+      ],
 
-    enabled: !!teamId,
-  });
-};
+      queryFn: async () => {
+        const res =
+          await projectApi.getTeamProjects(
+            teamId as string
+          );
+
+        return res.data;
+      },
+
+      enabled: !!teamId,
+    });
+  };

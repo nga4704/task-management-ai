@@ -6,27 +6,27 @@ import {
 } from "lucide-react";
 
 import {
+  useParams,
+} from "react-router-dom";
+
+import {
   useProjectStore,
 } from "@/store/projectStore";
 
-const mockProjects = [
-  {
-    id: "project-001",
-    name: "AI Productivity Platform",
-  },
-  {
-    id: "project-002",
-    name: "Mobile Banking System",
-  },
-  {
-    id: "project-003",
-    name: "E-Commerce Dashboard",
-  },
-];
+import {
+  useTeamStore,
+} from "@/store/teamStore";
+
+import {
+  useTeamProjects,
+} from "@/features/projects/hooks/useTeamProjects";
 
 function ProjectSwitcher() {
   const [open, setOpen] =
     useState(false);
+
+  const { teamId } =
+    useParams();
 
   const {
     selectedProjectId,
@@ -34,13 +34,37 @@ function ProjectSwitcher() {
     setSelectedProject,
   } = useProjectStore();
 
+  const selectedTeamId =
+    useTeamStore(
+      (state) =>
+        state.selectedTeamId
+    );
+
+  const activeTeamId =
+    selectedTeamId || teamId;
+
+  const {
+    data: projects = [],
+    isLoading,
+  } = useTeamProjects(
+    activeTeamId
+  );
+
+console.log("selectedTeamId", selectedTeamId); 
+console.log("projects", projects);
+console.log("isLoading", isLoading);
+console.log(
+  localStorage.getItem(
+    "team-storage"
+  )
+);
+
   const currentProject =
-    selectedProjectName ??
+    selectedProjectName ||
     "Select Project";
 
   return (
     <div className="relative mt-4">
-
       <p
         className="
           mb-2
@@ -64,16 +88,12 @@ function ProjectSwitcher() {
           w-full
           items-center
           justify-between
-
           rounded-2xl
           border
           border-border
-
           bg-surface
-
           px-4
           py-3
-
           shadow-soft
         "
       >
@@ -111,55 +131,70 @@ function ProjectSwitcher() {
             z-50
             mt-2
             w-full
-
             overflow-hidden
-
             rounded-2xl
             border
             border-border
-
             bg-white
-
             shadow-xl
           "
         >
-          {mockProjects.map(
-            (project) => (
-              <button
-                key={project.id}
-                onClick={() => {
+          {isLoading ? (
+            <div
+              className="
+                px-4
+                py-3
+                text-sm
+                text-muted
+              "
+            >
+              Loading...
+            </div>
+          ) : projects.length === 0 ? (
+            <div
+              className="
+                px-4
+                py-3
+                text-sm
+                text-muted
+              "
+            >
+              No projects found
+            </div>
+          ) : (
+            projects.map(
+              (project: any) => (
+                <button
+                  key={project.id}
+                  onClick={() => {
+                    setSelectedProject(
+                      project.id,
+                      project.name
+                    );
 
-                  setSelectedProject(
-                    project.id,
-                    project.name
-                  );
+                    setOpen(false);
+                  }}
+                  className={`
+                    flex
+                    w-full
+                    items-center
+                    justify-between
+                    px-4
+                    py-3
+                    text-left
+                    text-sm
+                    hover:bg-surfaceSecondary
 
-                  setOpen(false);
-                }}
-                className={`
-                  flex
-                  w-full
-                  items-center
-                  justify-between
-
-                  px-4
-                  py-3
-
-                  text-left
-                  text-sm
-
-                  hover:bg-surfaceSecondary
-
-                  ${
-                    selectedProjectId ===
-                    project.id
+                    ${selectedProjectId ===
+                      project.id
                       ? "bg-primaryLight"
                       : ""
-                  }
-                `}
-              >
-                {project.name}
-              </button>
+                    }
+                  `}
+                >
+                  {project.name}
+                </button>
+              )
             )
           )}
         </div>

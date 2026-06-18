@@ -2,8 +2,8 @@ import { useNavigate } from "react-router-dom";
 import { Users } from "lucide-react";
 
 import {
-  useWorkspaceStore,
-} from "@/store/workspaceStore";
+  useTeamStore,
+} from "@/store/teamStore";
 
 import type { Team } from "../types/team.types";
 
@@ -15,13 +15,16 @@ function TeamCard({ team }: Props) {
   const navigate = useNavigate();
 
   const setSelectedTeam =
-    useWorkspaceStore(
+    useTeamStore(
       (state) => state.setSelectedTeam
     );
 
   const handleClick = () => {
 
-    setSelectedTeam(team.id);
+    setSelectedTeam(
+      team.id,
+      team.name
+    );
 
     navigate(`/teams/${team.id}`);
   };

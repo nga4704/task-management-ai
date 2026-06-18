@@ -31,15 +31,15 @@ function ProjectCard({
 
   const statusConfig =
     projectStatusConfig[
-      project.status
+    project.status
     ];
 
   const handleOpenProject =
     () => {
       setSelectedProject(
-        project.id
+        project.id,
+        project.name
       );
-
       navigate(
         `/teams/${project.team_id}/projects/${project.id}`
       );

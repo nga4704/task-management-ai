@@ -1,29 +1,27 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-
-import { projectApi } from "../api/projectApi.ts";
+import { projectApi } from "../api/projectApi";
 
 export const useCreateProject = () => {
-  const queryClient =
-    useQueryClient();
+  const queryClient = useQueryClient();
 
   return useMutation({
     mutationFn: (
-      payload: {
+      {
+        teamId,
+        ...payload
+      }: {
+        teamId: string;
         name: string;
         description?: string;
-        teamId: string;
         status: string;
         startDate?: string;
         endDate?: string;
       }
-    ) =>
-      projectApi.createProject(
-        payload
-      ),
+    ) => projectApi.createProject(teamId, payload),
 
-    onSuccess: () => {
+    onSuccess: (_, variables) => {
       queryClient.invalidateQueries({
-        queryKey: ["projects"],
+        queryKey: ["team-projects", variables.teamId],
       });
     },
   });

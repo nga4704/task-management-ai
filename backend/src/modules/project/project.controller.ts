@@ -1,36 +1,30 @@
 import { Request, Response } from "express";
 import * as projectService from "./project.service";
 
-export const createProject = async (
-  req: Request,
-  res: Response
-) => {
+export const createProject = async (req: any, res: Response) => {
   try {
+    const teamId = req.params.teamId; 
     const {
       name,
       description,
-      teamId,
       status,
       startDate,
       endDate,
     } = req.body;
 
-    const project =
-      await projectService.createProjectService(
-        name,
-        description,
-        teamId,
-        status,
-        startDate,
-        endDate
-      );
+    const project = await projectService.createProjectService(
+      name,
+      description,
+      teamId,
+      status,
+      startDate,
+      endDate
+    );
 
     res.status(201).json(project);
   } catch (error: any) {
     res.status(500).json({
-      message:
-        error.message ||
-        "Create project failed",
+      message: error.message || "Create project failed",
     });
   }
 };
