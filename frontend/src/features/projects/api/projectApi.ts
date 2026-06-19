@@ -1,21 +1,21 @@
 import apiClient from "@/lib/api";
 
 export const projectApi = {
-  getTeamProjects: (
-    teamId: string
-  ) =>
-    apiClient.get(
+  async getTeamProjects(teamId: string) {
+    const { data } = await apiClient.get(
       `/teams/${teamId}/projects`
-    ),
+    );
+    return data;
+  },
 
-  getProjectById: (
-    projectId: string
-  ) =>
-    apiClient.get(
+  async getProjectDetail(projectId: string) {
+    const { data } = await apiClient.get(
       `/projects/${projectId}`
-    ),
+    );
+    return data;
+  },
 
-  createProject: (
+  async createProject(
     teamId: string,
     payload: {
       name: string;
@@ -24,25 +24,29 @@ export const projectApi = {
       startDate?: string;
       endDate?: string;
     }
-  ) =>
-    apiClient.post(
+  ) {
+    const { data } = await apiClient.post(
       `/projects/teams/${teamId}/projects`,
       payload
-    ),
+    );
+    return data;
+  },
 
-  updateProject: (
+  async updateProject(
     projectId: string,
     payload: any
-  ) =>
-    apiClient.put(
+  ) {
+    const { data } = await apiClient.put(
       `/projects/${projectId}`,
       payload
-    ),
+    );
+    return data;
+  },
 
-  deleteProject: (
-    projectId: string
-  ) =>
-    apiClient.delete(
+  async deleteProject(projectId: string) {
+    const { data } = await apiClient.delete(
       `/projects/${projectId}`
-    ),
+    );
+    return data;
+  },
 };

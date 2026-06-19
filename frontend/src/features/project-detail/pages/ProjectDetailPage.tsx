@@ -2,13 +2,9 @@ import { useState } from "react";
 
 import MainLayout from "@/app/layouts/MainLayout";
 
-import type {
-  ProjectTab,
-} from "../constants/projectTabs";
+import type { ProjectTab } from "../constants/projectTabs";
 
-import {
-  useProjectDetail,
-} from "../hooks/useProjectDetail";
+import { useProjectDetail } from "../hooks/useProjectDetail";
 
 import ProjectHeader from "../components/common/ProjectHeader";
 import ProjectTabs from "../components/common/ProjectTabs";
@@ -20,24 +16,49 @@ import TimelineTab from "../components/tabs/TimelineTab";
 import MembersTab from "../components/tabs/MembersTab";
 import AnalyticsTab from "../components/tabs/AnalyticsTab";
 
+import { useParams } from "react-router-dom";
+
 function ProjectDetailPage() {
-  const { data: project, isLoading } = useProjectDetail();
+  const { projectId } = useParams();
+
+  const { data: project, isLoading } =
+    useProjectDetail(projectId);
 
   const [activeTab, setActiveTab] =
-    useState<ProjectTab>(
-      "overview"
-    );
+    useState<ProjectTab>("overview");
 
   if (isLoading) {
-    return <div>Loading...</div>;
+    return (
+      <MainLayout
+        title="Project Detail"
+        description="Loading project..."
+      >
+        <div className="space-y-6 animate-pulse">
+          <div className="h-40 rounded-[32px] bg-surface-secondary" />
+          <div className="h-12 rounded-2xl bg-surface-secondary" />
+          <div className="h-80 rounded-2xl bg-surface-secondary" />
+        </div>
+      </MainLayout>
+    );
   }
 
-  if (!project) return null;
+  if (!project) {
+    return (
+      <MainLayout
+        title="Project Not Found"
+        description="This project does not exist or was deleted"
+      >
+        <div className="text-muted">
+          Project not found.
+        </div>
+      </MainLayout>
+    );
+  }
 
   return (
     <MainLayout
-      title="Project Detail"
-      description="Manage project progress and team collaboration"
+      title={project.name}
+      description={project.description}
     >
       <div className="space-y-6">
         <ProjectHeader

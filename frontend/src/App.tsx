@@ -1,93 +1,39 @@
-// src/App.tsx
-
 import { useEffect } from "react";
 
 import AppRoutes from "./app/routes/AppRoutes";
-
 import { supabase } from "./lib/supabase";
-
 import { useAuthStore } from "./store/authStore";
 
 function App() {
-
-  const setUser =
-    useAuthStore(
-      (state) => state.setUser
-    );
+  const setSupabaseUser = useAuthStore(
+    (state) => state.setSupabaseUser
+  );
 
   useEffect(() => {
-
     // restore session
-    const restoreSession =
-      async () => {
+    const restoreSession = async () => {
+      const {
+        data: { session },
+      } = await supabase.auth.getSession();
 
-        const {
-          data: { session },
-        } =
-          await supabase.auth.getSession();
-
-        if (session?.user) {
-
-          setUser({
-            id: session.user.id,
-
-            email:
-              session.user.email || "",
-
-            full_name:
-              session.user.user_metadata
-                ?.full_name || "",
-
-            username:
-              session.user.user_metadata
-                ?.username || "",
-          });
-
-        } else {
-
-          setUser(null);
-        }
-      };
+      setSupabaseUser(session?.user ?? null);
+    };
 
     restoreSession();
 
     // listen auth changes
     const {
-      data: listener,
-    } =
-      supabase.auth.onAuthStateChange(
-        (_event, session) => {
-
-          if (session?.user) {
-
-            setUser({
-              id: session.user.id,
-
-              email:
-                session.user.email || "",
-
-              full_name:
-                session.user.user_metadata
-                  ?.full_name || "",
-
-              username:
-                session.user.user_metadata
-                  ?.username || "",
-            });
-
-          } else {
-
-            setUser(null);
-          }
-        }
-      );
+      data: { subscription },
+    } = supabase.auth.onAuthStateChange(
+      (_event, session) => {
+        setSupabaseUser(session?.user ?? null);
+      }
+    );
 
     return () => {
-
-      listener.subscription.unsubscribe();
+      subscription.unsubscribe();
     };
-
-  }, [setUser]);
+  }, [setSupabaseUser]);
 
   return <AppRoutes />;
 }

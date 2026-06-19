@@ -1,16 +1,10 @@
 import { useQuery } from "@tanstack/react-query";
-import { useParams } from "react-router-dom";
-import api from "@/lib/api";
+import { projectApi } from "../../projects/api/projectApi";
 
-export function useProjectDetail() {
-  const { projectId } = useParams();
-
+export function useProjectDetail(projectId?: string) {
   return useQuery({
     queryKey: ["project", projectId],
-    queryFn: async () => {
-      const res = await api.get(`/projects/${projectId}`);
-      return res.data;
-    },
+    queryFn: () => projectApi.getProjectDetail(projectId!),
     enabled: !!projectId,
   });
 }
