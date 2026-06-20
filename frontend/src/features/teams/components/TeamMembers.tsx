@@ -12,11 +12,14 @@ interface Props {
   onRemove: (
     userId: string
   ) => void;
+
+  isOwner: boolean;
 }
 
 function TeamMembers({
   members,
   onRemove,
+  isOwner,
 }: Props) {
 
   return (
@@ -77,20 +80,23 @@ function TeamMembers({
                   text-xs
                 "
               >
-                {member.role}
+                {member.role === "owner"
+                  ? "Owner"
+                  : "Member"}
               </span>
 
-              <button
-                onClick={() =>
-                  onRemove(
-                    member.users.id
-                  )
-                }
-              >
-                <Trash2
-                  size={18}
-                />
-              </button>
+              {isOwner &&
+                member.role !== "owner" && (
+                  <button
+                    onClick={() =>
+                      onRemove(
+                        member.users.id
+                      )
+                    }
+                  >
+                    <Trash2 size={18} />
+                  </button>
+                )}
             </div>
           </div>
         )

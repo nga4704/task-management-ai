@@ -51,17 +51,17 @@ export const getTeamDetail =
 
     return response.data;
   };
-
-  export const addMember = async (
+  
+export const addMember = async (
   teamId: string,
-  userId: string
+  email: string
 ) => {
 
   const response =
     await axiosClient.post(
       `/teams/${teamId}/members`,
       {
-        userId,
+        email,
       }
     );
 

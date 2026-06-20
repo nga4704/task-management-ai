@@ -170,37 +170,38 @@ function CreateTeamModal({
   SUBMIT
   -----------------------------------
   */
-const navigate = useNavigate();
+  const navigate = useNavigate();
 
-const handleSubmit = () => {
-  if (!isValid) return;
+  const handleSubmit = () => {
+    if (!isValid) return;
 
-  createTeam(
-    {
-      name,
-      slug,
-      description,
-      invitedMembers,
-    },
-    {
-      onSuccess: (response) => {
-        resetForm();
-
-        onClose();
-
-        navigate(
-          `/teams/${response.team.id}`
-        );
+    createTeam(
+      {
+        name,
+        slug,
+        description,
+        invitedMembers,
       },
+      {
+        onSuccess: (response) => {
+          resetForm();
 
-      onError: () => {
-        alert(
-          "Failed to create workspace"
-        );
-      },
-    }
-  );
-};
+          onClose();
+
+          navigate(
+            `/teams/${response.team.id}`
+          );
+        },
+
+        onError: (error: any) => {
+          alert(
+            error?.response?.data?.message ||
+            "Failed to create workspace"
+          );
+        }
+      }
+    );
+  };
 
   /*
   -----------------------------------
@@ -572,19 +573,19 @@ const handleSubmit = () => {
             {/* MEMBER LIST */}
             {invitedMembers.length >
               0 && (
-              <div
-                className="
+                <div
+                  className="
                   mt-4
                   flex
                   flex-wrap
                   gap-3
                 "
-              >
-                {invitedMembers.map(
-                  (email) => (
-                    <div
-                      key={email}
-                      className="
+                >
+                  {invitedMembers.map(
+                    (email) => (
+                      <div
+                        key={email}
+                        className="
                         flex
                         items-center
                         gap-2
@@ -596,33 +597,33 @@ const handleSubmit = () => {
                         px-4
                         py-2
                       "
-                    >
-                      <span
-                        className="
+                      >
+                        <span
+                          className="
                           text-sm
                         "
-                      >
-                        {email}
-                      </span>
+                        >
+                          {email}
+                        </span>
 
-                      <button
-                        type="button"
-                        onClick={() =>
-                          handleRemoveMember(
-                            email
-                          )
-                        }
-                        className="
+                        <button
+                          type="button"
+                          onClick={() =>
+                            handleRemoveMember(
+                              email
+                            )
+                          }
+                          className="
                           text-muted
                         "
-                      >
-                        <X size={14} />
-                      </button>
-                    </div>
-                  )
-                )}
-              </div>
-            )}
+                        >
+                          <X size={14} />
+                        </button>
+                      </div>
+                    )
+                  )}
+                </div>
+              )}
           </div>
 
           {/* ACTIONS */}

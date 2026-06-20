@@ -39,7 +39,8 @@ Xây dựng hệ thống quản lý dự án hiện đại hỗ trợ:
 * Node.js
 * Express.js
 * TypeScript
-* JWT Authentication
+* Supabase Authentication
+* JWT
 
 ### Database
 
@@ -58,65 +59,92 @@ Xây dựng hệ thống quản lý dự án hiện đại hỗ trợ:
 
 ## Core AI Features
 
-### Progress Prediction
+### Progress Prediction (4)
 
 Dự đoán khả năng hoàn thành dự án.
 
-### Delay Risk Detection
+### Delay Risk Detection (2)
 
-Phát hiện nguy cơ trễ tiến độ.
+Phát hiện nguy cơ trễ tiến độ. (+)
 
-### Schedule Suggestion
+### Schedule Suggestion (3)
 
 Đề xuất lịch trình tối ưu.
 
-### Team Productivity Analysis
+### Team Productivity Analysis (1)
 
-Đánh giá hiệu suất nhóm.
+Đánh giá hiệu suất nhóm. (+)
 
 ---
 
 ## Main Modules
 
-Authentication
+### Authentication
 
-Team Management
+- Login
+- Register
+- Session Management
 
-Project Management
+### Team Management
 
-Task Management
+- Team CRUD
+- Member Management
+- Role Management
 
-Dashboard
+### Project Management
 
-Calendar
+- Project CRUD
+- Project Overview
 
-Timeline
+### Task Management
 
-Analytics
+- Task CRUD
+- Assignment
+- Status Tracking
+- Progress Tracking
 
-AI Insights
+### Collaboration
 
-Notification
+- Notifications
+- Activity Tracking
+
+### Visualization
+
+- Dashboard
+- Kanban Board
+- Calendar
+- Timeline
+
+### Analytics
+
+- Performance Metrics
+- Progress Reports
+- Team Productivity Analysis
+
+### AI Insights
+
+- Progress Prediction
+- Delay Risk Detection
+- Schedule Suggestion
+- Productivity Analysis
 
 ---
 
 ## User Roles
 
-### Admin
-
-Toàn quyền hệ thống.
-
 ### Team Owner
 
-Quản lý team.
-
-### Project Manager
-
-Quản lý dự án.
+- Tạo và quản lý Team.
+- Quản lý thành viên trong Team.
+- Tạo và quản lý Project.
+- Toàn quyền trong phạm vi Team.
 
 ### Member
 
-Thực hiện công việc.
+- Tham gia Project.
+- Thực hiện Task được giao.
+- Theo dõi tiến độ công việc.
+- Cập nhật trạng thái Task.
 
 ---
 

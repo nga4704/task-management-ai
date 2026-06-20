@@ -53,10 +53,27 @@ function TeamSettings({
   const handleUpdate =
     () => {
 
-      updateMutation.mutate({
-        name,
-        description,
-      });
+      updateMutation.mutate(
+        {
+          name,
+          description,
+        },
+        {
+          onSuccess: () => {
+            alert(
+              "Updated successfully"
+            );
+          },
+
+          onError: (error: any) => {
+            alert(
+              error?.response?.data
+                ?.message ||
+              "Failed to update"
+            );
+          },
+        }
+      );
     };
 
   const handleDelete =

@@ -12,8 +12,6 @@ import {
   useState,
 } from "react";
 
-import CreateTaskModal from "./CreateTaskModal";
-
 function BoardHeader() {
 
   const navigate =
@@ -113,7 +111,7 @@ function BoardHeader() {
               Analytics
             </button>
 
-            <button
+            {/* <button
               onClick={() =>
                 setIsOpen(true)
               }
@@ -131,18 +129,18 @@ function BoardHeader() {
             >
               <Plus size={18} />
               Create Task
-            </button>
+            </button> */}
 
           </div>
         </div>
       </div>
 
-      <CreateTaskModal
+      {/* <CreateTaskModal
         open={isOpen}
         onClose={() =>
           setIsOpen(false)
         }
-      />
+      /> */}
     </>
   );
 }

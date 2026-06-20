@@ -5,24 +5,21 @@ import {
   projectApi,
 } from "../api/projectApi";
 
-export const useTeamProjects =
-  (teamId?: string) => {
+type Project = {
+  id: string;
+  name: string;
+};
 
-    return useQuery({
-      queryKey: [
-        "team-projects",
-        teamId,
-      ],
+export const useTeamProjects = (teamId?: string) => {
+  return useQuery<Project[]>({
+    queryKey: ["team-projects", teamId],
 
-      queryFn: async () => {
-        const res =
-          await projectApi.getTeamProjects(
-            teamId as string
-          );
+    queryFn: async () => {
+      if (!teamId) return [];
 
-        return res.data;
-      },
+      return projectApi.getTeamProjects(teamId);
+    },
 
-      enabled: !!teamId,
-    });
-  };
+    enabled: !!teamId,
+  });
+};

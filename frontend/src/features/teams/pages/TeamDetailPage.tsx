@@ -15,13 +15,36 @@ import {
   Users,
   FolderKanban,
   Settings,
+  Trash2,
 } from "lucide-react";
 
 import {
   useTeamDetail,
 } from "../hooks/useTeamDetail";
 
+import InviteMemberForm from "../components/InviteMemberForm";
+
+import {
+  useAddMember,
+} from "../hooks/useAddMember";
+
+import {
+  useRemoveMember,
+} from "../hooks/useRemoveMember";
+
+import TeamMembers from "../components/TeamMembers";
+
+import TeamSettings
+  from "../components/TeamSettings";
+
+import { useAuthStore } from "@/store/authStore";
+
 function TeamDetailPage() {
+  const currentUser =
+    useAuthStore(
+      (state) => state.user
+    );
+
   const { teamId } = useParams();
 
   const navigate = useNavigate();
@@ -37,14 +60,84 @@ function TeamDetailPage() {
     isError,
   } = useTeamDetail(teamId || "");
 
-useEffect(() => {
-  if (teamId) {
-    setSelectedTeam(
-      teamId,
-      team?.name || ""
+  const addMemberMutation =
+    useAddMember(
+      teamId || ""
     );
-  }
-}, [teamId]);
+
+  const removeMemberMutation =
+    useRemoveMember(
+      teamId || ""
+    );
+
+  const isOwner =
+    currentUser?.id ===
+    team?.owner_id;
+
+  useEffect(() => {
+    if (
+      teamId &&
+      team?.name
+    ) {
+      setSelectedTeam(
+        teamId,
+        team.name
+      );
+    }
+  }, [
+    teamId,
+    team?.name,
+    setSelectedTeam,
+  ]);
+
+  const handleInviteMember =
+    (email: string) => {
+
+      addMemberMutation.mutate(
+        email,
+        {
+          onSuccess: () => {
+            alert(
+              "Member added successfully"
+            );
+          },
+
+          onError: (error: any) => {
+            alert(
+              error?.response?.data?.message ||
+              "Failed to add member"
+            );
+          },
+        }
+      );
+    };
+
+  const handleRemoveMember =
+    (userId: string) => {
+
+      const confirmed =
+        window.confirm(
+          "Remove member?"
+        );
+
+      if (!confirmed) {
+        return;
+      }
+
+      removeMemberMutation.mutate(
+        userId,
+        {
+          onError: (
+            error: any
+          ) => {
+            alert(
+              error?.response?.data?.message ||
+              "Failed to remove member"
+            );
+          },
+        }
+      );
+    };
 
   if (isLoading) {
     return (
@@ -273,64 +366,51 @@ useEffect(() => {
             Team Members
           </h3>
 
+          {isOwner && (
+            <div className="mb-6">
+              <InviteMemberForm
+                onInvite={
+                  handleInviteMember
+                }
+              />
+            </div>
+          )}
+
           <div className="space-y-3">
-            {team.team_members?.map(
-              (member) => (
-                <div
-                  key={member.id}
-                  className="
-                    flex
-                    items-center
-                    justify-between
-
-                    rounded-2xl
-                    border
-                    border-border
-
-                    p-4
-                  "
-                >
-                  <div>
-                    <p
-                      className="
-                        font-medium
-                      "
-                    >
-                      {member.users
-                        ?.full_name ||
-                        member.users
-                          ?.email}
-                    </p>
-
-                    <p
-                      className="
-                        text-sm
-                        text-muted
-                      "
-                    >
-                      {
-                        member.users
-                          ?.email
-                      }
-                    </p>
-                  </div>
-
-                  <span
-                    className="
-                      rounded-full
-                      bg-surfaceSecondary
-                      px-3
-                      py-1
-                      text-xs
-                    "
-                  >
-                    {member.role}
-                  </span>
-                </div>
-              )
-            )}
+            <TeamMembers
+              members={team.team_members}
+              onRemove={handleRemoveMember}
+              isOwner={isOwner}
+            />
           </div>
         </div>
+
+        {/* SETTINGS */}
+        {isOwner && (
+          <div
+            className="
+      rounded-3xl
+      border
+      border-border
+      bg-surface
+      p-6
+    "
+          >
+            <h3
+              className="
+        mb-4
+        text-xl
+        font-semibold
+      "
+            >
+              Workspace Settings
+            </h3>
+
+            <TeamSettings
+              team={team}
+            />
+          </div>
+        )}
       </div>
     </MainLayout>
   );

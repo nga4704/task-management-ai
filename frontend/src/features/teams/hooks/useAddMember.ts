@@ -16,10 +16,10 @@ export const useAddMember =
     return useMutation({
 
       mutationFn:
-        (userId: string) =>
+        (email: string) =>
           addMember(
             teamId,
-            userId
+            email
           ),
 
       onSuccess: () => {

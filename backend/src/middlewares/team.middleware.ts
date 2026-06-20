@@ -76,3 +76,45 @@ export const isTeamMember =
 
     next();
   };
+
+  export const isTeamAdminOrOwner =
+  async (
+    req: AuthRequest,
+    res: Response,
+    next: NextFunction
+  ) => {
+
+    const teamId =
+      req.params.teamId as string;
+
+    const userId =
+      req.user?.id as string;
+
+    const member =
+      await prisma.team_members.findFirst({
+        where: {
+          team_id: teamId,
+          user_id: userId,
+        },
+      });
+
+    if (!member) {
+
+      return res.status(403).json({
+        message: "Forbidden",
+      });
+    }
+
+    if (
+      member.role !== "owner" &&
+      member.role !== "admin"
+    ) {
+
+      return res.status(403).json({
+        message:
+          "Only owner or admin can do this",
+      });
+    }
+
+    next();
+  };

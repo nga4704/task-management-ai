@@ -10,29 +10,29 @@ export const createTaskService = async (data: {
   title: string;
   description?: string;
   priority?: string;
-  deadline?: Date;
+  deadline?: string;
   assigneeId?: string;
   createdBy: string;
 }) => {
   const task = await prisma.tasks.create({
     data: {
       team_id: data.teamId,
-       project_id: data.projectId, 
+      project_id: data.projectId,
       title: data.title,
       description: data.description,
       priority: data.priority,
-      deadline: data.deadline,
+      deadline: data.deadline ? new Date(data.deadline) : null,
       assignee_id: data.assigneeId,
       created_by: data.createdBy,
     },
   });
 
-  
   const io = getIO();
   io.emit("taskCreated", task);
 
   return task;
 };
+
 
 /* 
    GET TASKS

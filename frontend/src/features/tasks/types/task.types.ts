@@ -1,4 +1,14 @@
-export interface CreateTaskPayload {
+export type TaskStatus =
+  | "todo"
+  | "in-progress"
+  | "review"
+  | "done";
+
+export type TaskPriority = "low" | "medium" | "high";
+
+export interface Task {
+  id: string;
+
   team_id: string;
   project_id: string;
 
@@ -7,14 +17,16 @@ export interface CreateTaskPayload {
 
   assignee_id?: string;
 
-  priority: "low" | "medium" | "high";
+  priority: TaskPriority;
 
-  status: "todo" | "in-progress" | "review" | "done";
+  status: TaskStatus;
 
   deadline?: string;
 
   estimated_hours?: number;
 
-  // VERY IMPORTANT for Kanban / drag & drop
   position?: number;
+
+  created_at?: string;
+  updated_at?: string;
 }

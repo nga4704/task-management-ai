@@ -1,11 +1,11 @@
 import MainLayout from "@/app/layouts/MainLayout";
 
-import TaskHeader from "../../components/task-detail/TaskHeader";
-import TaskInfoCard from "../../components/task-detail/TaskInfoCard";
-import SubtaskItem from "../../components/task-detail/SubtaskItem";
-import CommentCard from "../../components/task-detail/CommentCard";
-import ActivityTimeline from "../../components/task-detail/ActivityTimeline";
-import AttachmentCard from "../../components/task-detail/AttachmentCard";
+import TaskHeader from "../components/TaskHeader";
+import TaskInfoCard from "../components/TaskInfoCard";
+import SubtaskItem from "../components/SubtaskItem";
+import CommentCard from "../components/CommentCard";
+import ActivityTimeline from "../components/ActivityTimeline";
+import AttachmentCard from "../components/AttachmentCard";
 
 function TaskDetailPage() {
   return (

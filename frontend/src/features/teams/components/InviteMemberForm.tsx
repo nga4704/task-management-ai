@@ -1,6 +1,5 @@
-import {
-  useState,
-} from "react";
+import { useState } from "react";
+import type { KeyboardEvent } from "react";
 
 interface Props {
   onInvite: (
@@ -12,9 +11,34 @@ function InviteMemberForm({
   onInvite,
 }: Props) {
 
-  const [email,
-    setEmail]
-    = useState("");
+  const [email, setEmail] =
+    useState("");
+
+  const handleSubmit = () => {
+
+    const value =
+      email.trim();
+
+    if (!value) return;
+
+    onInvite(value);
+
+    setEmail("");
+  };
+
+  const handleKeyDown = (
+    e: KeyboardEvent<HTMLInputElement>
+  ) => {
+
+    if (e.key === "Enter") {
+      e.preventDefault();
+
+      handleSubmit();
+    }
+  };
+
+  const isDisabled =
+    email.trim().length === 0;
 
   return (
     <div
@@ -30,6 +54,9 @@ function InviteMemberForm({
             e.target.value
           )
         }
+        onKeyDown={
+          handleKeyDown
+        }
         placeholder="user@email.com"
         className="
           flex-1
@@ -42,18 +69,21 @@ function InviteMemberForm({
       />
 
       <button
-        onClick={() => {
-
-          onInvite(email);
-
-          setEmail("");
-        }}
+        onClick={
+          handleSubmit
+        }
+        disabled={
+          isDisabled
+        }
         className="
           rounded-2xl
           bg-black
           px-5
           py-3
           text-white
+
+          disabled:opacity-50
+          disabled:cursor-not-allowed
         "
       >
         Invite

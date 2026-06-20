@@ -7,8 +7,8 @@ import {
 } from "lucide-react";
 
 import {
-  createTask,
-} from "@/services/task.service";
+  taskApi,
+} from "../../../tasks/api/taskApi";
 
 type Props = {
   open: boolean;
@@ -55,7 +55,7 @@ function CreateTaskModal({
 
         setLoading(true);
 
-        await createTask({
+        await taskApi.createTask({
           team_id:
             "TEAM_ID",
 

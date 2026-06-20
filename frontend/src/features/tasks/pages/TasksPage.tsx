@@ -1,178 +1,85 @@
+import MainLayout from "@/app/layouts/MainLayout";
+
+import { DragDropContext } from "@hello-pangea/dnd";
+import type { DropResult } from "@hello-pangea/dnd";
+
 import { useState } from "react";
-
-import {
-  DragDropContext,
-  type DropResult,
-} from "@hello-pangea/dnd";
-
-import MainLayout from "../../../app/layouts/MainLayout";
 
 import BoardHeader from "../components/BoardHeader";
 import BoardFilter from "@/shared/components/cards/BoardFilter";
-import KanbanColumn from "../components/KanbanColumn";
 import TaskStats from "../components/TaskStats";
+import KanbanColumn from "../components/KanbanColumn";
 
-import { mockTasks } from "../data/mockTasks";
+import { useTasks } from "@/features/tasks/hooks/useTasks";
+import { taskApi } from "@/features/tasks/api/taskApi";
 
-import type {
-  TaskColumns,
-} from "@/shared/types/task.types";
+import type { Task, TaskStatus } from "@/features/tasks/types/task.types";
+import { useMoveTask } from "@/features/tasks/hooks/useMoveTask";
 
 function TasksPage() {
-  const [columns, setColumns] =
-    useState<TaskColumns>(mockTasks);
+  const [projectId] = useState<string | undefined>(undefined);
 
-  const handleDragEnd = (
-    result: DropResult
-  ) => {
-    const {
-      source,
-      destination,
-    } = result;
+  const { data: tasks = [] } = useTasks(projectId);
 
-    // Drop outside board
-    if (!destination) {
-      return;
-    }
+   const moveTask = useMoveTask(projectId);
 
-    // Same position
-    if (
-      source.droppableId ===
-        destination.droppableId &&
-      source.index ===
-        destination.index
-    ) {
-      return;
-    }
+  const groupByStatus = (status: TaskStatus) =>
+    tasks.filter((t: Task) => t.status === status);
 
-    const sourceColumn =
-      columns[
-        source.droppableId as keyof TaskColumns
-      ];
+  const handleDragEnd = async (result: DropResult) => {
+    const { destination, draggableId } = result;
 
-    const destinationColumn =
-      columns[
-        destination.droppableId as keyof TaskColumns
-      ];
+    if (!destination) return;
 
-    // SAME COLUMN
-    if (
-      source.droppableId ===
-      destination.droppableId
-    ) {
-      const updatedTasks = [
-        ...sourceColumn,
-      ];
+    const newStatus = destination.droppableId as TaskStatus;
 
-      const [movedTask] =
-        updatedTasks.splice(
-          source.index,
-          1
-        );
+    await taskApi.moveTask(draggableId, newStatus);
 
-      updatedTasks.splice(
-        destination.index,
-        0,
-        movedTask
-      );
-
-      setColumns({
-        ...columns,
-
-        [source.droppableId]:
-          updatedTasks,
-      });
-
-      return;
-    }
-
-    // DIFFERENT COLUMN
-    const sourceTasks = [
-      ...sourceColumn,
-    ];
-
-    const destinationTasks = [
-      ...destinationColumn,
-    ];
-
-    const [movedTask] =
-      sourceTasks.splice(
-        source.index,
-        1
-      );
-
-    destinationTasks.splice(
-      destination.index,
-      0,
-      movedTask
-    );
-
-    setColumns({
-      ...columns,
-
-      [source.droppableId]:
-        sourceTasks,
-
-      [destination.droppableId]:
-        destinationTasks,
+     moveTask.mutate({
+      taskId: draggableId,
+      status: newStatus,
     });
   };
 
   return (
     <MainLayout
       title="Task Management"
-      description="
-        AI-powered kanban workflow
-        and productivity optimization
-      "
+      description="AI-powered task system"
     >
       <div className="space-y-6">
-
-        {/* HERO */}
         <BoardHeader />
 
-        {/* FILTER */}
         <BoardFilter />
 
-        {/* STATS */}
         <TaskStats />
 
-        {/* BOARD */}
-        <DragDropContext
-          onDragEnd={handleDragEnd}
-        >
-          <section
-            className="
-              grid
-              grid-cols-1
-              gap-6
-              md:grid-cols-2
-              xl:grid-cols-4
-            "
-          >
+        <DragDropContext onDragEnd={handleDragEnd}>
+          <section className="grid gap-6 md:grid-cols-2 xl:grid-cols-4">
+
             <KanbanColumn
               title="Todo"
-              tasks={columns.todo}
+              tasks={groupByStatus("todo")}
               droppableId="todo"
             />
 
             <KanbanColumn
               title="In Progress"
-              tasks={columns.inProgress}
-              droppableId="inProgress"
+              tasks={groupByStatus("in-progress")}
+              droppableId="in-progress"
             />
 
             <KanbanColumn
               title="Review"
-              tasks={columns.review}
+              tasks={groupByStatus("review")}
               droppableId="review"
             />
 
             <KanbanColumn
               title="Done"
-              tasks={columns.done}
+              tasks={groupByStatus("done")}
               droppableId="done"
             />
+
           </section>
         </DragDropContext>
       </div>
