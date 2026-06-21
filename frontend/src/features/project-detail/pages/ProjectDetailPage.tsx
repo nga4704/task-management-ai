@@ -1,4 +1,7 @@
 import { useState } from "react";
+import toast from "react-hot-toast";
+import { useNavigate } from "react-router-dom";
+import { useDeleteProject } from "../hooks/useDeleteProject";
 
 import MainLayout from "@/app/layouts/MainLayout";
 
@@ -15,11 +18,34 @@ import CalendarTab from "../components/tabs/CalendarTab";
 import TimelineTab from "../components/tabs/TimelineTab";
 import MembersTab from "../components/tabs/MembersTab";
 import AnalyticsTab from "../components/tabs/AnalyticsTab";
+import EditProjectModal
+  from "../components/common/EditProjectModal";
 
 import { useParams } from "react-router-dom";
 
 function ProjectDetailPage() {
   const { projectId } = useParams();
+
+  const [
+    editOpen,
+    setEditOpen,
+  ] = useState(false);
+
+  const navigate = useNavigate();
+  const { mutate: deleteProject } = useDeleteProject();
+
+
+
+  if (!projectId) {
+    return (
+      <MainLayout
+        title="Invalid Project"
+        description=""
+      >
+        Invalid project id
+      </MainLayout>
+    );
+  }
 
   const { data: project, isLoading } =
     useProjectDetail(projectId);
@@ -55,6 +81,27 @@ function ProjectDetailPage() {
     );
   }
 
+  const handleDelete = () => {
+    if (!projectId) return;
+
+    const confirmDelete = window.confirm(
+      "Are you sure you want to delete this project?"
+    );
+
+    if (!confirmDelete) return;
+
+    deleteProject(projectId, {
+      onSuccess: () => {
+        toast.success("Project deleted");
+
+        navigate(`/teams/${project.teamId}/projects`);
+      },
+      onError: () => {
+        toast.error("Delete failed");
+      },
+    });
+  };
+
   return (
     <MainLayout
       title={project.name}
@@ -64,9 +111,29 @@ function ProjectDetailPage() {
         <ProjectHeader
           projectId={project.id}
           name={project.name}
-          description={project.description}
-          progress={project.progress}
+          description={project.description ?? ""}
+          progress={project.progress ?? 0}
           status={project.status}
+
+          totalTasks={
+            project.taskCount ?? 0
+          }
+
+          totalMembers={
+            project.memberCount ?? 0
+          }
+
+          dueDate={
+            project.endDate
+              ? new Date(
+                project.endDate
+              ).toLocaleDateString()
+              : "N/A"
+          }
+          onEdit={() =>
+            setEditOpen(true)
+          }
+          onDelete={handleDelete}
         />
 
         <ProjectTabs
@@ -98,7 +165,15 @@ function ProjectDetailPage() {
           <AnalyticsTab />
         )}
       </div>
+      <EditProjectModal
+        open={editOpen}
+        onClose={() =>
+          setEditOpen(false)
+        }
+        project={project}
+      />
     </MainLayout>
+
   );
 }
 

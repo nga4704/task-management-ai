@@ -1,18 +1,16 @@
 import prisma from "../../config/prisma";
 
-export const findProjects =
-async () => {
+export const findProjects = async (teamId?: string) => {
   return prisma.projects.findMany({
+    where: teamId ? { team_id: teamId } : undefined,
     include: {
       tasks: true,
-
       teams: {
         include: {
           team_members: true,
         },
       },
     },
-
     orderBy: {
       created_at: "desc",
     },

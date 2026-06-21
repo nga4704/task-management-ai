@@ -12,6 +12,7 @@ import {
 
 import { protect } from "../../middlewares/auth.middleware";
 import { isTeamMember } from "../../middlewares/team.middleware";
+import { isProjectMember } from "../../middlewares/project.middleware";
 
 const router = Router();
 
@@ -34,8 +35,24 @@ router.get(
 router.get("/dashboard", getProjectsDashboard);
 router.get("/activity", getProjectsActivity);
 
-router.get("/:projectId", getProjectDetail);
-router.put("/:projectId", updateProject);
-router.delete("/:projectId", deleteProject);
+router.put(
+  "/:projectId",
+  protect,
+  isProjectMember,
+  updateProject
+);
+
+router.delete(
+  "/:projectId",
+  protect,
+  isProjectMember,
+  deleteProject
+);
+
+router.get(
+ "/:projectId",
+ protect,
+ getProjectDetail
+);
 
 export default router;

@@ -16,6 +16,14 @@ import {
 
 import CreateTaskModal from "../common/CreateTaskModal";
 
+import type {
+  ProjectStatus,
+} from "@/features/projects/types/project.types";
+
+import {
+  projectStatusConfig,
+} from "@/features/projects/constants/projectStatus";
+
 type ProjectHeaderProps = {
   projectId: string;
 
@@ -23,12 +31,15 @@ type ProjectHeaderProps = {
   description: string;
 
   progress: number;
-  status: string;
+  status: ProjectStatus;
 
   totalTasks?: number;
   totalMembers?: number;
 
   dueDate?: string;
+
+  onEdit: () => void;
+  onDelete: () => void;
 };
 
 function ProjectHeader({
@@ -44,6 +55,10 @@ function ProjectHeader({
   totalMembers = 0,
 
   dueDate = "N/A",
+
+  onEdit,
+  onDelete,
+
 }: ProjectHeaderProps) {
   const navigate =
     useNavigate();
@@ -84,23 +99,19 @@ function ProjectHeader({
           <div className="flex-1">
             {/* STATUS */}
             <div
-              className="
-                inline-flex
-                items-center
-                gap-2
-
-                rounded-full
-
-                bg-primaryLight
-
-                px-3
-                py-1.5
-
-                text-xs
-                font-semibold
-              "
+              className={`
+                  inline-flex
+                  items-center
+                  gap-2
+                  rounded-full
+                  px-3
+                  py-1.5
+                  text-xs
+                  font-semibold
+                  ${projectStatusConfig[status].className}
+                `}
             >
-              {status.toUpperCase()}
+              {projectStatusConfig[status].label}
             </div>
 
             {/* TITLE */}
@@ -256,6 +267,56 @@ function ProjectHeader({
               <BarChart3 size={18} />
 
               Analytics
+            </button>
+            
+            <button
+              onClick={onEdit}
+              className="
+                flex
+                items-center
+                justify-center
+                gap-2
+
+                rounded-2xl
+
+                border
+                border-border
+
+                bg-white
+
+                px-5
+                py-3
+
+                font-medium
+              "
+            >
+              Edit Project
+            </button>
+
+            <button
+              onClick={onDelete}
+              className="
+                flex
+                items-center
+                justify-center
+                gap-2
+
+                rounded-2xl
+                border
+                border-red-200
+
+                bg-red-50
+                text-red-600
+
+                px-5
+                py-3
+
+                font-medium
+
+                hover:bg-red-100
+              "
+            >
+              Delete Project
             </button>
 
             <button

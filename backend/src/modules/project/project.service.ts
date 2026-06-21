@@ -1,7 +1,7 @@
 import prisma from "../../config/prisma";
-
+import { AppError } from "../../middlewares/error.middleware";
 import { getIO } from "../../config/socket";
-
+import { ProjectStatus } from "@prisma/client";
 import {
   findProjects,
   findProjectById,
@@ -14,12 +14,20 @@ import {
   calculateAIScore,
 } from "./project.utils";
 
+type UpdateProjectDto = {
+  name?: string;
+  description?: string;
+  status?: ProjectStatus;
+  startDate?: Date;
+  endDate?: Date;
+};
+
 export const createProjectService =
   async (
     name: string,
     description: string,
     teamId: string,
-    status: string,
+    status: ProjectStatus,
     startDate?: Date,
     endDate?: Date
   ) => {
@@ -30,7 +38,7 @@ export const createProjectService =
           description,
 
           team_id: teamId,
-          status,
+          status: status as ProjectStatus,
           start_date:
             startDate,
 
@@ -75,6 +83,8 @@ export const getProjectDetailService =
     return {
       ...mapProjectList(project),
 
+      teamId: project.team_id,
+
       tasks: project.tasks,
 
       members:
@@ -86,44 +96,91 @@ export const getProjectDetailService =
 export const updateProjectService =
   async (
     projectId: string,
-    data: any
+    userId: string,
+    data: UpdateProjectDto,
+
   ) => {
-    const project =
-      await prisma.projects.update({
-        where: {
-          id: projectId,
-        },
-
-        data,
-      });
-
-    getIO().emit(
-      "projectUpdated",
-      project
-    );
-
-    return project;
-  };
-
-export const deleteProjectService =
-  async (
-    projectId: string
-  ) => {
-    await prisma.projects.delete({
-      where: {
-        id: projectId,
+    const project = await prisma.projects.findUnique({
+      where: { id: projectId },
+      include: {
+        teams: true,
       },
     });
 
-    getIO().emit(
-      "projectDeleted",
-      projectId
-    );
+    if (!project) {
+      throw new Error("Project not found");
+    }
 
-    return {
-      success: true,
-    };
+    // 🔒 OWNER CHECK
+    if (project.teams.owner_id !== userId) {
+      throw new Error("Forbidden: Only owner can update project");
+    }
+
+    const {
+      name,
+      description,
+      status,
+      startDate,
+      endDate,
+    } = data;
+
+    const updated = await prisma.projects.update({
+      where: { id: projectId },
+      data: {
+        ...(name !== undefined && { name }),
+        ...(description !== undefined && { description }),
+        ...(status !== undefined && { status }),
+        ...(startDate !== undefined && {
+          start_date: new Date(startDate),
+        }),
+
+        ...(endDate !== undefined && {
+          end_date: new Date(endDate),
+        }),
+      },
+    });
+
+    getIO().emit("projectUpdated", updated);
+
+    return updated;
   };
+
+export const deleteProjectService = async (
+  projectId: string,
+  userId: string
+) => {
+  const project = await prisma.projects.findUnique({
+    where: { id: projectId },
+    include: {
+      teams: true,
+    },
+  });
+
+  if (!project) {
+    throw new AppError("Project not found", 404);
+  }
+
+  const team = await prisma.teams.findUnique({
+    where: { id: project.team_id },
+  });
+
+  if (!team) {
+    throw new AppError("Team not found", 404);
+  }
+
+  // ONLY OWNER CAN DELETE
+  if (team.owner_id !== userId) {
+    throw new AppError("Only owner can delete project", 403);
+  }
+
+  await prisma.projects.delete({
+    where: { id: projectId },
+  });
+
+  getIO().emit("projectDeleted", projectId);
+
+  return { success: true };
+};
 
 
 export const getProjectsActivityService =
@@ -178,14 +235,14 @@ export const getProjectsDashboardService =
     const activeProjects =
       projects.filter(
         (p) =>
-          p.status === "active"
+          p.status === "IN_PROGRESS"
       ).length;
 
     const completedProjects =
       projects.filter(
         (p) =>
           p.status ===
-          "completed"
+          "COMPLETED"
       ).length;
 
     const totalMembers =

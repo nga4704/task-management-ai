@@ -1,10 +1,10 @@
 import type { ReactNode } from "react";
-import {
-  BrainCircuit,
-  CheckCircle2,
-  Users,
-  AlertTriangle,
-} from "lucide-react";
+// import {
+//   BrainCircuit,
+//   CheckCircle2,
+//   Users,
+//   AlertTriangle,
+// } from "lucide-react";
 
 type AuthLayoutProps = {
   title: string;

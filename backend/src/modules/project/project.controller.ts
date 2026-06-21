@@ -1,5 +1,6 @@
 import { Request, Response } from "express";
 import * as projectService from "./project.service";
+import { AuthRequest } from "../../middlewares/auth.middleware";
 
 export const createProject = async (req: any, res: Response) => {
   try {
@@ -30,7 +31,7 @@ export const createProject = async (req: any, res: Response) => {
 };
 
 export const getProjects = async (
-  req: Request,
+  req: AuthRequest,
   res: Response
 ) => {
   const projects =
@@ -40,7 +41,7 @@ export const getProjects = async (
 };
 
 export const getProjectDetail = async (
-  req: Request,
+  req: AuthRequest,
   res: Response
 ) => {
   const project =
@@ -52,24 +53,33 @@ export const getProjectDetail = async (
 };
 
 export const updateProject = async (
-  req: Request,
+  req: AuthRequest,
   res: Response
 ) => {
-  const project =
-    await projectService.updateProjectService(
-      req.params.projectId as string,
-      req.body
-    );
+  if (!req.user?.id) {
+    return res.status(401).json({ message: "Unauthorized" });
+  }
+
+  const project = await projectService.updateProjectService(
+    req.params.projectId as string,
+    req.user.id,
+    req.body
+  );
 
   res.json(project);
 };
 
 export const deleteProject = async (
-  req: Request,
+  req: AuthRequest,
   res: Response
 ) => {
+  if (!req.user?.id) {
+    return res.status(401).json({ message: "Unauthorized" });
+  }
+
   await projectService.deleteProjectService(
-    req.params.projectId as string
+    req.params.projectId as string,
+    req.user.id
   );
 
   res.json({

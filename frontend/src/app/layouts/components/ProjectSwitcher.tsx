@@ -63,11 +63,10 @@ function ProjectSwitcher() {
                     `/teams/${activeTeamId}/projects/${project.id}`
                   );
                 }}
-                className={`flex w-full items-center justify-between px-4 py-3 text-left text-sm hover:bg-surfaceSecondary ${
-                  projectId === project.id
-                    ? "bg-primaryLight"
-                    : ""
-                }`}
+                className={`flex w-full items-center justify-between px-4 py-3 text-left text-sm hover:bg-surfaceSecondary ${projectId === project.id
+                  ? "bg-primaryLight"
+                  : ""
+                  }`}
               >
                 {project.name}
               </button>

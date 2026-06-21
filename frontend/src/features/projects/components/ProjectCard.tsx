@@ -5,8 +5,6 @@ import {
 
 import { useNavigate } from "react-router-dom";
 
-import { useProjectStore } from "@/store/projectStore";
-
 import type { Project } from "../types/project.types";
 
 import {
@@ -23,27 +21,16 @@ function ProjectCard({
   const navigate =
     useNavigate();
 
-  const setSelectedProject =
-    useProjectStore(
-      (state) =>
-        state.setSelectedProject
-    );
-
   const statusConfig =
     projectStatusConfig[
     project.status
     ];
 
-  const handleOpenProject =
-    () => {
-      setSelectedProject(
-        project.id,
-        project.name
-      );
-      navigate(
-        `/teams/${project.team_id}/projects/${project.id}`
-      );
-    };
+  const handleOpenProject = () => {
+    navigate(
+      `/teams/${project.team_id}/projects/${project.id}`
+    );
+  };
 
   return (
     <article

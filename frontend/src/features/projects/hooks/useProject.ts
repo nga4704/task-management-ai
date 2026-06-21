@@ -5,8 +5,7 @@ export const useProject = (projectId: string) => {
   return useQuery({
     queryKey: ["project", projectId],
     queryFn: async () => {
-      const res = await projectApi.getProjectById(projectId);
-      return res.data;
+      return projectApi.getProjectDetail(projectId);
     },
     enabled: !!projectId,
   });

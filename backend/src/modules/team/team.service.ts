@@ -274,7 +274,6 @@ export const removeMemberService = async (
       403
     );
   }
-
   await prisma.team_members.deleteMany({
     where: {
       team_id: teamId,

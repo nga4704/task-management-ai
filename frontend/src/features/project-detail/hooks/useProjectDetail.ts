@@ -1,10 +1,20 @@
 import { useQuery } from "@tanstack/react-query";
-import { projectApi } from "../../projects/api/projectApi";
+
+import { projectApi } from "@/features/projects/api/projectApi";
+
+import type {
+  ProjectDetail,
+} from "../types/projectDetail.types";
 
 export function useProjectDetail(projectId?: string) {
-  return useQuery({
-    queryKey: ["project", projectId],
-    queryFn: () => projectApi.getProjectDetail(projectId!),
+  return useQuery<ProjectDetail>({
+    queryKey: ["project-detail", projectId],
+
+    queryFn: () =>
+      projectApi.getProjectDetail(projectId!),
+
     enabled: !!projectId,
+
+    retry: false,
   });
 }

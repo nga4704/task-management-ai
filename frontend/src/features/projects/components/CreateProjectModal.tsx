@@ -1,12 +1,10 @@
 import {
   X,
-  Plus,
 } from "lucide-react";
 
 import { useState } from "react";
 
 import type {
-  Project,
   ProjectStatus,
 } from "../types/project.types";
 import {
@@ -52,16 +50,7 @@ function CreateProjectModal({
   const [endDate, setEndDate] =
     useState("");
 
-  const [
-    memberEmail,
-    setMemberEmail,
-  ] = useState("");
-
-  const [
-    memberEmails,
-    setMemberEmails,
-  ] = useState<string[]>([]);
-
+ 
   const {
     mutate: createProject,
     isPending,
@@ -71,42 +60,7 @@ function CreateProjectModal({
     return null;
   }
 
-  const handleAddMember =
-    () => {
-      const email =
-        memberEmail.trim();
-
-      if (!email) {
-        return;
-      }
-
-      if (
-        memberEmails.includes(
-          email
-        )
-      ) {
-        return;
-      }
-
-      setMemberEmails([
-        ...memberEmails,
-        email,
-      ]);
-
-      setMemberEmail("");
-    };
-
-  const handleRemoveMember =
-    (email: string) => {
-      setMemberEmails(
-        memberEmails.filter(
-          (item) =>
-            item !== email
-        )
-      );
-    };
-
-  const handleSubmit = async (e: React.FormEvent) => {
+    const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
     if (!teamId) {
@@ -127,7 +81,7 @@ function CreateProjectModal({
         onSuccess: () => {
           toast.success("Project created successfully");
 
-           queryClient.invalidateQueries({
+          queryClient.invalidateQueries({
             queryKey: ["team-projects", teamId],
           });
 
@@ -303,10 +257,25 @@ function CreateProjectModal({
                 setStatus(e.target.value as ProjectStatus)
               }
             >
-              <option value="PLANNING">Planning</option>
-              <option value="IN_PROGRESS">In Progress</option>
-              <option value="REVIEW">Review</option>
-              <option value="COMPLETED">Completed</option>
+              <option value="PLANNING">
+                Planning
+              </option>
+
+              <option value="IN_PROGRESS">
+                In Progress
+              </option>
+
+              <option value="ON_HOLD">
+                On Hold
+              </option>
+
+              <option value="REVIEW">
+                Review
+              </option>
+
+              <option value="COMPLETED">
+                Completed
+              </option>
             </select>
           </div>
 
@@ -387,7 +356,7 @@ function CreateProjectModal({
 
           {/* MEMBERS */}
 
-          <div>
+          {/* <div>
             <label
               className="
                 mb-2
@@ -446,11 +415,11 @@ function CreateProjectModal({
                 Add
               </button>
             </div>
-          </div>
+          </div> */}
 
           {/* MEMBER LIST */}
 
-          {memberEmails.length >
+          {/* {memberEmails.length >
             0 && (
               <div
                 className="
@@ -497,7 +466,7 @@ function CreateProjectModal({
                   )
                 )}
               </div>
-            )}
+            )} */}
 
           {/* FOOTER */}
 

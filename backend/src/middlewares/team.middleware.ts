@@ -7,7 +7,7 @@ import {
 import prisma from "../config/prisma";
 
 import { AuthRequest }
-from "./auth.middleware";
+  from "./auth.middleware";
 
 export const isTeamMember =
   async (
@@ -40,7 +40,7 @@ export const isTeamMember =
     next();
   };
 
-  export const isTeamOwner =
+export const isTeamOwner =
   async (
     req: AuthRequest,
     res: Response,
@@ -77,7 +77,7 @@ export const isTeamMember =
     next();
   };
 
-  export const isTeamAdminOrOwner =
+export const isTeamAdminOrOwner =
   async (
     req: AuthRequest,
     res: Response,
@@ -98,6 +98,16 @@ export const isTeamMember =
         },
       });
 
+    const team = await prisma.teams.findUnique({
+      where: { id: teamId },
+    });
+
+    if (!team) {
+      return res.status(404).json({
+        message: "Team not found",
+      });
+    }
+
     if (!member) {
 
       return res.status(403).json({
@@ -105,10 +115,10 @@ export const isTeamMember =
       });
     }
 
-    if (
-      member.role !== "owner" &&
-      member.role !== "admin"
-    ) {
+  const isOwner = team.owner_id === userId;
+  const isAdmin = member?.role === "admin";
+
+    if (!isOwner && !isAdmin) {
 
       return res.status(403).json({
         message:

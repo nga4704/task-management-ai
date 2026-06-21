@@ -1,8 +1,6 @@
-export type ProjectStatus =
-  | "Planning"
-  | "In Progress"
-  | "Completed"
-  | "On Hold";
+import type {
+  ProjectStatus,
+} from "../../projects/types/project.types";
 
 export interface ProjectDetail {
   id: string;
@@ -15,13 +13,21 @@ export interface ProjectDetail {
 
   progress: number;
 
-  members: number;
+  taskCount: number;
 
-  tasks: number;
+  memberCount: number;
 
-  completedTasks: number;
+  aiScore: number;
 
-  startDate: string;
+  startDate?: string;
 
-  endDate: string;
+  endDate?: string;
+
+  createdAt?: string;
+
+  tasks: any[];
+
+  members: any[];
+
+  teamId: string; 
 }

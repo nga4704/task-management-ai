@@ -227,10 +227,7 @@ function Sidebar({
                         collapsed={
                           collapsed
                         }
-                        active={
-                          location.pathname ===
-                          item.path
-                        }
+                        active={location.pathname.startsWith(item.path)}
                       />
                     )
                   )}

@@ -1,7 +1,7 @@
 export type ProjectStatus =
   | "PLANNING"
   | "IN_PROGRESS"
-  | "REVIEW"
+  | "ON_HOLD"
   | "COMPLETED";
 
 export interface Project {

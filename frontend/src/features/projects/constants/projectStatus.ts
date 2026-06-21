@@ -3,14 +3,14 @@ import type {
 } from "../types/project.types";
 
 export const projectStatusConfig:
-Record<
-  ProjectStatus,
-  {
-    label: string;
+  Record<
+    ProjectStatus,
+    {
+      label: string;
 
-    className: string;
-  }
-> = {
+      className: string;
+    }
+  > = {
   PLANNING: {
     label: "Planning",
 
@@ -24,18 +24,16 @@ Record<
     label: "In Progress",
 
     className: `
-      bg-warningLight
-      text-warning
+     bg-secondaryLight
+     text-secondary
     `,
   },
 
-  REVIEW: {
-    label: "Review",
+  ON_HOLD: {
+    label: "On Hold",
 
-    className: `
-      bg-secondaryLight
-      text-secondary
-    `,
+    className:
+      `bg-warningLight text-warning`,
   },
 
   COMPLETED: {

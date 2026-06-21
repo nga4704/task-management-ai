@@ -1,52 +1,60 @@
 import apiClient from "@/lib/api";
 
 export const projectApi = {
-  async getTeamProjects(teamId: string) {
-    const { data } = await apiClient.get(
-      `/teams/${teamId}/projects`
-    );
-    return data;
-  },
-
-  async getProjectDetail(projectId: string) {
-    const { data } = await apiClient.get(
-      `/projects/${projectId}`
-    );
-    return data;
-  },
-
-  async createProject(
-    teamId: string,
-    payload: {
-      name: string;
-      description?: string;
-      status: string;
-      startDate?: string;
-      endDate?: string;
-    }
-  ) {
-    const { data } = await apiClient.post(
+  async createProject(teamId: string, payload: any) {
+    const res = await apiClient.post(
       `/projects/teams/${teamId}/projects`,
       payload
     );
-    return data;
+    return res.data;
   },
 
-  async updateProject(
-    projectId: string,
-    payload: any
-  ) {
-    const { data } = await apiClient.put(
+  async getTeamProjects(teamId: string) {
+    const res = await apiClient.get(
+      `/teams/${teamId}/projects`
+    );
+
+    return res.data;
+  },
+
+  async getProjectDetail(projectId: string) {
+    const res = await apiClient.get(
+      `/projects/${projectId}`
+    );
+
+    return res.data;
+  },
+
+  async updateProject(projectId: string, payload: any) {
+    const res = await apiClient.put(
       `/projects/${projectId}`,
       payload
     );
-    return data;
+
+    return res.data;
   },
 
   async deleteProject(projectId: string) {
-    const { data } = await apiClient.delete(
+    const res = await apiClient.delete(
       `/projects/${projectId}`
     );
-    return data;
+
+    return res.data;
+  },
+
+  async getProjectsDashboard() {
+    const res = await apiClient.get(
+      "/projects/dashboard"
+    );
+
+    return res.data;
+  },
+
+  async getProjectsActivity() {
+    const res = await apiClient.get(
+      "/projects/activity"
+    );
+
+    return res.data;
   },
 };

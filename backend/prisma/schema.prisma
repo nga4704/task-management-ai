@@ -8,6 +8,13 @@ datasource db {
   directUrl = env("DIRECT_URL")
 }
 
+enum ProjectStatus {
+  PLANNING
+  IN_PROGRESS
+  ON_HOLD
+  COMPLETED
+}
+
 model ai_predictions {
   id               String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
   task_id          String    @db.Uuid
@@ -106,7 +113,7 @@ model projects {
   name        String  @db.VarChar(255)
   description String?
 
-  status String? @default("PLANNING") @db.VarChar(20)
+  status ProjectStatus @default(PLANNING)
 
   start_date DateTime? @db.Timestamp(6)
   end_date   DateTime? @db.Timestamp(6)
@@ -122,20 +129,20 @@ model projects {
 }
 
 model users {
-  id         String    @id @db.Uuid
-  email      String    @unique @db.VarChar(100)
-  username   String    @unique @db.VarChar(50)
+  id       String @id @db.Uuid
+  email    String @unique @db.VarChar(100)
+  username String @unique @db.VarChar(50)
 
-  full_name  String?   @db.VarChar(100)
-  avatar     String?
+  full_name String? @db.VarChar(100)
+  avatar    String?
 
   created_at DateTime? @default(now()) @db.Timestamp(6)
   updated_at DateTime? @default(now()) @db.Timestamp(6)
 
   notifications                  notifications[]
   task_progress                  task_progress[]
-  tasks_tasks_assignee_idTousers tasks[] @relation("tasks_assignee_idTousers")
-  tasks_tasks_created_byTousers  tasks[] @relation("tasks_created_byTousers")
+  tasks_tasks_assignee_idTousers tasks[]         @relation("tasks_assignee_idTousers")
+  tasks_tasks_created_byTousers  tasks[]         @relation("tasks_created_byTousers")
   team_members                   team_members[]
   teams                          teams[]
 }
