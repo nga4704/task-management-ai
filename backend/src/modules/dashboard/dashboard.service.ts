@@ -12,7 +12,7 @@ export const getOverviewService = async (
   const completedTasks = await prisma.tasks.count({
     where: {
       team_id: teamId,
-      status: "done",
+      status: "DONE",
     },
   });
 
@@ -23,7 +23,7 @@ export const getOverviewService = async (
         lt: new Date(),
       },
       status: {
-        not: "done",
+        not: "DONE",
       },
     },
   });
@@ -31,7 +31,7 @@ export const getOverviewService = async (
   const inProgressTasks = await prisma.tasks.count({
     where: {
       team_id: teamId,
-      status: "in-progress",
+      status: "IN_PROGRESS",
     },
   });
 
@@ -70,7 +70,7 @@ export const getTeamProgressService = async (
 
   const completedTasks =
     tasks.filter(
-      task => task.status === "done"
+      task => task.status === "DONE"
     ).length;
 
   const overallProgress =
@@ -127,13 +127,13 @@ export const getWorkloadService = async (
 
     completedTasks:
       tasks.filter(
-        task => task.status === "done"
+        task => task.status === "DONE"
       ).length,
 
     inProgressTasks:
       tasks.filter(
         task =>
-          task.status === "in-progress"
+          task.status === "IN_PROGRESS"
       ).length,
   };
 });

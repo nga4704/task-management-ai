@@ -1,12 +1,9 @@
 import apiClient from "@/lib/api";
 
-export type TaskStatus =
-  | "todo"
-  | "in-progress"
-  | "review"
-  | "done";
-
-export type TaskPriority = "low" | "medium" | "high";
+import type {
+  TaskStatus,
+  TaskPriority,
+} from "../types/task.types";
 
 export interface CreateTaskPayload {
   team_id: string;

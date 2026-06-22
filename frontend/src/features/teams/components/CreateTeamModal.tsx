@@ -31,6 +31,9 @@ function CreateTeamModal({
   -----------------------------------
   */
 
+  const emailRegex =
+    /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
   const [name, setName] =
     useState("");
 
@@ -127,11 +130,15 @@ function CreateTeamModal({
   */
 
   const handleAddMember = () => {
-    if (!inviteEmail.trim())
-      return;
-
     const email =
-      inviteEmail.trim();
+      inviteEmail
+        .trim()
+        .toLowerCase();
+
+    if (!emailRegex.test(email)) {
+      alert("Invalid email");
+      return;
+    }
 
     const alreadyExists =
       invitedMembers.includes(

@@ -31,6 +31,47 @@ export const createProjectService =
     startDate?: Date,
     endDate?: Date
   ) => {
+
+    const team =
+      await prisma.teams.findUnique({
+        where: {
+          id: teamId
+        }
+      });
+
+    if (!team) {
+      throw new AppError(
+        "Team not found",
+        404
+      );
+    }
+
+    if (!name?.trim()) {
+      throw new AppError(
+        "Project name is required",
+        400
+      );
+    }
+
+    if (!description?.trim()) {
+      throw new AppError(
+        "Project description is required",
+        400
+      );
+    }
+
+    if (
+      startDate &&
+      endDate &&
+      new Date(startDate) >
+      new Date(endDate)
+    ) {
+      throw new AppError(
+        "Start date must be before end date",
+        400
+      );
+    }
+
     const project =
       await prisma.projects.create({
         data: {
@@ -47,18 +88,21 @@ export const createProjectService =
         },
       });
 
-    getIO().emit(
-      "projectCreated",
-      project
-    );
+    // getIO().emit(
+    //   "projectCreated",
+    //   project
+    // );
 
     return project;
   };
 
 export const getProjectsService =
-  async () => {
+  async (
+    teamId?: string
+  ) => {
+
     const projects =
-      await findProjects();
+      await findProjects(teamId);
 
     return projects.map(
       mapProjectList
@@ -124,6 +168,18 @@ export const updateProjectService =
       endDate,
     } = data;
 
+    if (
+      startDate &&
+      endDate &&
+      new Date(startDate) >
+      new Date(endDate)
+    ) {
+      throw new AppError(
+        "Start date must be before end date",
+        400
+      );
+    }
+
     const updated = await prisma.projects.update({
       where: { id: projectId },
       data: {
@@ -140,7 +196,7 @@ export const updateProjectService =
       },
     });
 
-    getIO().emit("projectUpdated", updated);
+    // getIO().emit("projectUpdated", updated);
 
     return updated;
   };
@@ -177,7 +233,7 @@ export const deleteProjectService = async (
     where: { id: projectId },
   });
 
-  getIO().emit("projectDeleted", projectId);
+  // getIO().emit("projectDeleted", projectId);
 
   return { success: true };
 };

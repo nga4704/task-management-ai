@@ -10,15 +10,24 @@ import {
   taskApi,
 } from "../../../tasks/api/taskApi";
 
+import { useCreateTask } from "@/features/tasks/hooks/useCreateTask";
+
 type Props = {
   open: boolean;
   onClose: () => void;
+
+  projectId: string;
+  teamId: string;
 };
 
 function CreateTaskModal({
   open,
   onClose,
+  projectId,
+  teamId,
 }: Props) {
+
+const { mutateAsync: createTask } = useCreateTask(projectId);
 
   const [loading, setLoading] =
     useState(false);
@@ -55,12 +64,10 @@ function CreateTaskModal({
 
         setLoading(true);
 
-        await taskApi.createTask({
-          team_id:
-            "TEAM_ID",
+        await createTask({
+          team_id: teamId,
 
-          project_id:
-            "PROJECT_ID",
+          project_id: projectId,
 
           title,
 
@@ -68,9 +75,9 @@ function CreateTaskModal({
 
           priority:
             priority as
-              | "low"
-              | "medium"
-              | "high",
+            | "low"
+            | "medium"
+            | "high",
 
           deadline,
 

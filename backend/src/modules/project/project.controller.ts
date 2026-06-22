@@ -35,7 +35,9 @@ export const getProjects = async (
   res: Response
 ) => {
   const projects =
-    await projectService.getProjectsService();
+    await projectService.getProjectsService(
+      req.params.teamId as string
+    );
 
   res.json(projects);
 };

@@ -55,13 +55,20 @@ function AppRoutes() {
       {/* TEAMS */}
       <Route
         path="/teams"
-        element={<TeamsPage />}
+        element={
+          <ProtectedRoute>
+            <TeamsPage />
+          </ProtectedRoute>
+        }
       />
       <Route
         path="/teams/:teamId"
-        element={<TeamDetailPage />}
+        element={
+          <ProtectedRoute>
+            <TeamDetailPage />
+          </ProtectedRoute>
+        }
       />
-
       {/* PROJECTS */}
       {/* <Route path="/projects" element={<ProjectsPage />} />
 
@@ -72,18 +79,40 @@ function AppRoutes() {
 
       <Route
         path="/teams/:teamId/projects"
-        element={<ProjectsPage />}
+        element={
+          <ProtectedRoute>
+            <ProjectsPage />
+          </ProtectedRoute>
+        }
       />
 
       <Route
         path="/teams/:teamId/projects/:projectId"
-        element={<ProjectDetailPage />}
+        element={
+          <ProtectedRoute>
+            <ProjectDetailPage />
+          </ProtectedRoute>
+        }
       />
 
       {/* TASKS */}
-      <Route path="/tasks" element={<TasksPage />} />
+      <Route
+        path="/tasks"
+        element={
+          <ProtectedRoute>
+            <TasksPage />
+          </ProtectedRoute>
+        }
+      />
 
-      <Route path="/calendar" element={<CalendarPage />} />
+      <Route
+        path="/calendar"
+        element={
+          <ProtectedRoute>
+            <CalendarPage />
+          </ProtectedRoute>
+        }
+      />
 
       {/* AI */}
       <Route path="/planner" element={<PlannerPage />} />
@@ -94,7 +123,14 @@ function AppRoutes() {
       {/* SYSTEM */}
       <Route path="/notifications" element={<NotificationsPage />} />
 
-      <Route path="/settings" element={<SettingsPage />} />
+      <Route
+        path="/settings"
+        element={
+          <ProtectedRoute>
+            <SettingsPage />
+          </ProtectedRoute>
+        }
+      />
     </Routes>
 
   );

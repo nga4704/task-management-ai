@@ -11,7 +11,7 @@ export const projectApi = {
 
   async getTeamProjects(teamId: string) {
     const res = await apiClient.get(
-      `/teams/${teamId}/projects`
+      `/projects/teams/${teamId}/projects`
     );
 
     return res.data;

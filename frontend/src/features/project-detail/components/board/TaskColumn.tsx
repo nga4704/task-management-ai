@@ -1,24 +1,30 @@
 import TaskCard from "./TaskCard";
 
-import type { Task } from "../../types/task.types";
+import type { Task } from "@/features/tasks/types/task.types";
+import { useDroppable } from "@dnd-kit/core";
+import type { TaskStatus } from "@/features/tasks/types/task.types";
 
 type Props = {
   title: string;
-
+  status: TaskStatus;
   tasks: Task[];
-
-  onTaskClick: (
-    task: Task
-  ) => void;
+  onTaskClick: (task: Task) => void;
 };
 
 function TaskColumn({
   title,
+  status,
   tasks,
   onTaskClick,
 }: Props) {
+
+const { setNodeRef } = useDroppable({
+  id: status,
+});
+
   return (
     <div
+      ref={setNodeRef}
       className="
         rounded-[32px]
 

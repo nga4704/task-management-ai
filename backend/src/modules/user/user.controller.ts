@@ -15,6 +15,32 @@ import {
   updateProfileService,
 } from "./user.service";
 
+const generateUniqueUsername =
+  async (baseUsername: string) => {
+
+    let username =
+      baseUsername.toLowerCase();
+
+    let counter = 1;
+
+    while (true) {
+
+      const exists =
+        await prisma.users.findUnique({
+          where: { username },
+        });
+
+      if (!exists) {
+        return username;
+      }
+
+      username =
+        `${baseUsername.toLowerCase()}${counter}`;
+
+      counter++;
+    }
+  };
+
 export const createProfile =
   asyncHandler(
     async (
@@ -52,26 +78,32 @@ export const createProfile =
         );
       }
 
-      // generate username fallback
-      const finalUsername =
+      const baseUsername =
         username?.trim()
-          ? username
-          : email.split("@")[0];
+          ? username.trim().toLowerCase()
+          : email
+            .split("@")[0]
+            .toLowerCase();
 
-      // check username exists
+      let finalUsername =
+        baseUsername;
+
       const usernameExists =
         await prisma.users.findUnique({
           where: {
-            username:
-              finalUsername,
+            username: finalUsername,
           },
         });
 
       if (usernameExists) {
-        throw new AppError(
-          "Username already exists",
-          400
-        );
+
+        const randomSuffix =
+          Math.floor(
+            1000 + Math.random() * 9000
+          );
+
+        finalUsername =
+          `${baseUsername}_${randomSuffix}`;
       }
 
       const user =

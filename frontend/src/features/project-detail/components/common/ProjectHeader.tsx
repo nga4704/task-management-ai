@@ -26,7 +26,7 @@ import {
 
 type ProjectHeaderProps = {
   projectId: string;
-
+  teamId: string;
   name: string;
   description: string;
 
@@ -44,7 +44,7 @@ type ProjectHeaderProps = {
 
 function ProjectHeader({
   projectId,
-
+  teamId,
   name,
   description,
 
@@ -268,7 +268,7 @@ function ProjectHeader({
 
               Analytics
             </button>
-            
+
             <button
               onClick={onEdit}
               className="
@@ -356,6 +356,8 @@ function ProjectHeader({
         onClose={() =>
           setIsOpen(false)
         }
+        projectId={projectId}
+        teamId={teamId}
       />
     </>
   );

@@ -1,3 +1,5 @@
+// @/features/project-detail/components/common/EditProjectModal.tsx
+
 import { X } from "lucide-react";
 import { useState } from "react";
 import toast from "react-hot-toast";
@@ -317,10 +319,6 @@ function EditProjectModal({
 
                         <option value="ON_HOLD">
                             On Hold
-                        </option>
-
-                        <option value="REVIEW">
-                            Review
                         </option>
 
                         <option value="COMPLETED">

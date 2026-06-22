@@ -110,29 +110,19 @@ function ProjectDetailPage() {
       <div className="space-y-6">
         <ProjectHeader
           projectId={project.id}
+          teamId={project.teamId}
           name={project.name}
           description={project.description ?? ""}
           progress={project.progress ?? 0}
           status={project.status}
-
-          totalTasks={
-            project.taskCount ?? 0
-          }
-
-          totalMembers={
-            project.memberCount ?? 0
-          }
-
+          totalTasks={project.taskCount ?? 0}
+          totalMembers={project.memberCount ?? 0}
           dueDate={
             project.endDate
-              ? new Date(
-                project.endDate
-              ).toLocaleDateString()
+              ? new Date(project.endDate).toLocaleDateString()
               : "N/A"
           }
-          onEdit={() =>
-            setEditOpen(true)
-          }
+          onEdit={() => setEditOpen(true)}
           onDelete={handleDelete}
         />
 
@@ -146,7 +136,9 @@ function ProjectDetailPage() {
         )}
 
         {activeTab === "board" && (
-          <BoardTab />
+          <BoardTab
+            projectId={project.id}
+          />
         )}
 
         {activeTab === "calendar" && (

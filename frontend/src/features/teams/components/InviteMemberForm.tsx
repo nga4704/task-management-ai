@@ -19,7 +19,13 @@ function InviteMemberForm({
     const value =
       email.trim();
 
-    if (!value) return;
+    const emailRegex =
+      /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+    if (!emailRegex.test(value)) {
+      alert("Invalid email");
+      return;
+    }
 
     onInvite(value);
 

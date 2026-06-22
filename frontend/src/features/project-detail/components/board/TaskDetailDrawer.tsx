@@ -4,7 +4,7 @@ import {
   AlertTriangle,
 } from "lucide-react";
 
-import type { Task } from "../../types/task.types";
+import type { Task } from "@/features/tasks/types/task.types";
 
 type Props = {
   task: Task | null;
@@ -76,7 +76,7 @@ function TaskDetailDrawer({
                 text-muted
               "
             >
-              {task.description}
+              {task.description ?? "No description"}
             </p>
           </div>
 

@@ -14,8 +14,22 @@ import { AuthRequest } from "../../middlewares/auth.middleware";
 import { AppError } from "../../middlewares/error.middleware";
 import { asyncHandler } from "../../utils/asyncHandler";
 
+import { validate as isUUID }
+from "uuid";
+
 // CREATE
 export const createTeam = asyncHandler(async (req: AuthRequest, res: Response) => {
+
+const teamId =
+  req.params.teamId;
+
+if (!isUUID(teamId)) {
+  throw new AppError(
+    "Invalid team id",
+    400
+  );
+}
+
   if (!req.user) {
     throw new AppError("Unauthorized", 401);
   }
@@ -26,6 +40,20 @@ export const createTeam = asyncHandler(async (req: AuthRequest, res: Response) =
     description,
     invitedMembers,
   } = req.body;
+
+  if (!name?.trim()) {
+    throw new AppError(
+      "Team name is required",
+      400
+    );
+  }
+
+  if (!slug?.trim()) {
+  throw new AppError(
+    "Workspace slug is required",
+    400
+  );
+}
 
   const team =
     await createTeamService(
@@ -45,20 +73,20 @@ export const createTeam = asyncHandler(async (req: AuthRequest, res: Response) =
 
 // GET ALL
 export const getTeams =
-asyncHandler(async (
-  req: AuthRequest,
-  res: Response
-) => {
+  asyncHandler(async (
+    req: AuthRequest,
+    res: Response
+  ) => {
 
-  const teams =
-    await getTeamsService(
-      req.user!.id
+    const teams =
+      await getTeamsService(
+        req.user!.id
+      );
+
+    res.status(200).json(
+      teams
     );
-
-  res.status(200).json(
-    teams
-  );
-});
+  });
 
 // DETAIL
 export const getTeamDetail = asyncHandler(async (req: Request, res: Response) => {
@@ -100,13 +128,13 @@ export const deleteTeam = asyncHandler(async (req: Request, res: Response) => {
 // ADD MEMBER
 export const addMember = asyncHandler(async (req: Request, res: Response) => {
   const teamId = req.params.teamId as string;
-  const { email } = req.body; 
+  const { email } = req.body;
 
   const member =
-  await addMemberService(
-    teamId,
-    email
-  );
+    await addMemberService(
+      teamId,
+      email
+    );
 
   res.status(201).json({
     message: "Add member successfully",
@@ -129,10 +157,10 @@ export const removeMember = asyncHandler(async (req: Request, res: Response) => 
 export const getTeamProjects = asyncHandler(async (req: Request, res: Response) => {
   const teamId = req.params.teamId;
 
-if (!teamId || Array.isArray(teamId)) {
-  throw new AppError("Invalid teamId", 400);
-}
+  if (!teamId || Array.isArray(teamId)) {
+    throw new AppError("Invalid teamId", 400);
+  }
 
-const projects = await getTeamProjectsService(teamId);
+  const projects = await getTeamProjectsService(teamId);
   res.json(projects);
 });

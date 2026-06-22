@@ -49,7 +49,8 @@ function TeamCard({ team }: Props) {
           </h3>
 
           <p className="text-sm text-muted">
-            {team.description}
+            {team.description ||
+              "No description"}
           </p>
         </div>
 

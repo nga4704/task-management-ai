@@ -28,7 +28,7 @@ export function useUpdateProject() {
         onSuccess: (_, variables) => {
             queryClient.invalidateQueries({
                 queryKey: [
-                    "project",
+                    "project-detail",
                     variables.projectId,
                 ],
             });

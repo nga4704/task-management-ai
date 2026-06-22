@@ -53,6 +53,13 @@ function TeamSettings({
   const handleUpdate =
     () => {
 
+      if (name.trim().length < 3) {
+        alert(
+          "Workspace name must be at least 3 characters"
+        );
+        return;
+      }
+
       updateMutation.mutate(
         {
           name,

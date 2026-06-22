@@ -1,6 +1,7 @@
 import prisma from "../../config/prisma";
 import { getIO } from "../../config/socket";
-
+import { AppError } from "../../middlewares/error.middleware";
+import { mapTaskStatusToPrisma } from "./task.mapper";
 /* 
    CREATE TASK
  */
@@ -13,6 +14,8 @@ export const createTaskService = async (data: {
   deadline?: string;
   assigneeId?: string;
   createdBy: string;
+  estimatedHours?: number;
+
 }) => {
   const task = await prisma.tasks.create({
     data: {
@@ -24,6 +27,8 @@ export const createTaskService = async (data: {
       deadline: data.deadline ? new Date(data.deadline) : null,
       assignee_id: data.assigneeId,
       created_by: data.createdBy,
+      estimated_hours:
+        data.estimatedHours,
     },
   });
 
@@ -39,13 +44,29 @@ export const createTaskService = async (data: {
  */
 export const getTasksService = async (filters: {
   teamId?: string;
+  projectId?: string;
   status?: string;
   priority?: string;
+  userId?: string;
 }) => {
+  const membership = await prisma.team_members.findFirst({
+    where: {
+      team_id: filters.teamId,
+      user_id: filters.userId,
+    },
+  });
+
+  if (!membership) {
+    throw new AppError("Forbidden", 403);
+  }
+
   return prisma.tasks.findMany({
     where: {
       team_id: filters.teamId,
-      status: filters.status,
+      project_id: filters.projectId,
+      status: filters.status
+        ? mapTaskStatusToPrisma(filters.status)
+        : undefined,
       priority: filters.priority,
     },
     include: {
@@ -83,11 +104,14 @@ export const updateTaskService = async (taskId: string, data: any) => {
       title: data.title,
       description: data.description,
       priority: data.priority,
-      deadline: data.deadline,
+      deadline:
+        data.deadline
+          ? new Date(data.deadline)
+          : undefined,
     },
   });
 
-  
+
   const io = getIO();
   io.emit("taskUpdated", updatedTask);
 
@@ -104,7 +128,7 @@ export const deleteTaskService = async (taskId: string) => {
     },
   });
 
-  
+
   const io = getIO();
   io.emit("taskDeleted", taskId);
 
@@ -123,11 +147,11 @@ export const updateTaskStatusService = async (
       id: taskId,
     },
     data: {
-      status,
+      status: status ? mapTaskStatusToPrisma(status) : undefined,
     },
   });
 
-  
+
   const io = getIO();
   io.emit("taskUpdated", task);
 
@@ -162,7 +186,7 @@ export const updateTaskProgressService = async (
     },
   });
 
-  
+
   const io = getIO();
   io.emit("taskUpdated", updatedTask);
 
@@ -185,7 +209,7 @@ export const assignTaskService = async (
     },
   });
 
-  
+
   const io = getIO();
   io.emit("taskUpdated", task);
 

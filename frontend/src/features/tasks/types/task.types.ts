@@ -1,8 +1,8 @@
 export type TaskStatus =
-  | "todo"
-  | "in-progress"
-  | "review"
-  | "done";
+  | "TODO"
+  | "IN_PROGRESS"
+  | "REVIEW"
+  | "DONE";
 
 export type TaskPriority = "low" | "medium" | "high";
 
@@ -29,4 +29,13 @@ export interface Task {
 
   created_at?: string;
   updated_at?: string;
+
+  progress?: number;
+
+  assignee?: {
+  id: string;
+  full_name?: string;
+  avatar?: string;
+};
 }
+

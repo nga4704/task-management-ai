@@ -18,10 +18,6 @@ export function useDeleteProject() {
         queryKey: ["project-detail", projectId],
       });
 
-      queryClient.removeQueries({
-        queryKey: ["project", projectId],
-      });
-
       queryClient.invalidateQueries({
         queryKey: ["team-projects"],
       });

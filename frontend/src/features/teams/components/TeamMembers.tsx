@@ -46,8 +46,8 @@ function TeamMembers({
 
               <p className="font-medium">
                 {
-                  member.users
-                    .full_name
+                  member.users.full_name ||
+                  member.users.username
                 }
               </p>
 

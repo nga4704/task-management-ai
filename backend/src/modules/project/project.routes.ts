@@ -32,8 +32,17 @@ router.get(
 );
 
 // GLOBAL (optional)
-router.get("/dashboard", getProjectsDashboard);
-router.get("/activity", getProjectsActivity);
+router.get(
+ "/dashboard",
+ protect,
+ getProjectsDashboard
+);
+
+router.get(
+ "/activity",
+ protect,
+ getProjectsActivity
+);
 
 router.put(
   "/:projectId",
@@ -52,6 +61,7 @@ router.delete(
 router.get(
  "/:projectId",
  protect,
+ isProjectMember,
  getProjectDetail
 );
 

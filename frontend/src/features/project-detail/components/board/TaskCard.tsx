@@ -3,7 +3,8 @@ import {
   AlertTriangle,
 } from "lucide-react";
 
-import type { Task } from "../../types/task.types";
+import type { Task } from "@/features/tasks/types/task.types";
+import { useDraggable } from "@dnd-kit/core";
 
 type Props = {
   task: Task;
@@ -15,8 +16,21 @@ function TaskCard({
   task,
   onClick,
 }: Props) {
+
+  const { attributes, listeners, setNodeRef, transform } = useDraggable({
+    id: task.id,
+  });
+
   return (
     <button
+      ref={setNodeRef}
+      {...listeners}
+      {...attributes}
+      style={{
+        transform: transform
+          ? `translate(${transform.x}px, ${transform.y}px)`
+          : undefined,
+      }}
       onClick={onClick}
       className="
         w-full
@@ -56,13 +70,13 @@ function TaskCard({
           {task.priority}
         </span>
 
-        {task.riskScore &&
+        {/* {task.riskScore &&
           task.riskScore > 60 && (
             <AlertTriangle
               size={18}
               className="text-danger"
             />
-          )}
+          )} */}
       </div>
 
       <h3
@@ -86,7 +100,7 @@ function TaskCard({
             bg-border
           "
         >
-          <div
+          {/* <div
             className="
               h-full
 
@@ -97,10 +111,10 @@ function TaskCard({
             style={{
               width: `${task.progress}%`,
             }}
-          />
+          /> */}
         </div>
 
-        <p
+        {/* <p
           className="
             mt-2
 
@@ -109,7 +123,7 @@ function TaskCard({
           "
         >
           {task.progress}% complete
-        </p>
+        </p> */}
       </div>
 
       <div
@@ -151,7 +165,17 @@ function TaskCard({
             font-bold
           "
         >
-          {task.assignee[0]}
+          {task.assignee?.avatar ? (
+            <img
+              src={task.assignee.avatar}
+              alt={task.assignee?.full_name || "Unassigned"}
+              className="h-full w-full rounded-xl object-cover"
+            />
+          ) : (
+            <span className="text-lg">
+              {task.assignee?.full_name?.charAt(0) || "?"}
+            </span>
+          )}
         </div>
       </div>
     </button>
