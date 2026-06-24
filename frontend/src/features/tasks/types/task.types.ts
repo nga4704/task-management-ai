@@ -33,9 +33,21 @@ export interface Task {
   progress?: number;
 
   assignee?: {
-  id: string;
-  full_name?: string;
-  avatar?: string;
-};
+    id: string;
+    full_name?: string;
+    avatar?: string;
+  };
+
+  users_tasks_assignee_idTousers?: {
+    id: string;
+    full_name?: string;
+    avatar?: string;
+  };
+
+  task_progress?: {
+    id: string;
+    progress?: number;
+    note?: string;
+  }[];
 }
 

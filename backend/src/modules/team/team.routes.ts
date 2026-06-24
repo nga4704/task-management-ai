@@ -9,6 +9,7 @@ import {
   addMember,
   removeMember,
   getTeamProjects,
+  getTeamMembers,
 } from "./team.controller";
 
 import { protect }
@@ -76,5 +77,7 @@ router.delete(
 
 // get team projects
 router.get("/:teamId/projects", protect, isTeamMember, getTeamProjects);
+
+router.get("/:teamId/members", protect, isTeamMember, getTeamMembers);
 
 export default router;

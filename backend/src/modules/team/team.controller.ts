@@ -8,6 +8,7 @@ import {
   addMemberService,
   removeMemberService,
   getTeamProjectsService,
+  getTeamMembersService,
 } from "./team.service";
 
 import { AuthRequest } from "../../middlewares/auth.middleware";
@@ -163,4 +164,12 @@ export const getTeamProjects = asyncHandler(async (req: Request, res: Response) 
 
   const projects = await getTeamProjectsService(teamId);
   res.json(projects);
+});
+
+export const getTeamMembers = asyncHandler(async (req: Request, res: Response) => {
+  const teamId = req.params.teamId as string;
+
+  const members = await getTeamMembersService(teamId);
+
+  res.json(members);
 });

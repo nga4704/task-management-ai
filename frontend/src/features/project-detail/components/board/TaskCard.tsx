@@ -1,3 +1,5 @@
+// @/features/project-detail/components/board/TaskCard.tsx
+
 import {
   Calendar,
   AlertTriangle,
@@ -26,12 +28,18 @@ function TaskCard({
       ref={setNodeRef}
       {...listeners}
       {...attributes}
+
+
       style={{
         transform: transform
           ? `translate(${transform.x}px, ${transform.y}px)`
           : undefined,
       }}
-      onClick={onClick}
+      onPointerDown={(e) => e.stopPropagation()}
+      onClick={(e) => {
+        e.stopPropagation();
+        onClick();
+      }}
       className="
         w-full
         text-left
@@ -146,7 +154,12 @@ function TaskCard({
           "
         >
           <Calendar size={14} />
-          {task.deadline}
+          {
+            task.deadline
+              ? new Date(task.deadline)
+                .toLocaleDateString()
+              : "No deadline"
+          }
         </div>
 
         <div

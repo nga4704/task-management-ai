@@ -1,5 +1,5 @@
 import MainLayout from "@/app/layouts/MainLayout";
-
+import { useParams } from "react-router-dom";
 import { DragDropContext } from "@hello-pangea/dnd";
 import type { DropResult } from "@hello-pangea/dnd";
 
@@ -17,27 +17,29 @@ import type { Task, TaskStatus } from "@/features/tasks/types/task.types";
 import { useMoveTask } from "@/features/tasks/hooks/useMoveTask";
 
 function TasksPage() {
-  const [projectId] = useState<string | undefined>(undefined);
+const { projectId } = useParams();
 
-  const { data: tasks = [] } = useTasks(projectId);
+const { data: tasks = [] } = useTasks(
+  projectId
+    ? { projectId }
+    : { projectId: undefined }
+);
 
-   const moveTask = useMoveTask(projectId);
+  const moveTask = useMoveTask(projectId);
 
   const groupByStatus = (status: TaskStatus) =>
     tasks.filter((t: Task) => t.status === status);
 
-  const handleDragEnd = async (result: DropResult) => {
+  const handleDragEnd = (
+    result: DropResult
+  ) => {
     const { destination, draggableId } = result;
 
     if (!destination) return;
 
-    const newStatus = destination.droppableId as TaskStatus;
-
-    await taskApi.moveTask(draggableId, newStatus);
-
-     moveTask.mutate({
+    moveTask.mutate({
       taskId: draggableId,
-      status: newStatus,
+      status: destination.droppableId as TaskStatus,
     });
   };
 
@@ -58,26 +60,26 @@ function TasksPage() {
 
             <KanbanColumn
               title="Todo"
-              tasks={groupByStatus("todo")}
-              droppableId="todo"
+              tasks={groupByStatus("TODO")}
+              droppableId="TODO"
             />
 
             <KanbanColumn
               title="In Progress"
-              tasks={groupByStatus("in-progress")}
-              droppableId="in-progress"
+              tasks={groupByStatus("IN_PROGRESS")}
+              droppableId="IN_PROGRESS"
             />
 
             <KanbanColumn
               title="Review"
-              tasks={groupByStatus("review")}
-              droppableId="review"
+              tasks={groupByStatus("REVIEW")}
+              droppableId="REVIEW"
             />
 
             <KanbanColumn
               title="Done"
-              tasks={groupByStatus("done")}
-              droppableId="done"
+              tasks={groupByStatus("DONE")}
+              droppableId="DONE"
             />
 
           </section>

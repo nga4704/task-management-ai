@@ -5,51 +5,56 @@ from "express";
 import { AuthRequest }
 from "./auth.middleware";
 
-export const isProjectMember =
-async (
- req: AuthRequest,
- res: Response,
- next: NextFunction
+export const isProjectMember = async (
+  req: AuthRequest,
+  res: Response,
+  next: NextFunction
 ) => {
+  const projectId = req.params.projectId as string;
+  const userId = req.user?.id;
 
-const projectId = Array.isArray(req.params.projectId)
-  ? req.params.projectId[0]
-  : req.params.projectId;
+  if (!userId) {
+    return res.status(401).json({ message: "Unauthorized" });
+  }
 
- const userId =
-   req.user?.id;
-
- const project =
-  await prisma.projects.findUnique({
-    where: {
-      id: projectId as string
-    },
-
+  const project = await prisma.projects.findUnique({
+    where: { id: projectId },
     include: {
-      teams: {
-        include: {
-          team_members: true
-        }
-      }
-    }
+      teams: true,
+    },
   });
 
- if (!project) {
-   return res.status(404).json({
-     message: "Project not found"
-   });
- }
+  if (!project) {
+    return res.status(404).json({ message: "Project not found" });
+  }
 
-const isMember =
-  project?.teams?.team_members?.some(
-    (m) => m.user_id === userId
-  );
+  // 🔥 CORE FIX: check team ownership first
+  const team = await prisma.teams.findUnique({
+    where: { id: project.team_id },
+  });
 
- if (!isMember) {
-   return res.status(403).json({
-     message: "Forbidden"
-   });
- }
+  if (!team) {
+    return res.status(404).json({ message: "Team not found" });
+  }
 
- next();
+  const isOwner = team.owner_id === userId;
+
+  const member = await prisma.team_members.findFirst({
+    where: {
+      team_id: project.team_id,
+      user_id: userId,
+    },
+  });
+
+  const isAdmin = member?.role === "admin";
+
+  const isMember = !!member;
+
+  // 🔥 FINAL RULE:
+  // owner OR admin OR member đều được access project
+  if (!isOwner && !isAdmin && !isMember) {
+    return res.status(403).json({ message: "Forbidden" });
+  }
+
+  next();
 };

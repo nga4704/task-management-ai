@@ -5,18 +5,23 @@ import {
 } from "lucide-react";
 
 import type { Task } from "@/features/tasks/types/task.types";
+import { useTaskDetail }
+  from "@/features/tasks/hooks/useTaskDetail";
 
 type Props = {
-  task: Task | null;
-
+  taskId?: string;
   onClose: () => void;
 };
 
 function TaskDetailDrawer({
-  task,
+  taskId,
   onClose,
 }: Props) {
-  if (!task) return null;
+
+  const { data: task } =
+    useTaskDetail(taskId ?? "");
+
+  if (!taskId) return null;
 
   return (
     <>
@@ -67,7 +72,7 @@ function TaskDetailDrawer({
                 font-bold
               "
             >
-              {task.title}
+              {task?.title}
             </h2>
 
             <p
@@ -76,10 +81,20 @@ function TaskDetailDrawer({
                 text-muted
               "
             >
-              {task.description ?? "No description"}
+              {task?.description ?? "No description"}
             </p>
           </div>
+          <div className="mt-6">
+            <p className="font-semibold">
+              Assignee
+            </p>
 
+            <p>
+              {task?.users_tasks_assignee_idTousers?.full_name ??
+                "Unassigned"}
+
+            </p>
+          </div>
           <button onClick={onClose}>
             <X />
           </button>
@@ -112,7 +127,7 @@ function TaskDetailDrawer({
                 bg-primary
               "
               style={{
-                width: `${task.progress}%`,
+                width: `${task?.progress}%`,
               }}
             />
           </div>

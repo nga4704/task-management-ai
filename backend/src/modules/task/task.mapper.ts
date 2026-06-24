@@ -8,20 +8,16 @@ export const mapTaskStatusToPrisma = (
 ): TaskStatus | undefined => {
   if (!status) return undefined;
 
-  switch (status) {
-    case "todo":
-      return "TODO";
+  const validStatuses: TaskStatus[] = [
+    "TODO",
+    "IN_PROGRESS",
+    "REVIEW",
+    "DONE",
+  ];
 
-    case "in-progress":
-      return "IN_PROGRESS";
-
-    case "review":
-      return "REVIEW";
-
-    case "done":
-      return "DONE";
-
-    default:
-      return undefined;
+  if (validStatuses.includes(status as TaskStatus)) {
+    return status as TaskStatus;
   }
+
+  return undefined;
 };

@@ -10,10 +10,14 @@ export function useTaskSocket(projectId: string) {
       });
     });
 
-    socket.on("taskUpdated", () => {
+    socket.on("taskUpdated", (updatedTask) => {
       queryClient.invalidateQueries({
-        queryKey: ["tasks", projectId],
+        queryKey: ["tasks"],
       });
+      queryClient.setQueryData(
+        ["task-detail", updatedTask.id],
+        updatedTask
+      );
     });
 
     socket.on("taskDeleted", () => {

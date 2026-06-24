@@ -16,16 +16,17 @@ export function useMoveTask(projectId?: string) {
 
     onMutate: async ({ taskId, status }) => {
       await queryClient.cancelQueries({
-        queryKey: ["tasks", projectId],
-      });
+  queryKey: ["tasks"],
+});
 
-      const previousTasks = queryClient.getQueryData([
-        "tasks",
-        projectId,
-      ]);
+      const previousTasks =
+  queryClient.getQueryData([
+    "tasks",
+    projectId,
+  ]);
 
       queryClient.setQueryData(
-        ["tasks", projectId],
+         ["tasks", projectId],
         (old: any = []) => {
           return old.map((task: any) =>
             task.id === taskId
@@ -40,14 +41,17 @@ export function useMoveTask(projectId?: string) {
 
     onError: (_err, _vars, context) => {
       queryClient.setQueryData(
-        ["tasks", projectId],
+        [
+          "tasks",
+          projectId,
+        ],
         context?.previousTasks
       );
     },
     onSettled: () => {
       queryClient.invalidateQueries({
-        queryKey: ["tasks", projectId],
-      });
+  queryKey: ["tasks"],
+});
     },
   });
 }

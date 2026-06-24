@@ -2,6 +2,16 @@ import prisma from "../../config/prisma";
 import { getIO } from "../../config/socket";
 import { AppError } from "../../middlewares/error.middleware";
 import { mapTaskStatusToPrisma } from "./task.mapper";
+import { assertProjectAccess, assertTeamMember } from "./task.permission";
+import { findMyTasks, findProjectTasks } from "./task.query";
+
+type UpdateTaskDto = {
+  title?: string;
+  description?: string;
+  priority?: string;
+  deadline?: string;
+};
+
 /* 
    CREATE TASK
  */
@@ -17,6 +27,59 @@ export const createTaskService = async (data: {
   estimatedHours?: number;
 
 }) => {
+
+  const project =
+    await prisma.projects.findUnique({
+      where: {
+        id: data.projectId,
+      },
+    });
+
+  if (!project) {
+    throw new AppError(
+      "Project not found",
+      404
+    );
+  }
+
+  const team =
+    await prisma.teams.findUnique({
+      where: {
+        id: data.teamId,
+      },
+    });
+
+  if (!team) {
+    throw new AppError(
+      "Team not found",
+      404
+    );
+  }
+
+  if (
+    project.team_id !== data.teamId
+  ) {
+    throw new AppError(
+      "Project does not belong to team",
+      400
+    );
+  }
+
+  const member =
+    await prisma.team_members.findFirst({
+      where: {
+        team_id: data.teamId,
+        user_id: data.createdBy,
+      },
+    });
+
+  if (!member) {
+    throw new AppError(
+      "Forbidden",
+      403
+    );
+  }
+
   const task = await prisma.tasks.create({
     data: {
       team_id: data.teamId,
@@ -49,53 +112,115 @@ export const getTasksService = async (filters: {
   priority?: string;
   userId?: string;
 }) => {
-  const membership = await prisma.team_members.findFirst({
-    where: {
-      team_id: filters.teamId,
-      user_id: filters.userId,
-    },
-  });
 
-  if (!membership) {
-    throw new AppError("Forbidden", 403);
+  const { teamId, projectId, status, priority, userId } = filters;
+
+  // =========================
+  // CASE 1: MY TASKS
+  // =========================
+  if (!projectId && !teamId) {
+    const tasks = await findMyTasks(userId!);
+
+    return tasks;
   }
 
-  return prisma.tasks.findMany({
-    where: {
-      team_id: filters.teamId,
-      project_id: filters.projectId,
-      status: filters.status
-        ? mapTaskStatusToPrisma(filters.status)
-        : undefined,
-      priority: filters.priority,
-    },
-    include: {
-      users_tasks_assignee_idTousers: true,
-      teams: true,
-    },
-  });
+  // =========================
+  // CASE 2: PROJECT BOARD (MAIN)
+  // =========================
+  if (projectId) {
+
+    await assertProjectAccess(projectId, userId!);
+
+    const tasks = await findProjectTasks(projectId);
+
+    return tasks.filter(t => {
+      if (status && t.status !== mapTaskStatusToPrisma(status)) return false;
+      if (priority && t.priority !== priority) return false;
+      return true;
+    });
+  }
+
+  // =========================
+  // CASE 3: TEAM (optional future)
+  // =========================
+  throw new AppError("Invalid task query", 400);
 };
 
 /* 
    GET TASK DETAIL
  */
-export const getTaskDetailService = async (taskId: string) => {
-  return prisma.tasks.findUnique({
-    where: {
-      id: taskId,
-    },
-    include: {
-      users_tasks_assignee_idTousers: true,
-      teams: true,
-      task_progress: true,
-    },
-  });
+export const getTaskDetailService = async (
+  taskId: string,
+  userId: string
+) => {
+
+  const task =
+    await prisma.tasks.findUnique({
+      where: {
+        id: taskId,
+      },
+      include: {
+        users_tasks_assignee_idTousers: true,
+        teams: true,
+        task_progress: true,
+      },
+    });
+
+  if (!task) {
+    throw new AppError(
+      "Task not found",
+      404
+    );
+  }
+
+  const member =
+    await prisma.team_members.findFirst({
+      where: {
+        team_id: task.team_id,
+        user_id: userId,
+      },
+    });
+
+  if (!member) {
+    throw new AppError(
+      "Forbidden",
+      403
+    );
+  }
+
+  return task;
 };
 
 /* 
    UPDATE TASK
  */
-export const updateTaskService = async (taskId: string, data: any) => {
+export const updateTaskService = async (taskId: string, data: UpdateTaskDto, userId: string) => {
+
+  const existingTask =
+    await prisma.tasks.findUnique({
+      where: {
+        id: taskId,
+      },
+    });
+
+  if (!existingTask) {
+    throw new AppError(
+      "Task not found",
+      404
+    );
+  }
+
+  const member = await prisma.team_members.findFirst({
+    where: {
+      team_id: existingTask.team_id,
+      user_id: userId,
+    },
+  });
+
+  if (!member) {
+    throw new AppError("Forbidden", 403);
+  }
+
   const updatedTask = await prisma.tasks.update({
     where: {
       id: taskId,
@@ -121,7 +246,33 @@ export const updateTaskService = async (taskId: string, data: any) => {
 /* 
    DELETE TASK
  */
-export const deleteTaskService = async (taskId: string) => {
+export const deleteTaskService = async (taskId: string, userId: string) => {
+
+  const task =
+    await prisma.tasks.findUnique({
+      where: {
+        id: taskId,
+      },
+    });
+
+  if (!task) {
+    throw new AppError(
+      "Task not found",
+      404
+    );
+  }
+
+  const member = await prisma.team_members.findFirst({
+    where: {
+      team_id: task.team_id,
+      user_id: userId,
+    },
+  });
+
+  if (!member) {
+    throw new AppError("Forbidden", 403);
+  }
+
   const deletedTask = await prisma.tasks.delete({
     where: {
       id: taskId,
@@ -140,14 +291,32 @@ export const deleteTaskService = async (taskId: string) => {
  */
 export const updateTaskStatusService = async (
   taskId: string,
-  status: string
+  status: string,
+  userId: string
 ) => {
+
+  const existingTask =
+    await prisma.tasks.findUnique({
+      where: {
+        id: taskId
+      }
+    });
+
+  if (!existingTask) {
+    throw new AppError(
+      "Task not found",
+      404
+    );
+  }
+
+  await assertTeamMember(existingTask.team_id, userId);
+
   const task = await prisma.tasks.update({
     where: {
       id: taskId,
     },
     data: {
-      status: status ? mapTaskStatusToPrisma(status) : undefined,
+      status: mapTaskStatusToPrisma(status),
     },
   });
 
@@ -166,6 +335,17 @@ export const updateTaskProgressService = async (
   progress: number,
   userId: string
 ) => {
+
+  if (
+    progress < 0 ||
+    progress > 100
+  ) {
+    throw new AppError(
+      "Progress must be between 0 and 100",
+      400
+    );
+  }
+
   // update task progress
   const updatedTask = await prisma.tasks.update({
     where: {
@@ -173,6 +353,10 @@ export const updateTaskProgressService = async (
     },
     data: {
       progress,
+
+      ...(progress === 100 && {
+        status: "DONE",
+      }),
     },
   });
 
@@ -198,8 +382,22 @@ export const updateTaskProgressService = async (
  */
 export const assignTaskService = async (
   taskId: string,
-  assigneeId: string
+  assigneeId: string,
+  userId: string
 ) => {
+
+ const existingTask = await prisma.tasks.findUnique({
+  where: { id: taskId },
+});
+
+if (!existingTask) throw new AppError("Task not found", 404);
+
+// người assign phải thuộc team
+await assertTeamMember(existingTask.team_id, userId);
+
+// người được assign cũng phải thuộc team
+await assertTeamMember(existingTask.team_id, assigneeId);
+
   const task = await prisma.tasks.update({
     where: {
       id: taskId,

@@ -1,3 +1,5 @@
+// @/features/project-detail/components/drawer/activity/ActivityTimeline.tsx
+
 const activities = [
   "Task created",
   "Status changed to In Progress",

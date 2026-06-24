@@ -1,9 +1,13 @@
+// @/features/tasks/api/taskApi.ts
 import apiClient from "@/lib/api";
 
 import type {
   TaskStatus,
   TaskPriority,
 } from "../types/task.types";
+
+import type { Task } from "../types/task.types";
+import type { AxiosResponse } from "axios";
 
 export interface CreateTaskPayload {
   team_id: string;
@@ -58,8 +62,10 @@ export const taskApi = {
   /**
    * GET TASK DETAIL
    */
-  getTaskById: (taskId: string) =>
-    apiClient.get(`/tasks/${taskId}`),
+  getTaskById: async (taskId: string): Promise<Task> => {
+    const res = await apiClient.get(`/tasks/${taskId}`);
+    return res.data;
+  },
 
   /**
    * CREATE TASK

@@ -13,6 +13,7 @@ import {
 } from "./task.service";
 
 import { asyncHandler } from "../../utils/asyncHandler";
+import { mapTaskStatusToPrisma } from "./task.mapper";
 
 export const createTask = asyncHandler(async (
   req: AuthRequest,
@@ -80,13 +81,17 @@ export const getTasks = asyncHandler(async (
 });
 
 export const getTaskDetail = asyncHandler(async (
-  req: Request,
+  req: AuthRequest,
   res: Response
 ) => {
 
   const taskId = req.params.taskId as string;
 
-  const task = await getTaskDetailService(taskId);
+  const task =
+    await getTaskDetailService(
+      taskId,
+      req.user?.id as string
+    );
 
   if (!task) {
     throw new AppError("Task not found", 404);
@@ -97,7 +102,7 @@ export const getTaskDetail = asyncHandler(async (
 });
 
 export const updateTask = asyncHandler(async (
-  req: Request,
+  req: AuthRequest,
   res: Response
 ) => {
 
@@ -105,7 +110,8 @@ export const updateTask = asyncHandler(async (
 
   const task = await updateTaskService(
     taskId,
-    req.body
+    req.body,
+    req.user?.id as string
   );
 
   res.status(200).json({
@@ -116,13 +122,16 @@ export const updateTask = asyncHandler(async (
 });
 
 export const deleteTask = asyncHandler(async (
-  req: Request,
+  req: AuthRequest,
   res: Response
 ) => {
 
   const taskId = req.params.taskId as string;
 
-  await deleteTaskService(taskId);
+  await deleteTaskService(
+    taskId,
+    req.user?.id as string
+  );
 
   res.status(200).json({
     message: "Delete task successfully",
@@ -130,15 +139,28 @@ export const deleteTask = asyncHandler(async (
 
 });
 
-export const updateTaskStatus = asyncHandler(async (req: Request, res: Response) => {
+export const updateTaskStatus = asyncHandler(async (req: AuthRequest, res: Response) => {
   const taskId = req.params.taskId as string;
   const { status } = req.body;
 
   if (!status) {
-    throw new AppError("Status required", 400);
+    throw new AppError(
+      "Status required",
+      400
+    );
   }
 
-  const task = await updateTaskStatusService(taskId, status);
+  const mappedStatus =
+    mapTaskStatusToPrisma(status);
+
+  if (!mappedStatus) {
+    throw new AppError(
+      "Invalid status",
+      400
+    );
+  }
+
+  const task = await updateTaskStatusService(taskId, status, req.user?.id as string);
 
   res.json({
     message: "Task moved",
@@ -169,7 +191,7 @@ export const updateTaskProgress = asyncHandler(async (
 });
 
 export const assignTask = asyncHandler(async (
-  req: Request,
+  req: AuthRequest,
   res: Response
 ) => {
 
@@ -180,7 +202,8 @@ export const assignTask = asyncHandler(async (
   const task =
     await assignTaskService(
       taskId,
-      assignee_id
+      assignee_id,
+      req.user?.id as string
     );
 
   res.status(200).json({

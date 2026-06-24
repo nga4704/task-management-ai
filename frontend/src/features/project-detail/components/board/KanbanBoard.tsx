@@ -26,15 +26,20 @@ function KanbanBoard({
   projectId,
   filters
 }: Props) {
-
+  const queryKey = [
+    "tasks",
+    projectId,
+    filters?.status,
+    filters?.priority,
+  ];
 
   const [selectedTask, setSelectedTask] =
     useState<Task | null>(null);
 
-  const { data: tasks = [], isLoading } = useTasks(
+  const { data: tasks = [], isLoading } = useTasks({
     projectId,
-    filters
-  );
+    filters,
+  });
 
   useTaskSocket(projectId);
 
@@ -57,16 +62,13 @@ function KanbanBoard({
     if (!taskId || !newStatus) return;
 
     // 1. optimistic update
-    queryClient.setQueryData(
-      ["tasks", projectId, filters],
-      (old: any) => {
-        if (!old) return old;
+    queryClient.setQueryData(queryKey, (old: any) => {
+      if (!old) return old;
 
-        return old.map((t: any) =>
-          t.id === taskId ? { ...t, status: newStatus } : t
-        );
-      }
-    );
+      return old.map((t: any) =>
+        t.id === taskId ? { ...t, status: newStatus } : t
+      );
+    });
 
     // 2. call API
     await taskApi.moveTask(taskId, newStatus);
@@ -123,7 +125,7 @@ function KanbanBoard({
         </div>
 
         <TaskDetailDrawer
-          task={selectedTask}
+          taskId={selectedTask?.id}
           onClose={() =>
             setSelectedTask(null)
           }

@@ -11,6 +11,7 @@ import {
 } from "../../../tasks/api/taskApi";
 
 import { useCreateTask } from "@/features/tasks/hooks/useCreateTask";
+import { useTeamMembers } from "@/features/teams/hooks/useTeamMembers";
 
 type Props = {
   open: boolean;
@@ -26,8 +27,10 @@ function CreateTaskModal({
   projectId,
   teamId,
 }: Props) {
+  const [assigneeId, setAssigneeId] = useState<string>("");
+  const { data: members = [] } = useTeamMembers(teamId);
 
-const { mutateAsync: createTask } = useCreateTask(projectId);
+  const { mutateAsync: createTask } = useCreateTask(projectId);
 
   const [loading, setLoading] =
     useState(false);
@@ -304,6 +307,24 @@ const { mutateAsync: createTask } = useCreateTask(projectId);
             />
           </div>
 
+          <div>
+            <label>
+              Assignee
+            </label>
+            <select
+              value={assigneeId}
+              onChange={(e) => setAssigneeId(e.target.value)}
+              className="mt-2 w-full rounded-xl border p-3"
+            >
+              <option value="">Unassigned</option>
+
+              {members.map((m: any) => (
+                <option key={m.user_id} value={m.user_id}>
+                  {m.users.full_name}
+                </option>
+              ))}
+            </select>
+          </div>
           <button
             type="submit"
             disabled={loading}

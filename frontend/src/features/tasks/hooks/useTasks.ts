@@ -1,13 +1,17 @@
+// @/features/tasks/hooks/useTasks.ts
 import { useQuery } from "@tanstack/react-query";
 import { taskApi } from "../api/taskApi";
 
 import type { Task, TaskPriority, TaskStatus } from "../types/task.types";
 
 export function useTasks(
-  projectId?: string,
-  filters?: {
-    status?: TaskStatus;
-    priority?: TaskPriority;
+  params: {
+    projectId?: string;
+    teamId?: string;
+    filters?: {
+      status?: TaskStatus;
+      priority?: TaskPriority;
+    };
   }
 ) {
   const mapStatus = (status?: string): TaskStatus | undefined => {
@@ -23,13 +27,14 @@ export function useTasks(
   };
 
   return useQuery<Task[]>({
-    queryKey: ["tasks", projectId, filters],
+    queryKey: ["tasks", params.projectId, params.teamId, params.filters],
 
     queryFn: async () => {
       const response = await taskApi.getTasks({
-        project_id: projectId,
-        status: mapStatus(filters?.status),
-        priority: mapPriority(filters?.priority),
+        project_id: params.projectId,
+        team_id: params.teamId,
+        status: mapStatus(params.filters?.status),
+        priority: mapPriority(params.filters?.priority),
       });
 
       return response.data.map((task: any) => ({

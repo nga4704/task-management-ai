@@ -425,3 +425,12 @@ export const getTeamProjectsService =
       mapProjectList
     );
   };
+
+  export const getTeamMembersService = async (teamId: string) => {
+  return prisma.team_members.findMany({
+    where: { team_id: teamId },
+    include: {
+      users: true,
+    },
+  });
+};
