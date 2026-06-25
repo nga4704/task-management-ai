@@ -21,15 +21,6 @@ from "uuid";
 // CREATE
 export const createTeam = asyncHandler(async (req: AuthRequest, res: Response) => {
 
-const teamId =
-  req.params.teamId;
-
-if (!isUUID(teamId)) {
-  throw new AppError(
-    "Invalid team id",
-    400
-  );
-}
 
   if (!req.user) {
     throw new AppError("Unauthorized", 401);

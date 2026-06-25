@@ -1,32 +1,16 @@
-// @/features/project-detail/components/board/TaskCard.tsx
-
 import { Calendar } from "lucide-react";
-
 import type { Task } from "@/features/tasks/types/task.types";
 import { useDraggable } from "@dnd-kit/core";
 
-import {
-  priorityStyles,
-  statusStyles,
-  statusLabel,
-} from "@/shared/constants/task";
+import { priorityStyles } from "@/shared/constants/task";
 
 type Props = {
   task: Task;
   onClick: () => void;
 };
 
-function TaskCard({
-  task,
-  onClick,
-}: Props) {
-
-  const {
-    attributes,
-    listeners,
-    setNodeRef,
-    transform,
-  } = useDraggable({
+function TaskCard({ task, onClick }: Props) {
+  const { attributes, listeners, setNodeRef, transform } = useDraggable({
     id: task.id,
   });
 
@@ -37,12 +21,9 @@ function TaskCard({
       {...attributes}
       style={{
         transform: transform
-          ? `translate(${transform.x}px, ${transform.y}px)`
+          ? `translate3d(${transform.x}px, ${transform.y}px, 0)`
           : undefined,
       }}
-      onPointerDown={(e) =>
-        e.stopPropagation()
-      }
       onClick={(e) => {
         e.stopPropagation();
         onClick();
@@ -50,200 +31,47 @@ function TaskCard({
       className="
         w-full
         text-left
-
         rounded-3xl
-
         border
         border-border
-
         bg-white
-
         p-4
-
         shadow-soft
-
         transition-all
         duration-200
-
         hover:-translate-y-1
         hover:shadow-card
       "
     >
-      {/* HEADER */}
-      <div className="flex justify-between gap-2">
-
-        <span
-          className={`
-            rounded-full
-            px-3
-            py-1
-
-            text-xs
-            font-semibold
-
-            ${priorityStyles[task.priority]}
-          `}
-        >
+      {/* PRIORITY */}
+      <div className="flex justify-between">
+        <span className={`text-xs font-semibold px-3 py-1 rounded-full ${priorityStyles[task.priority]}`}>
           {task.priority}
         </span>
-
-        {/* <span
-          className={`
-            rounded-full
-            px-3
-            py-1
-
-            text-xs
-            font-semibold
-
-            ${statusStyles[task.status]}
-          `}
-        >
-          {statusLabel[task.status]}
-        </span> */}
-
       </div>
 
       {/* TITLE */}
-      <h3
-        className="
-          mt-4
-
-          font-semibold
-          leading-6
-        "
-      >
-        {task.title}
-      </h3>
+      <h3 className="mt-4 font-semibold">{task.title}</h3>
 
       {/* DESCRIPTION */}
       {task.description && (
-        <p
-          className="
-            mt-2
-
-            line-clamp-2
-
-            text-sm
-            text-muted
-          "
-        >
+        <p className="mt-2 text-sm text-muted line-clamp-2">
           {task.description}
         </p>
       )}
 
-      {/* PROGRESS */}
-      <div className="mt-4">
-
-        <div
-          className="
-            h-2
-
-            rounded-full
-
-            bg-border
-          "
-        >
-          <div
-            className="
-              h-full
-
-              rounded-full
-
-              bg-primary
-            "
-            style={{
-              width: `${task.progress ?? 0}%`,
-            }}
-          />
-        </div>
-
-        <p
-          className="
-            mt-2
-
-            text-xs
-            text-muted
-          "
-        >
-          {task.progress ?? 0}% complete
-        </p>
-
-      </div>
-
       {/* FOOTER */}
-      <div
-        className="
-          mt-4
-
-          flex
-          items-center
-          justify-between
-        "
-      >
-        <div
-          className="
-            flex
-            items-center
-            gap-2
-
-            text-xs
-            text-muted
-          "
-        >
+      <div className="mt-4 flex justify-between items-center text-xs text-muted">
+        <div className="flex items-center gap-2">
           <Calendar size={14} />
-
-          {
-            task.deadline
-              ? new Date(
-                task.deadline
-              ).toLocaleDateString()
-              : "No deadline"
-          }
+          {task.deadline
+            ? new Date(task.deadline).toLocaleDateString()
+            : "No deadline"}
         </div>
 
-        <div
-          className="
-            h-9
-            w-9
-
-            rounded-xl
-
-            bg-primary
-
-            flex
-            items-center
-            justify-center
-
-            font-bold
-          "
-        >
-          {task.assignee?.avatar ? (
-            <img
-              src={task.assignee.avatar}
-              alt={
-                task.assignee.full_name ||
-                "Unassigned"
-              }
-              className="
-                h-full
-                w-full
-
-                rounded-xl
-
-                object-cover
-              "
-            />
-          ) : (
-            <span className="text-lg">
-              {
-                task.assignee?.full_name?.charAt(0) ||
-                "?"
-              }
-            </span>
-          )}
+        <div className="h-8 w-8 rounded-lg bg-primary flex items-center justify-center text-white">
+          {task.assignee?.full_name?.charAt(0) || "?"}
         </div>
-
       </div>
     </button>
   );

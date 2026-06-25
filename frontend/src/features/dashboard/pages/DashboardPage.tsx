@@ -16,7 +16,15 @@ import {
   useParams,
 } from "react-router-dom";
 
+import { useEffect } from "react";
+import { useNavigate } from "react-router-dom";
+import { useTeams } from "@/features/teams/hooks/useTeams";
+
+
 function DashboardPage() {
+
+  const navigate = useNavigate();
+  const { data: teams, isLoading } = useTeams();
 
   const { teamId } =
     useParams();
@@ -31,6 +39,12 @@ function DashboardPage() {
     projectName,
   } =
     useActiveProject();
+
+  useEffect(() => {
+    if (!isLoading && (!teams || teams.length === 0)) {
+      navigate("/teams");
+    }
+  }, [teams, isLoading]);
 
   return (
     <MainLayout

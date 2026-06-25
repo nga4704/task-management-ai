@@ -26,7 +26,7 @@ function TeamCard({ team }: Props) {
       team.name
     );
 
-    navigate(`/teams/${team.id}`);
+    navigate(`/teams/${team.id}/projects`);
   };
 
   return (

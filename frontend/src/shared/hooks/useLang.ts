@@ -1,4 +1,4 @@
-import { vi } from "@/locales/vi";
+import { vi } from "@/shared/locales/vi";
 
 export const useLang = () => {
   const t = (key: string) => {

@@ -6,17 +6,16 @@ export type NotificationType =
   | "warning"
   | "system";
 
-export interface Notification {
+export type Notification = {
   id: string;
+
+  receiver_id: string;
 
   title: string;
 
-  description: string;
+  message?: string | null;
 
-  time: string;
+  is_read: boolean | null;
 
-  read: boolean;
-
-  type: NotificationType;
-  projectId?: string;
-}
+  created_at: string | null;
+};

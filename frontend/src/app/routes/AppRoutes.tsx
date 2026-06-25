@@ -13,7 +13,6 @@ import AnalyticsPage from "@/features/analytics/pages/AnalyticsPage";
 import ProjectDetailPage from "@/features/project-detail/pages/ProjectDetailPage";
 import ProtectedRoute from "./ProtectedRoute";
 import TeamsPage from "@/features/teams/pages/TeamsPage";
-import TeamDetailPage from "@/features/teams/pages/TeamDetailPage";
 
 function AppRoutes() {
   return (
@@ -61,14 +60,14 @@ function AppRoutes() {
           </ProtectedRoute>
         }
       />
-      <Route
+      {/* <Route
         path="/teams/:teamId"
         element={
           <ProtectedRoute>
             <TeamDetailPage />
           </ProtectedRoute>
         }
-      />
+      /> */}
       {/* PROJECTS */}
       {/* <Route path="/projects" element={<ProjectsPage />} />
 

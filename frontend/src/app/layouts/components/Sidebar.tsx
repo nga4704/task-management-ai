@@ -15,8 +15,8 @@ import { sidebarSections } from "../constants/sidebar";
 import SidebarItem from "./sidebar/SidebarItem";
 
 import AIStatusCard from "@/shared/components/cards/AIStatusCard";
-import ProjectSwitcher
-  from "./ProjectSwitcher";
+import TeamProjectTree
+  from "./TeamProjectTree";
 
 type SidebarProps = {
   mobileOpen: boolean;
@@ -175,66 +175,59 @@ function Sidebar({
           />
         </div>
 
-        {/* PROJECT SWITCHER */}
-        {!collapsed && (
-          <div className="px-4">
-            <ProjectSwitcher />
-          </div>
-        )}
-
         {/* NAVIGATION */}
-        <div
-          className="
-            mt-6
-            flex-1
-            overflow-y-auto
+        <div className="mt-6 flex-1 overflow-y-auto px-4 pb-6 space-y-6">
 
-            px-4
-            pb-6
-          "
-        >
-          {sidebarSections.map(
-            (section) => (
-              <div
-                key={section.title}
-                className="mb-8"
-              >
-                {!collapsed && (
-                  <p
-                    className="
-                      mb-3
-                      px-3
-
-                      text-xs
-                      font-bold
-                      uppercase
-                      tracking-[0.18em]
-
-                      text-muted
-                    "
-                  >
+          {/* WORKSPACE */}
+          <div>
+            {sidebarSections
+              .filter((s) => s.title === "Workspace")
+              .map((section) => (
+                <div key={section.title}>
+                  <p className="mb-3 px-3 text-xs font-bold uppercase tracking-[0.18em] text-muted">
                     {section.title}
                   </p>
-                )}
 
-                <div className="space-y-2">
-
-                  {section.items.map(
-                    (item) => (
+                  <div className="space-y-2">
+                    {section.items.map((item) => (
                       <SidebarItem
                         key={item.path}
                         {...item}
-                        collapsed={
-                          collapsed
-                        }
+                        collapsed={collapsed}
                         active={location.pathname.startsWith(item.path)}
                       />
-                    )
-                  )}
+                    ))}
+                  </div>
+                </div>
+              ))}
+          </div>
+
+          {/* TEAMS TREE (MOVE DOWN HERE) */}
+          <div>
+            <TeamProjectTree />
+          </div>
+
+          {/* AI + SYSTEM */}
+          {sidebarSections
+            .filter((s) => s.title !== "Workspace")
+            .map((section) => (
+              <div key={section.title}>
+                <p className="mb-3 px-3 text-xs font-bold uppercase tracking-[0.18em] text-muted">
+                  {section.title}
+                </p>
+
+                <div className="space-y-2">
+                  {section.items.map((item) => (
+                    <SidebarItem
+                      key={item.path}
+                      {...item}
+                      collapsed={collapsed}
+                      active={location.pathname.startsWith(item.path)}
+                    />
+                  ))}
                 </div>
               </div>
-            )
-          )}
+            ))}
         </div>
       </aside>
     </>

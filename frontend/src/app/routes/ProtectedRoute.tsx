@@ -9,18 +9,15 @@ export default function ProtectedRoute({
   children,
 }: Props) {
 
-  const user =
-    useAuthStore(
-      (state) => state.user
-    );
+  const user = useAuthStore((s) => s.user);
+  const loading = useAuthStore((s) => s.loading);
+
+  if (loading) {
+    return <div>Loading...</div>;
+  }
 
   if (!user) {
-    return (
-      <Navigate
-        to="/login"
-        replace
-      />
-    );
+    return <Navigate to="/login" replace />;
   }
 
   return <>{children}</>;

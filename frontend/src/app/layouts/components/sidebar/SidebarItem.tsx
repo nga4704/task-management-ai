@@ -29,7 +29,7 @@ function SidebarItem({
           flex
           items-center
           gap-3
-          rounded-2xl
+          rounded-xl
           px-4
           py-3
           transition-all
@@ -38,7 +38,7 @@ function SidebarItem({
           ${
             active
               ? `
-                bg-primary
+                bg-primaryLight
                 text-black
                 shadow-soft
                 font-semibold

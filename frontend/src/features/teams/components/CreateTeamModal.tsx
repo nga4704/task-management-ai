@@ -196,7 +196,7 @@ function CreateTeamModal({
           onClose();
 
           navigate(
-            `/teams/${response.team.id}`
+            `/teams/${response.team.id}/projects`
           );
         },
 

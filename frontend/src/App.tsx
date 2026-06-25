@@ -8,74 +8,48 @@ import { supabase } from "./lib/supabase";
 import { useAuthStore } from "./store/authStore";
 
 function App() {
-  const setUser =
-    useAuthStore(
-      (state) => state.setUser
-    );
+  const setUser = useAuthStore((s) => s.setUser);
+  const setLoading = useAuthStore((s) => s.setLoading);
 
   useEffect(() => {
+    const loadProfile = async () => {
+      setLoading(true);
 
-    const loadProfile =
-      async () => {
+      const { data: { session } } =
+        await supabase.auth.getSession();
 
-        const {
-          data: { session },
-        } =
-          await supabase.auth.getSession();
+      if (!session) {
+        setUser(null);
+        setLoading(false);
+        return;
+      }
 
-        if (!session) {
+      try {
+        const profile = await api.get("/users/me");
 
-          setUser(null);
-
-          return;
-        }
-
-        try {
-
-          const profile =
-            await api.get(
-              "/users/me"
-            );
-
-          setUser(
-            profile.data
-          );
-
-        } catch (error) {
-
-          console.error(
-            "Load profile error:",
-            error
-          );
-
-          setUser(null);
-        }
-      };
+        setUser(profile.data);
+      } catch (error) {
+        console.error(error);
+        setUser(null);
+      } finally {
+        setLoading(false);
+      }
+    };
 
     loadProfile();
 
-    const {
-      data: { subscription },
-    } =
-      supabase.auth.onAuthStateChange(
-        (_event, session) => {
-
-          if (!session) {
-
-            setUser(null);
-
-            return;
-          }
-
-          loadProfile();
+    const { data: { subscription } } =
+      supabase.auth.onAuthStateChange((_event, session) => {
+        if (!session) {
+          setUser(null);
+          return;
         }
-      );
 
-    return () => {
-      subscription.unsubscribe();
-    };
+        loadProfile();
+      });
 
-  }, [setUser]);
+    return () => subscription.unsubscribe();
+  }, []);
 
   return <AppRoutes />;
 }
