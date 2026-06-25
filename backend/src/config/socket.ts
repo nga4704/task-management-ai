@@ -12,6 +12,11 @@ export const initSocket = (httpServer: any) => {
   io.on("connection", (socket) => {
     console.log("Client connected:", socket.id);
 
+    socket.on("join_project", (projectId: string) => {
+      socket.join(`project_${projectId}`);
+      console.log(`Socket ${socket.id} joined project ${projectId}`);
+    });
+
     socket.on("disconnect", () => {
       console.log("Client disconnected:", socket.id);
     });

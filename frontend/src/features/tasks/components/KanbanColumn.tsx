@@ -3,7 +3,7 @@ import {
   Draggable,
 } from "@hello-pangea/dnd";
 
-import type { Task } from "@/shared/types/task.types";
+import type { Task } from "../types/task.types";
 
 import TaskBoardCard from "./TaskBoardCard";
 

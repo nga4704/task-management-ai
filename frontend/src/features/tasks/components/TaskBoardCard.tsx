@@ -3,7 +3,7 @@ import {
   Sparkles,
 } from "lucide-react";
 
-import type { Task } from "@/shared/types/task.types";
+import type { Task } from "../types/task.types";
 
 import { priorityStyles } from "@/shared/constants/task";
 
@@ -34,7 +34,7 @@ function TaskBoardCard({
 
         <div className="flex-1">
 
-          {task.aiSuggested && (
+          {/* {task.aiSuggested && (
             <div
               className="
                 inline-flex
@@ -53,7 +53,7 @@ function TaskBoardCard({
 
               AI Suggested
             </div>
-          )}
+          )} */}
 
           <h3
             className="
@@ -155,7 +155,7 @@ function TaskBoardCard({
           />
 
           <span className="text-sm text-muted">
-            Due {task.dueDate}
+            Due {task.deadline}
           </span>
         </div>
 

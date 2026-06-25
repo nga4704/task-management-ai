@@ -97,7 +97,10 @@ export const getTaskDetail = asyncHandler(async (
     throw new AppError("Task not found", 404);
   }
 
-  res.json(task);
+  res.json({
+    success: true,
+    data: task,
+  });
 
 });
 
@@ -115,8 +118,8 @@ export const updateTask = asyncHandler(async (
   );
 
   res.status(200).json({
-    message: "Update task successfully",
-    task,
+    success: true,
+    data: task,
   });
 
 });
@@ -150,21 +153,21 @@ export const updateTaskStatus = asyncHandler(async (req: AuthRequest, res: Respo
     );
   }
 
-  const mappedStatus =
-    mapTaskStatusToPrisma(status);
+  const mappedStatus = mapTaskStatusToPrisma(status);
 
   if (!mappedStatus) {
-    throw new AppError(
-      "Invalid status",
-      400
-    );
+    throw new AppError("Invalid status", 400);
   }
 
-  const task = await updateTaskStatusService(taskId, status, req.user?.id as string);
+  const task = await updateTaskStatusService(
+    taskId,
+    mappedStatus,
+    req.user?.id as string
+  );
 
   res.json({
-    message: "Task moved",
-    task,
+    success: true,
+    data: task,
   });
 });
 
@@ -184,8 +187,8 @@ export const updateTaskProgress = asyncHandler(async (
   );
 
   res.status(200).json({
-    message: "Update progress successfully",
-    task,
+    success: true,
+    data: task,
   });
 
 });
@@ -207,8 +210,8 @@ export const assignTask = asyncHandler(async (
     );
 
   res.status(200).json({
-    message: "Assign task successfully",
-    task,
+    success: true,
+    data: task,
   });
 
 });

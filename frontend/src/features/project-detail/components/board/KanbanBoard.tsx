@@ -1,7 +1,7 @@
 import { useState } from "react";
 
 import TaskColumn from "./TaskColumn";
-import TaskDetailDrawer from "./TaskDetailDrawer";
+import TaskDetailDrawer from "../drawer/TaskDetailDrawer";
 
 import type { Task, TaskStatus, TaskPriority } from "@/features/tasks/types/task.types";
 
@@ -15,7 +15,8 @@ import { queryClient } from "@/lib/queryClient";
 import { closestCorners } from "@dnd-kit/core";
 
 type Props = {
-  projectId: string;
+  projectId?: string;
+  scope: "project";
   filters?: {
     status?: TaskStatus;
     priority?: TaskPriority;
@@ -24,6 +25,7 @@ type Props = {
 
 function KanbanBoard({
   projectId,
+  scope,
   filters
 }: Props) {
   const queryKey = [
@@ -37,6 +39,7 @@ function KanbanBoard({
     useState<Task | null>(null);
 
   const { data: tasks = [], isLoading } = useTasks({
+    scope,
     projectId,
     filters,
   });
@@ -126,9 +129,9 @@ function KanbanBoard({
 
         <TaskDetailDrawer
           taskId={selectedTask?.id}
-          onClose={() =>
-            setSelectedTask(null)
-          }
+          onClose={() => {
+            setSelectedTask(null);
+          }}
         />
       </DndContext>
     </>

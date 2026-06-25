@@ -25,7 +25,7 @@ router.put("/:taskId", protect, updateTask);
 
 router.delete("/:taskId", protect, deleteTask);
 
-router.patch("/:taskId/status", protect, updateTaskStatus);
+// router.patch("/:taskId/status", protect, updateTaskStatus);
 
 router.patch("/:taskId/progress", protect, updateTaskProgress);
 

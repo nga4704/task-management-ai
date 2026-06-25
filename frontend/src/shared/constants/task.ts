@@ -3,41 +3,41 @@
 import type {
   TaskPriority,
   TaskStatus,
-} from "../types/task.types";
+} from "@/features/tasks/types/task.types";
 
 export const statusLabel: Record<
   TaskStatus,
   string
 > = {
-  todo: "Todo",
+  TODO: "Todo",
 
-  inProgress: "In Progress",
+  IN_PROGRESS: "In Progress",
 
-  review: "Review",
+  REVIEW: "Review",
 
-  done: "Completed",
+  DONE: "Completed",
 };
 
 export const statusStyles: Record<
   TaskStatus,
   string
 > = {
-  todo: `
+  TODO: `
     bg-surfaceSecondary
     text-muted
   `,
 
-  inProgress: `
+  IN_PROGRESS: `
     bg-infoLight
     text-info
   `,
 
-  review: `
+  REVIEW: `
     bg-warningLight
     text-warning
   `,
 
-  done: `
+  DONE: `
     bg-successLight
     text-success
   `,
@@ -47,17 +47,17 @@ export const priorityStyles: Record<
   TaskPriority,
   string
 > = {
-  High: `
+  high: `
     bg-dangerLight
     text-danger
   `,
 
-  Medium: `
+  medium: `
     bg-warningLight
     text-warning
   `,
 
-  Low: `
+  low: `
     bg-successLight
     text-success
   `,

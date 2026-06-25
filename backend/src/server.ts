@@ -15,7 +15,9 @@ import aiRoutes from "./modules/ai/ai.routes";
 import activityLogRoutes from "./modules/activityLog/activityLog.routes";
 
 import projectRoutes from "./modules/project/project.routes";
-
+import subtaskRoutes from "./modules/subtask/subtask.routes";
+import attachmentRoutes from "./modules/attachment/attachment.routes";
+import commentRoutes from "./modules/comment/comment.routes";
 import { errorHandler } from "./middlewares/error.middleware";
 
 dotenv.config();
@@ -84,6 +86,10 @@ app.use(
 app.get("/", (_, res) => {
   res.send("API running");
 });
+
+app.use("/api/v1/subtasks", subtaskRoutes);
+app.use("/api/v1/attachments", attachmentRoutes);
+app.use("/api/v1/comments", commentRoutes);
 
 app.use(errorHandler);
 

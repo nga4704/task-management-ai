@@ -2,8 +2,11 @@ import { useEffect } from "react";
 import socket from "@/lib/socket";
 import { queryClient } from "@/lib/queryClient";
 
-export function useTaskSocket(projectId: string) {
+export function useTaskSocket(projectId?: string) {
   useEffect(() => {
+
+    if (!projectId) return;
+
     socket.on("taskCreated", () => {
       queryClient.invalidateQueries({
         queryKey: ["tasks", projectId],

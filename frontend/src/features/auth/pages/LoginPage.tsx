@@ -333,7 +333,7 @@ function LoginPage() {
           disabled={loading}
           title="Login"
         />
-
+{/* 
         <div
           className="
             flex
@@ -353,9 +353,9 @@ function LoginPage() {
           </span>
 
           <div className="h-px flex-1 bg-gray-200" />
-        </div>
+        </div> */}
 
-        <Button
+        {/* <Button
           type="button"
           variant="secondary"
           loading={googleLoading}
@@ -364,7 +364,7 @@ function LoginPage() {
             handleGoogleSignIn
           }
           title="Continue with Google"
-        />
+        /> */}
       </form>
 
       <p

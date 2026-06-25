@@ -64,7 +64,7 @@ export const taskApi = {
    */
   getTaskById: async (taskId: string): Promise<Task> => {
     const res = await apiClient.get(`/tasks/${taskId}`);
-    return res.data;
+    return res.data.data;
   },
 
   /**

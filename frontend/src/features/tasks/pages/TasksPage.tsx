@@ -11,19 +11,16 @@ import TaskStats from "../components/TaskStats";
 import KanbanColumn from "../components/KanbanColumn";
 
 import { useTasks } from "@/features/tasks/hooks/useTasks";
-import { taskApi } from "@/features/tasks/api/taskApi";
 
 import type { Task, TaskStatus } from "@/features/tasks/types/task.types";
 import { useMoveTask } from "@/features/tasks/hooks/useMoveTask";
 
 function TasksPage() {
-const { projectId } = useParams();
+  const { projectId } = useParams();
 
-const { data: tasks = [] } = useTasks(
-  projectId
-    ? { projectId }
-    : { projectId: undefined }
-);
+  const { data: tasks = [] } = useTasks({
+    scope: "my",
+  });
 
   const moveTask = useMoveTask(projectId);
 

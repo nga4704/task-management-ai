@@ -46,8 +46,39 @@ export interface Task {
 
   task_progress?: {
     id: string;
+
     progress?: number;
+
     note?: string;
+
+    created_at?: string;
+
+    users?: {
+      full_name?: string;
+    };
   }[];
+
+  teams?: {
+    id: string;
+    name: string;
+    owner_id: string;
+  };
+
+  users_tasks_created_byTousers?: {
+    id: string;
+    full_name?: string;
+    avatar?: string;
+  };
+
+  created_by?: string;
+
+  subtasks?: {
+    id: string;
+    title: string;
+    completed: boolean;
+    created_at?: string;
+  }[];
+
+  isOwner?: boolean;
 }
 

@@ -27,7 +27,13 @@ export const createTaskService = async (data: {
   estimatedHours?: number;
 
 }) => {
+  if (!data.title) {
+    throw new AppError("Title is required", 400);
+  }
 
+  if (!data.priority) {
+    throw new AppError("Priority is required", 400);
+  }
   const project =
     await prisma.projects.findUnique({
       where: {
@@ -161,8 +167,20 @@ export const getTaskDetailService = async (
       },
       include: {
         users_tasks_assignee_idTousers: true,
+
+        users_tasks_created_byTousers: true,
+
         teams: true,
-        task_progress: true,
+
+        task_progress: {
+          include: {
+            users: true,
+          },
+
+          orderBy: {
+            created_at: "desc",
+          },
+        },
       },
     });
 
@@ -188,7 +206,12 @@ export const getTaskDetailService = async (
     );
   }
 
-  return task;
+  const isOwner = task.created_by === userId;
+
+  return {
+    ...task,
+    isOwner,
+  };
 };
 
 /* 
@@ -209,7 +232,7 @@ export const updateTaskService = async (taskId: string, data: UpdateTaskDto, use
       404
     );
   }
-
+  const isOwner = existingTask.created_by === userId;
   const member = await prisma.team_members.findFirst({
     where: {
       team_id: existingTask.team_id,
@@ -220,7 +243,18 @@ export const updateTaskService = async (taskId: string, data: UpdateTaskDto, use
   if (!member) {
     throw new AppError("Forbidden", 403);
   }
+  const restrictedFields = ["priority", "assignee_id", "deadline"];
 
+  if (!isOwner) {
+    for (const key of restrictedFields) {
+      if (key in data) {
+        throw new AppError(
+          "Only owner can update priority, assignee, deadline",
+          403
+        );
+      }
+    }
+  }
   const updatedTask = await prisma.tasks.update({
     where: {
       id: taskId,
@@ -236,6 +270,13 @@ export const updateTaskService = async (taskId: string, data: UpdateTaskDto, use
     },
   });
 
+  await prisma.task_progress.create({
+    data: {
+      task_id: taskId,
+      note: "Task information updated",
+      updated_by: userId,
+    },
+  });
 
   const io = getIO();
   io.emit("taskUpdated", updatedTask);
@@ -262,15 +303,21 @@ export const deleteTaskService = async (taskId: string, userId: string) => {
     );
   }
 
-  const member = await prisma.team_members.findFirst({
+  const team = await prisma.teams.findUnique({
     where: {
-      team_id: task.team_id,
-      user_id: userId,
+      id: task.team_id,
     },
   });
 
-  if (!member) {
-    throw new AppError("Forbidden", 403);
+  if (!team) {
+    throw new AppError("Team not found", 404);
+  }
+
+  if (team.owner_id !== userId) {
+    throw new AppError(
+      "Only team owner can delete task",
+      403
+    );
   }
 
   const deletedTask = await prisma.tasks.delete({
@@ -320,9 +367,16 @@ export const updateTaskStatusService = async (
     },
   });
 
+  await prisma.task_progress.create({
+    data: {
+      task_id: taskId,
+      note: `Status changed to ${status}`,
+      updated_by: userId,
+    },
+  });
 
   const io = getIO();
-  io.emit("taskUpdated", task);
+  io.to(`project_${task.project_id}`).emit("taskUpdated", task);
 
   return task;
 };
@@ -335,6 +389,24 @@ export const updateTaskProgressService = async (
   progress: number,
   userId: string
 ) => {
+  const task =
+    await prisma.tasks.findUnique({
+      where: {
+        id: taskId,
+      },
+    });
+
+  if (!task) {
+    throw new AppError(
+      "Task not found",
+      404
+    );
+  }
+
+  await assertTeamMember(
+    task.team_id,
+    userId
+  );
 
   if (
     progress < 0 ||
@@ -386,17 +458,17 @@ export const assignTaskService = async (
   userId: string
 ) => {
 
- const existingTask = await prisma.tasks.findUnique({
-  where: { id: taskId },
-});
+  const existingTask = await prisma.tasks.findUnique({
+    where: { id: taskId },
+  });
 
-if (!existingTask) throw new AppError("Task not found", 404);
+  if (!existingTask) throw new AppError("Task not found", 404);
 
-// người assign phải thuộc team
-await assertTeamMember(existingTask.team_id, userId);
+  // người assign phải thuộc team
+  await assertTeamMember(existingTask.team_id, userId);
 
-// người được assign cũng phải thuộc team
-await assertTeamMember(existingTask.team_id, assigneeId);
+  // người được assign cũng phải thuộc team
+  await assertTeamMember(existingTask.team_id, assigneeId);
 
   const task = await prisma.tasks.update({
     where: {
@@ -407,9 +479,16 @@ await assertTeamMember(existingTask.team_id, assigneeId);
     },
   });
 
+  await prisma.task_progress.create({
+    data: {
+      task_id: taskId,
+      note: "Assignee updated",
+      updated_by: userId,
+    },
+  });
 
   const io = getIO();
-  io.emit("taskUpdated", task);
+  io.to(`project_${task.project_id}`).emit("taskUpdated", task);
 
   return task;
 };

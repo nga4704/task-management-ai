@@ -1,4 +1,20 @@
-function TaskHeader() {
+// src/features/task-detail/components/TaskHeader.tsx
+
+import type { Task } from "@/features/tasks/types/task.types";
+
+import {
+  statusLabel,
+  priorityStyles,
+  statusStyles,
+} from "@/shared/constants/task";
+
+type Props = {
+  task: Task;
+};
+
+function TaskHeader({
+  task,
+}: Props) {
   return (
     <div
       className="
@@ -6,68 +22,71 @@ function TaskHeader() {
         rounded-card
         p-6
         shadow-soft
+
         flex
         flex-col
         lg:flex-row
+
         lg:items-center
         lg:justify-between
+
         gap-6
       "
     >
       <div>
         <div className="flex items-center gap-3">
+
           <span
-            className="
-              bg-primary
+            className={`
               px-4
               py-1
               rounded-full
               text-sm
               font-medium
-            "
+
+              ${statusStyles[task.status]}
+            `}
           >
-            In Progress
+            {statusLabel[task.status]}
           </span>
 
-          <span className="text-gray-500">
-            High Priority
+          <span
+            className={`
+              px-4
+              py-1
+              rounded-full
+              text-sm
+              font-medium
+
+              ${priorityStyles[task.priority]}
+            `}
+          >
+            {task.priority}
           </span>
+
         </div>
 
-        <h1 className="text-4xl font-bold mt-5">
-          Build AI Task Prediction System
+        <h1
+          className="
+            text-4xl
+            font-bold
+            mt-5
+          "
+        >
+          {task.title}
         </h1>
 
-        <p className="text-gray-500 mt-4 max-w-2xl leading-relaxed">
-          Develop an intelligent prediction module
-          that analyzes task progress and suggests
-          optimized schedules for the team.
+        <p
+          className="
+            text-gray-500
+            mt-4
+            max-w-2xl
+            leading-relaxed
+          "
+        >
+          {task.description ||
+            "No description"}
         </p>
-      </div>
-
-      <div className="flex gap-3">
-        <button
-          className="
-            bg-gray-100
-            px-5
-            py-3
-            rounded-full
-          "
-        >
-          Edit
-        </button>
-
-        <button
-          className="
-            bg-primary
-            px-5
-            py-3
-            rounded-full
-            font-semibold
-          "
-        >
-          Mark Complete
-        </button>
       </div>
     </div>
   );

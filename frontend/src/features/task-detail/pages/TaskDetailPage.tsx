@@ -10,9 +10,22 @@ import AttachmentCard from "../components/AttachmentCard";
 import { useParams } from "react-router-dom";
 import { useTaskDetail } from "@/features/tasks/hooks/useTaskDetail";
 
+import { useAuthStore }
+  from "@/store/authStore";
+import { statusLabel } from "@/shared/constants/task";
+
 function TaskDetailPage() {
   const { taskId } = useParams();
   const { data: task, isLoading } = useTaskDetail(taskId);
+
+  const user =
+    useAuthStore(
+      state => state.user
+    );
+
+  const isOwner =
+    task?.teams?.owner_id ===
+    user?.id;
 
   if (isLoading) {
     return (
@@ -31,163 +44,241 @@ function TaskDetailPage() {
   }
 
   // if (isLoading) {
-    return (
-       <MainLayout
+  return (
+    <MainLayout
       title={task.title}
       description={task.description ?? "Task detail page"}
     >
-        <div className="space-y-6">
+      <div className="space-y-6">
 
-          <TaskHeader />
+        <TaskHeader
+          task={task}
+        />
 
-          <div className="grid grid-cols-12 gap-6">
+        <div className="grid grid-cols-12 gap-6">
 
-            {/* Left */}
-            <div className="col-span-12 lg:col-span-8 space-y-6">
+          {/* Left */}
+          <div className="col-span-12 lg:col-span-8 space-y-6">
 
-              {/* Task Info */}
-              <div className="grid md:grid-cols-3 gap-6">
-                <TaskInfoCard
-                  label="Due Date"
-                  value={task.deadline ?? "No deadline"}
-                />
+            {/* Task Info */}
+            <div className="grid md:grid-cols-3 gap-6">
+              <TaskInfoCard
+                label="Status"
+                value={statusLabel[task.status]}
+              />
 
-                <TaskInfoCard
-                  label="Assignee"
-                  value={task.assignee?.full_name ?? "Unassigned"}
-                />
+              <TaskInfoCard
+                label="Priority"
+                value={task.priority}
+              />
 
-                <TaskInfoCard
-                  label="Sprint"
-                  value="Sprint 04"
-                />
-              </div>
+              <TaskInfoCard
+                label="Progress"
+                value={`${task.progress ?? 0}%`}
+              />
 
-              {/* Subtasks */}
-              <div
-                className="
-                bg-white
-                rounded-[28px]
-                p-6
-                shadow-soft
-              "
-              >
-                <h2 className="text-2xl font-bold">
-                  Subtasks
-                </h2>
+              <TaskInfoCard
+                label="Deadline"
+                value={
+                  task.deadline
+                    ? new Date(
+                      task.deadline
+                    ).toLocaleDateString()
+                    : "No deadline"
+                }
+              />
 
-                <div className="mt-6 space-y-4">
-                  <SubtaskItem
-                    title="Design AI architecture"
-                    completed
-                  />
+              <TaskInfoCard
+                label="Assignee"
+                value={
+                  task.users_tasks_assignee_idTousers
+                    ?.full_name ??
+                  "Unassigned"
+                }
+              />
 
-                  <SubtaskItem
-                    title="Build prediction API"
-                  />
+              <TaskInfoCard
+                label="Created By"
+                value={
+                  task.users_tasks_created_byTousers
+                    ?.full_name ??
+                  "Unknown"
+                }
+              />
 
-                  <SubtaskItem
-                    title="Train ML model"
-                  />
-                </div>
-              </div>
+              <TaskInfoCard
+                label="Team"
+                value={
+                  task.teams?.name ??
+                  "-"
+                }
+              />
 
-              {/* Comments */}
-              <div
-                className="
-                bg-white
-                rounded-[28px]
-                p-6
-                shadow-soft
-              "
-              >
-                <h2 className="text-2xl font-bold">
-                  Comments
-                </h2>
-
-                <div className="mt-6 space-y-6">
-                  <CommentCard
-                    name="Minh"
-                    comment="The AI model integration is almost done."
-                    time="2 hours ago"
-                  />
-
-                  <CommentCard
-                    name="Huy"
-                    comment="Need to optimize prediction performance."
-                    time="5 hours ago"
-                  />
-                </div>
-              </div>
-
+              <TaskInfoCard
+                label="Estimated Hours"
+                value={
+                  task.estimated_hours
+                    ? String(task.estimated_hours)
+                    : "-"
+                }
+              />
             </div>
 
-            {/* Right */}
-            <div className="col-span-12 lg:col-span-4 space-y-6">
-
-              {/* Activity */}
-              <div
-                className="
+            {/* Subtasks */}
+            <div
+              className="
                 bg-white
                 rounded-[28px]
                 p-6
                 shadow-soft
               "
-              >
-                <h2 className="text-2xl font-bold">
-                  Activity
-                </h2>
+            >
+              <h2 className="text-2xl font-bold">
+                Subtasks
+              </h2>
 
-                <div className="mt-6">
-                  <ActivityTimeline
-                    activity="Task status changed"
-                    time="Today, 10:30 AM"
-                  />
+              <div className="mt-6 space-y-4">
+                <SubtaskItem
+                  title="Design AI architecture"
+                  completed
+                />
 
-                  <ActivityTimeline
-                    activity="New comment added"
-                    time="Yesterday"
-                  />
+                <SubtaskItem
+                  title="Build prediction API"
+                />
 
-                  <ActivityTimeline
-                    activity="Task created"
-                    time="2 days ago"
-                  />
-                </div>
+                <SubtaskItem
+                  title="Train ML model"
+                />
               </div>
+            </div>
 
-              {/* Attachments */}
-              <div
-                className="
+            {/* Comments */}
+            <div
+              className="
                 bg-white
                 rounded-[28px]
                 p-6
                 shadow-soft
               "
-              >
-                <h2 className="text-2xl font-bold">
-                  Attachments
-                </h2>
+            >
+              <h2 className="text-2xl font-bold">
+                Comments
+              </h2>
 
-                <div className="mt-6 space-y-4">
-                  <AttachmentCard
-                    name="AI_Document.pdf"
-                    size="2.4 MB"
-                  />
+              <div className="mt-6 space-y-6">
+                <CommentCard
+                  name="Minh"
+                  comment="The AI model integration is almost done."
+                  time="2 hours ago"
+                />
 
-                  <AttachmentCard
-                    name="wireframe.fig"
-                    size="1.1 MB"
-                  />
-                </div>
+                <CommentCard
+                  name="Huy"
+                  comment="Need to optimize prediction performance."
+                  time="5 hours ago"
+                />
               </div>
-
             </div>
 
           </div>
+
+          {/* Right */}
+          <div className="col-span-12 lg:col-span-4 space-y-6">
+
+            {/* Activity */}
+            <div
+              className="
+                bg-white
+                rounded-[28px]
+                p-6
+                shadow-soft
+              "
+            >
+              <h2 className="text-2xl font-bold">
+                Activity
+              </h2>
+
+              <div className="mt-6">
+
+                {
+                  task.task_progress?.length
+                    ? task.task_progress.map(
+                      (item) => (
+                        <ActivityTimeline
+                          key={item.id}
+                          activity={
+                            item.note ??
+                            "Progress updated"
+                          }
+                          time={
+                            item.created_at
+                              ? new Date(
+                                item.created_at
+                              ).toLocaleString()
+                              : ""
+                          }
+                        />
+                      )
+                    )
+                    : (
+                      <p>
+                        No activity yet
+                      </p>
+                    )
+                }
+
+              </div>
+            </div>
+
+            {/* Attachments */}
+            <div
+              className="
+                bg-white
+                rounded-[28px]
+                p-6
+                shadow-soft
+              "
+            >
+              <h2 className="text-2xl font-bold">
+                Attachments
+              </h2>
+
+              <div className="mt-6 space-y-4">
+                <AttachmentCard
+                  name="AI_Document.pdf"
+                  size="2.4 MB"
+                />
+
+                <AttachmentCard
+                  name="wireframe.fig"
+                  size="1.1 MB"
+                />
+              </div>
+            </div>
+
+          </div>
+
         </div>
-      </MainLayout>
-    );
-  }
+        {isOwner && (
+          <div className="flex justify-end">
+            <button
+              className="
+        rounded-xl
+        bg-red-500
+        px-4
+        py-2
+        text-white
+      "
+            >
+              Delete Task
+            </button>
+          </div>
+        )}
+
+      </div>
+    </MainLayout>
+  );
+}
 
 export default TaskDetailPage;

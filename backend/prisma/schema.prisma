@@ -64,9 +64,9 @@ model tasks {
   assignee_id String? @db.Uuid
   created_by  String  @db.Uuid
 
-  priority String? @default("medium") @db.VarChar(20)
-  status TaskStatus @default(TODO)
-  progress Int?    @default(0)
+  priority String?    @default("medium") @db.VarChar(20)
+  status   TaskStatus @default(TODO)
+  progress Int?       @default(0)
 
   deadline        DateTime? @db.Timestamp(6)
   estimated_hours Int?
@@ -76,7 +76,10 @@ model tasks {
 
   ai_predictions ai_predictions[]
   task_progress  task_progress[]
+  task_comments  task_comments[]
+  subtasks       subtasks[]
 
+  task_attachments task_attachments[]
   users_tasks_assignee_idTousers users? @relation("tasks_assignee_idTousers", fields: [assignee_id], references: [id], onUpdate: NoAction, map: "fk_assignee")
 
   users_tasks_created_byTousers users @relation("tasks_created_byTousers", fields: [created_by], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "fk_creator")
@@ -152,4 +155,50 @@ model users {
   tasks_tasks_created_byTousers  tasks[]         @relation("tasks_created_byTousers")
   team_members                   team_members[]
   teams                          teams[]
+  task_comments                  task_comments[]
+}
+
+model task_comments {
+  id         String   @id @default(uuid()) @db.Uuid
+
+  task_id    String   @db.Uuid
+  user_id    String   @db.Uuid
+
+  content    String
+
+  parent_id  String?  @db.Uuid  
+
+  created_at DateTime @default(now())
+
+  tasks tasks @relation(fields: [task_id], references: [id], onDelete: Cascade)
+  users users @relation(fields: [user_id], references: [id])
+
+  parent task_comments? @relation("CommentReplies", fields: [parent_id], references: [id])
+  replies task_comments[] @relation("CommentReplies")
+}
+
+model subtasks {
+  id String @id @default(uuid()) @db.Uuid
+
+  task_id String @db.Uuid
+
+  title String
+
+  completed Boolean @default(false)
+
+  created_at DateTime @default(now())
+
+  tasks tasks @relation(fields: [task_id], references: [id], onDelete: Cascade)
+}
+model task_attachments {
+  id         String   @id @default(uuid()) @db.Uuid
+  task_id    String   @db.Uuid
+  file_name  String
+  file_url   String
+  file_type  String?
+  size       Int?
+  uploaded_by String? @db.Uuid
+  created_at DateTime @default(now())
+
+  tasks tasks @relation(fields: [task_id], references: [id], onDelete: Cascade)
 }

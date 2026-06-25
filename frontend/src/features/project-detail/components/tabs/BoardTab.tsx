@@ -4,7 +4,12 @@ import { useState } from "react";
 import type { TaskStatus, TaskPriority } from "@/features/tasks/types/task.types";
 
 type Props = {
-  projectId: string;
+  projectId?: string;
+  scope: "project";
+  filters?: {
+    status?: TaskStatus;
+    priority?: TaskPriority;
+  };
 };
 type FilterStatus = TaskStatus | "all" | "overdue";
 type FilterPriority = TaskPriority | "all";
@@ -38,13 +43,16 @@ function BoardTab({
         onChange={setFilters}
       />
 
-      <KanbanBoard
-        projectId={projectId}
-        filters={{
-          status: mapStatus(filters.status),
-          priority: mapPriority(filters.priority),
-        }}
-      />
+      {projectId && (
+        <KanbanBoard
+          projectId={projectId}
+          scope="project"
+          filters={{
+            status: mapStatus(filters.status),
+            priority: mapPriority(filters.priority),
+          }}
+        />
+      )}
     </div>
   );
 }

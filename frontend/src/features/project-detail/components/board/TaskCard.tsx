@@ -1,16 +1,18 @@
 // @/features/project-detail/components/board/TaskCard.tsx
 
-import {
-  Calendar,
-  AlertTriangle,
-} from "lucide-react";
+import { Calendar } from "lucide-react";
 
 import type { Task } from "@/features/tasks/types/task.types";
 import { useDraggable } from "@dnd-kit/core";
 
+import {
+  priorityStyles,
+  statusStyles,
+  statusLabel,
+} from "@/shared/constants/task";
+
 type Props = {
   task: Task;
-
   onClick: () => void;
 };
 
@@ -19,7 +21,12 @@ function TaskCard({
   onClick,
 }: Props) {
 
-  const { attributes, listeners, setNodeRef, transform } = useDraggable({
+  const {
+    attributes,
+    listeners,
+    setNodeRef,
+    transform,
+  } = useDraggable({
     id: task.id,
   });
 
@@ -28,14 +35,14 @@ function TaskCard({
       ref={setNodeRef}
       {...listeners}
       {...attributes}
-
-
       style={{
         transform: transform
           ? `translate(${transform.x}px, ${transform.y}px)`
           : undefined,
       }}
-      onPointerDown={(e) => e.stopPropagation()}
+      onPointerDown={(e) =>
+        e.stopPropagation()
+      }
       onClick={(e) => {
         e.stopPropagation();
         onClick();
@@ -62,31 +69,42 @@ function TaskCard({
         hover:shadow-card
       "
     >
-      <div className="flex justify-between">
-        <span
-          className="
-            rounded-full
-            bg-primaryLight
+      {/* HEADER */}
+      <div className="flex justify-between gap-2">
 
+        <span
+          className={`
+            rounded-full
             px-3
             py-1
 
             text-xs
             font-semibold
-          "
+
+            ${priorityStyles[task.priority]}
+          `}
         >
           {task.priority}
         </span>
 
-        {/* {task.riskScore &&
-          task.riskScore > 60 && (
-            <AlertTriangle
-              size={18}
-              className="text-danger"
-            />
-          )} */}
+        {/* <span
+          className={`
+            rounded-full
+            px-3
+            py-1
+
+            text-xs
+            font-semibold
+
+            ${statusStyles[task.status]}
+          `}
+        >
+          {statusLabel[task.status]}
+        </span> */}
+
       </div>
 
+      {/* TITLE */}
       <h3
         className="
           mt-4
@@ -98,7 +116,25 @@ function TaskCard({
         {task.title}
       </h3>
 
+      {/* DESCRIPTION */}
+      {task.description && (
+        <p
+          className="
+            mt-2
+
+            line-clamp-2
+
+            text-sm
+            text-muted
+          "
+        >
+          {task.description}
+        </p>
+      )}
+
+      {/* PROGRESS */}
       <div className="mt-4">
+
         <div
           className="
             h-2
@@ -108,7 +144,7 @@ function TaskCard({
             bg-border
           "
         >
-          {/* <div
+          <div
             className="
               h-full
 
@@ -117,12 +153,12 @@ function TaskCard({
               bg-primary
             "
             style={{
-              width: `${task.progress}%`,
+              width: `${task.progress ?? 0}%`,
             }}
-          /> */}
+          />
         </div>
 
-        {/* <p
+        <p
           className="
             mt-2
 
@@ -130,10 +166,12 @@ function TaskCard({
             text-muted
           "
         >
-          {task.progress}% complete
-        </p> */}
+          {task.progress ?? 0}% complete
+        </p>
+
       </div>
 
+      {/* FOOTER */}
       <div
         className="
           mt-4
@@ -154,10 +192,12 @@ function TaskCard({
           "
         >
           <Calendar size={14} />
+
           {
             task.deadline
-              ? new Date(task.deadline)
-                .toLocaleDateString()
+              ? new Date(
+                task.deadline
+              ).toLocaleDateString()
               : "No deadline"
           }
         </div>
@@ -181,15 +221,29 @@ function TaskCard({
           {task.assignee?.avatar ? (
             <img
               src={task.assignee.avatar}
-              alt={task.assignee?.full_name || "Unassigned"}
-              className="h-full w-full rounded-xl object-cover"
+              alt={
+                task.assignee.full_name ||
+                "Unassigned"
+              }
+              className="
+                h-full
+                w-full
+
+                rounded-xl
+
+                object-cover
+              "
             />
           ) : (
             <span className="text-lg">
-              {task.assignee?.full_name?.charAt(0) || "?"}
+              {
+                task.assignee?.full_name?.charAt(0) ||
+                "?"
+              }
             </span>
           )}
         </div>
+
       </div>
     </button>
   );

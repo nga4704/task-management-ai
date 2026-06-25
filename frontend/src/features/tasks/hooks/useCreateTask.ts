@@ -21,6 +21,11 @@ export function useCreateTask(
     onSuccess: () => {
 
       queryClient.invalidateQueries({
+        queryKey: ["tasks"],
+        exact: false,
+      });
+
+      queryClient.invalidateQueries({
         queryKey: [
           "tasks",
           projectId,
