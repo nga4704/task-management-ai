@@ -13,6 +13,7 @@ import AnalyticsPage from "@/features/analytics/pages/AnalyticsPage";
 import ProjectDetailPage from "@/features/project-detail/pages/ProjectDetailPage";
 import ProtectedRoute from "./ProtectedRoute";
 import TeamsPage from "@/features/teams/pages/TeamsPage";
+import AcceptInvitePage from "@/features/projects/pages/AcceptInvitePage";
 
 function AppRoutes() {
   return (
@@ -112,7 +113,8 @@ function AppRoutes() {
           </ProtectedRoute>
         }
       />
-
+      <Route path="/invite" element={<AcceptInvitePage />} />
+      
       {/* AI */}
       <Route path="/planner" element={<PlannerPage />} />
 

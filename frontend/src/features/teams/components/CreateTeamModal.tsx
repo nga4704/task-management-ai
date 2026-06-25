@@ -195,9 +195,16 @@ function CreateTeamModal({
 
           onClose();
 
-          navigate(
-            `/teams/${response.team.id}/projects`
-          );
+          console.log("CREATE TEAM RESPONSE:", response);
+
+          const teamId = response.team?.id;
+
+          if (!teamId) {
+            alert("Team created but missing ID");
+            return;
+          }
+
+          navigate(`/teams/${teamId}/projects`);
         },
 
         onError: (error: any) => {

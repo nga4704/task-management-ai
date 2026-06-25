@@ -81,14 +81,10 @@ export const getTeams =
   });
 
 // DETAIL
-export const getTeamDetail = asyncHandler(async (req: Request, res: Response) => {
+export const getTeamDetail = asyncHandler(async (req: AuthRequest, res: Response) => {
   const teamId = req.params.teamId as string;
 
-  const team = await getTeamDetailService(teamId);
-
-  if (!team) {
-    throw new AppError("Team not found", 404);
-  }
+  const team = await getTeamDetailService(teamId, req.user!.id);
 
   res.status(200).json(team);
 });
@@ -135,11 +131,11 @@ export const addMember = asyncHandler(async (req: Request, res: Response) => {
 });
 
 // REMOVE MEMBER
-export const removeMember = asyncHandler(async (req: Request, res: Response) => {
+export const removeMember = asyncHandler(async (req: AuthRequest, res: Response) => {
   const teamId = req.params.teamId as string;
   const userId = req.params.userId as string;
 
-  await removeMemberService(teamId, userId);
+  await removeMemberService(teamId, userId, req.user!.id);
 
   res.status(200).json({
     message: "Remove member successfully",

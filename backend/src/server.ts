@@ -19,6 +19,7 @@ import subtaskRoutes from "./modules/subtask/subtask.routes";
 import attachmentRoutes from "./modules/attachment/attachment.routes";
 import commentRoutes from "./modules/comment/comment.routes";
 import { errorHandler } from "./middlewares/error.middleware";
+import inviteRoutes from "./modules/team-invites/invite.routes";
 
 dotenv.config();
 
@@ -90,6 +91,7 @@ app.get("/", (_, res) => {
 app.use("/api/v1/subtasks", subtaskRoutes);
 app.use("/api/v1/attachments", attachmentRoutes);
 app.use("/api/v1/comments", commentRoutes);
+app.use("/api/v1/team-invites", inviteRoutes);
 
 app.use(errorHandler);
 

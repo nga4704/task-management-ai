@@ -172,7 +172,18 @@ export const getTeamsService =
     );
   };
 
-export const getTeamDetailService = async (teamId: string) => {
+export const getTeamDetailService = async (teamId: string, userId: string) => {
+  const member = await prisma.team_members.findFirst({
+    where: {
+      team_id: teamId,
+      user_id: userId,
+    },
+  });
+
+  if (!member) {
+    throw new AppError("Forbidden", 403);
+  }
+
   return prisma.teams.findUnique({
     where: {
       id: teamId,
@@ -338,51 +349,44 @@ export const addMemberService =
 
 export const removeMemberService = async (
   teamId: string,
-  userId: string
+  userId: string,        // target user
+  requesterId: string    // người thực hiện
 ) => {
-
-  const member =
-    await prisma.team_members.findFirst({
-      where: {
-        team_id: teamId,
-        user_id: userId,
-      },
-    });
-
-  const team =
-    await prisma.teams.findUnique({
-      where: {
-        id: teamId,
-      },
-    });
+  const team = await prisma.teams.findUnique({
+    where: { id: teamId },
+  });
 
   if (!team) {
-    throw new AppError(
-      "Team not found",
-      404
-    );
+    throw new AppError("Team not found", 404);
   }
 
-  if (team.owner_id === userId) {
-    throw new AppError(
-      "Owner cannot be removed",
-      403
-    );
+  // ❌ check quyền OWNER (phải là requester)
+  const requesterMember = await prisma.team_members.findFirst({
+    where: {
+      team_id: teamId,
+      user_id: requesterId,
+    },
+  });
+
+  if (!requesterMember || requesterMember.role !== "owner") {
+    throw new AppError("Forbidden", 403);
   }
+
+  // ❌ không cho xóa owner
+  if (team.owner_id === userId) {
+    throw new AppError("Owner cannot be removed", 403);
+  }
+
+  const member = await prisma.team_members.findFirst({
+    where: {
+      team_id: teamId,
+      user_id: userId,
+    },
+  });
 
   if (!member) {
-    throw new AppError(
-      "Member not found",
-      404
-    );
+    throw new AppError("Member not found", 404);
   }
-
-  // if (member.role === "owner") {
-  //   throw new AppError(
-  //     "Owner cannot be removed",
-  //     403
-  //   );
-  // }
 
   await prisma.team_members.deleteMany({
     where: {
@@ -392,10 +396,7 @@ export const removeMemberService = async (
   });
 
   const io = getIO();
-  io.emit("memberRemoved", {
-    teamId,
-    userId,
-  });
+  io.emit("memberRemoved", { teamId, userId });
 };
 
 export const getTeamProjectsService =

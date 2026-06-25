@@ -1,35 +1,35 @@
-import {
-  useMutation,
-  useQueryClient,
-} from "@tanstack/react-query";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { toast } from "react-hot-toast";
 
-import {
-  removeMember,
-} from "../api/teamApi";
+import { removeMember } from "../api/teamApi";
 
-export const useRemoveMember =
-  (teamId: string) => {
+export const useRemoveMember = (teamId: string) => {
+  const queryClient = useQueryClient();
 
-    const queryClient =
-      useQueryClient();
+  return useMutation({
+    mutationFn: (userId: string) => removeMember(teamId, userId),
 
-    return useMutation({
+    onSuccess: () => {
+      toast.success("Member removed successfully");
 
-      mutationFn:
-        (userId: string) =>
-          removeMember(
-            teamId,
-            userId
-          ),
+      queryClient.invalidateQueries({
+        queryKey: ["team", teamId],
+      });
+    },
 
-      onSuccess: () => {
+    onError: (err: any) => {
+      const message =
+        err?.response?.data?.message ||
+        "Failed to remove member";
 
-        queryClient.invalidateQueries({
-          queryKey: [
-            "team",
-            teamId,
-          ],
-        });
-      },
-    });
-  };
+      const status = err?.response?.status;
+
+      if (status === 403) {
+        toast.error("You are not allowed to remove this member");
+        return;
+      }
+
+      toast.error(message);
+    },
+  });
+};

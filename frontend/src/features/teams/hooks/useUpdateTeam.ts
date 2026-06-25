@@ -1,45 +1,30 @@
-import {
-  useMutation,
-  useQueryClient,
-} from "@tanstack/react-query";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { toast } from "react-hot-toast";
 
-import {
-  updateTeam,
-} from "../api/teamApi";
+import { updateTeam } from "../api/teamApi";
+import { getApiErrorMessage } from "@/lib/apiError";
 
-export const useUpdateTeam =
-  (teamId: string) => {
+export const useUpdateTeam = (teamId: string) => {
+  const queryClient = useQueryClient();
 
-    const queryClient =
-      useQueryClient();
+  return useMutation({
+    mutationFn: (payload: { name: string; description?: string }) =>
+      updateTeam(teamId, payload),
 
-    return useMutation({
+    onSuccess: () => {
+      toast.success("Team updated successfully");
 
-      mutationFn: (
-        payload: {
-          name: string;
-          description?: string;
-        }
-      ) =>
-        updateTeam(
-          teamId,
-          payload
-        ),
+      queryClient.invalidateQueries({
+        queryKey: ["team", teamId],
+      });
 
-      onSuccess: () => {
+      queryClient.invalidateQueries({
+        queryKey: ["teams"],
+      });
+    },
 
-        queryClient.invalidateQueries({
-          queryKey: [
-            "team",
-            teamId,
-          ],
-        });
-
-        queryClient.invalidateQueries({
-          queryKey: [
-            "teams",
-          ],
-        });
-      },
-    });
-  };
+    onError: (err: any) => {
+      toast.error(getApiErrorMessage(err));
+    },
+  });
+};

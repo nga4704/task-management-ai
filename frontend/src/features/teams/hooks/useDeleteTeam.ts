@@ -1,30 +1,25 @@
-import {
-  useMutation,
-  useQueryClient,
-} from "@tanstack/react-query";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { toast } from "react-hot-toast";
 
-import {
-  deleteTeam,
-} from "../api/teamApi";
+import { deleteTeam } from "../api/teamApi";
+import { getApiErrorMessage } from "@/lib/apiError";
 
-export const useDeleteTeam =
-  () => {
+export const useDeleteTeam = () => {
+  const queryClient = useQueryClient();
 
-    const queryClient =
-      useQueryClient();
+  return useMutation({
+    mutationFn: deleteTeam,
 
-    return useMutation({
+    onSuccess: () => {
+      toast.success("Team deleted successfully");
 
-      mutationFn:
-        deleteTeam,
+      queryClient.invalidateQueries({
+        queryKey: ["teams"],
+      });
+    },
 
-      onSuccess: () => {
-
-        queryClient.invalidateQueries({
-          queryKey: [
-            "teams",
-          ],
-        });
-      },
-    });
-  };
+    onError: (err: any) => {
+      toast.error(getApiErrorMessage(err));
+    },
+  });
+};
