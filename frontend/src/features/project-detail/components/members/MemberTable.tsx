@@ -3,10 +3,15 @@ import {
 } from "lucide-react";
 
 import WorkloadIndicator from "./WorkloadIndicator";
-
-import { mockMembers } from "./data/mockMembers";
+import { useTeamMembersStats } from "../../hooks/useTeamMembersStats";
+import { useParams } from "react-router-dom";
 
 function MemberTable() {
+  const { teamId } = useParams();
+
+  const { data: members = [], isLoading } =
+    useTeamMembersStats(teamId!);
+
   return (
     <section
       className="
@@ -84,85 +89,44 @@ function MemberTable() {
           </thead>
 
           <tbody>
-            {mockMembers.map(
-              (member) => (
-                <tr
-                  key={member.id}
-                  className="
-                    border-b
-                    border-border/50
-                  "
-                >
-                  <td className="py-5">
-                    <div className="flex items-center gap-3">
-                      <div
-                        className="
-                          flex
-                          h-11
-                          w-11
-                          items-center
-                          justify-center
-                          rounded-full
-                          bg-primaryLight
-                          font-bold
-                        "
-                      >
-                        {member.name[0]}
-                      </div>
-
-                      <div>
-                        <p className="font-semibold">
-                          {member.name}
-                        </p>
-
-                        <p
-                          className="
-                            text-sm
-                            text-muted
-                          "
-                        >
-                          Online
-                        </p>
-                      </div>
+            {members.map((member: any) => (
+              <tr
+                key={member.id}
+                className="border-b border-border/50"
+              >
+                <td className="py-5">
+                  <div className="flex items-center gap-3">
+                    <div className="flex h-11 w-11 items-center justify-center rounded-full bg-primaryLight font-bold">
+                      {member.name?.[0]}
                     </div>
-                  </td>
 
-                  <td>
-                    {member.role}
-                  </td>
+                    <div>
+                      <p className="font-semibold">
+                        {member.name}
+                      </p>
 
-                  <td>
-                    {member.tasks}
-                  </td>
+                      <p className="text-sm text-muted">
+                        Online
+                      </p>
+                    </div>
+                  </div>
+                </td>
 
-                  <td>
-                    {member.completion}%
-                  </td>
+                <td>{member.role}</td>
+                <td>{member.tasks}</td>
+                <td>{member.completion}%</td>
 
-                  <td className="w-[260px]">
-                    <WorkloadIndicator
-                      workload={
-                        member.workload
-                      }
-                    />
-                  </td>
+                <td className="w-[260px]">
+                  <WorkloadIndicator workload={member.workload} />
+                </td>
 
-                  <td>
-                    <button
-                      className="
-                        rounded-xl
-                        p-2
-                        hover:bg-surfaceSecondary
-                      "
-                    >
-                      <MoreHorizontal
-                        size={18}
-                      />
-                    </button>
-                  </td>
-                </tr>
-              )
-            )}
+                <td>
+                  <button className="rounded-xl p-2 hover:bg-surfaceSecondary">
+                    <MoreHorizontal size={18} />
+                  </button>
+                </td>
+              </tr>
+            ))}
           </tbody>
         </table>
       </div>

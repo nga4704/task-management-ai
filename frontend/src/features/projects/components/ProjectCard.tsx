@@ -1,4 +1,11 @@
-import { BarChart3, CheckCircle2 } from "lucide-react";
+import {
+  BarChart3,
+  CheckCircle2,
+  ListTodo,
+  Users,
+  Sparkles,
+} from "lucide-react";
+
 import { useNavigate } from "react-router-dom";
 import type { Project } from "../types/project.types";
 import { projectStatusConfig } from "../constants/projectStatus";
@@ -20,30 +27,21 @@ function ProjectCard({ project }: ProjectCardProps) {
       onClick={handleOpenProject}
       className="
         group cursor-pointer
-
         rounded-2xl border border-border bg-surface
         p-5
-
         transition-all duration-200
-
         hover:-translate-y-0.5
         hover:border-primary/30
         hover:shadow-soft
       "
     >
-
       {/* HEADER */}
       <div className="flex items-start justify-between gap-4">
-
         <div className="flex-1 min-w-0">
-
           <span
             className={`
-              inline-flex
-              rounded-full
-              px-2.5 py-1
-              text-[11px]
-              font-medium
+              inline-flex rounded-full px-2.5 py-1
+              text-[11px] font-medium
               ${statusConfig.className}
             `}
           >
@@ -59,23 +57,19 @@ function ProjectCard({ project }: ProjectCardProps) {
           </p>
         </div>
 
-        <div
-          className="
-            flex h-12 w-12 shrink-0
-            items-center justify-center
-            rounded-xl
-            bg-primaryLight text-black
-          "
-        >
+        <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-primaryLight text-black">
           <BarChart3 size={18} />
         </div>
       </div>
 
       {/* PROGRESS */}
       <div className="mt-5">
-
         <div className="flex items-center justify-between text-xs text-muted mb-2">
-          <span>Progress</span>
+          <div className="flex items-center gap-1">
+            <BarChart3 size={14} />
+            <span>Progress</span>
+          </div>
+
           <span className="font-medium text-text">
             {project.progress}%
           </span>
@@ -84,55 +78,52 @@ function ProjectCard({ project }: ProjectCardProps) {
         <div className="h-2 rounded-full bg-muted/20 overflow-hidden">
           <div
             style={{ width: `${project.progress}%` }}
-            className="
-              h-full
-              bg-primary
-              rounded-full
-              transition-all duration-300
-            "
+            className="h-full bg-primary rounded-full transition-all duration-300"
           />
         </div>
-
       </div>
 
       {/* FOOTER */}
       <div className="mt-5 flex items-center justify-between">
-
         <div className="flex gap-5 text-sm">
-
+          {/* TASKS */}
           <div>
-            <p className="text-xs text-muted">Tasks</p>
-            <p className="font-medium text-text">
+            <div className="flex items-center gap-2 text-muted">
+              <ListTodo size={14} />
+              <span>Tasks</span> 
+              <p className="font-medium text-text  text-md">
               {project.taskCount}
             </p>
+            </div>
+            
           </div>
 
+          {/* MEMBERS */}
           <div>
-            <p className="text-xs text-muted">Members</p>
-            <p className="font-medium text-text">
+            <div className="flex items-center gap-2 text-muted">
+              <Users size={14} />
+              <span>Members</span>
+               <p className="font-medium text-text text-md">
               {project.memberCount}
             </p>
+            </div>
+           
           </div>
-
         </div>
 
+        {/* AI SCORE */}
         <div
           className="
             inline-flex items-center gap-1.5
-
-            rounded-full
-            bg-successLight/70
+            rounded-full bg-successLight/70
             px-2.5 py-1.5
-
             text-xs font-medium text-success
           "
         >
-          <CheckCircle2 size={14} />
+          <Sparkles size={14} />
           AI {project.aiScore}%
         </div>
-
       </div>
-
     </article>
   );
 }

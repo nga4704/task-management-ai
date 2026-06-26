@@ -1,73 +1,70 @@
+import { useParams } from "react-router-dom";
+import { useProjectOverview } from "@/features/project-detail/hooks/useProjectOverview";
+
+import { statusStyles } from "@/shared/constants/task";
+
 function CompletionChart() {
-  const data = [
+  const { projectId } = useParams();
+  const { data } = useProjectOverview(projectId!);
+
+  const sprint = data?.sprintProgress;
+
+  if (!sprint) return null;
+
+  const chartData = [
     {
-      label: "Week 1",
-      value: 45,
+      key: "TODO",
+      label: "Todo",
+      value: sprint.todo,
+      color: statusStyles.TODO,
     },
     {
-      label: "Week 2",
-      value: 60,
+      key: "IN_PROGRESS",
+      label: "In Progress",
+      value: sprint.inProgress,
+      color: statusStyles.IN_PROGRESS,
     },
     {
-      label: "Week 3",
-      value: 78,
+      key: "REVIEW",
+      label: "Review",
+      value: sprint.review,
+      color: statusStyles.REVIEW,
     },
     {
-      label: "Week 4",
-      value: 92,
+      key: "DONE",
+      label: "Completed",
+      value: sprint.completed,
+      color: statusStyles.DONE,
     },
   ];
 
   return (
-    <div
-      className="
-        rounded-[28px]
-        border
-        border-border
-        bg-white/70
-        backdrop-blur-md
-        p-6
-        shadow-soft
-      "
-    >
-      <div className="mb-6">
-        <h3 className="font-bold text-lg">
-          Completion Trend
-        </h3>
-
-        <p className="text-sm text-muted">
-          Sprint progress over time
-        </p>
-      </div>
+    <div className="rounded-[28px] border border-border bg-white/70 backdrop-blur-md p-6 shadow-soft">
+      <h3 className="font-bold text-lg mb-6">
+        Sprint Progress
+      </h3>
 
       <div className="space-y-5">
-        {data.map((item) => (
-          <div key={item.label}>
+        {chartData.map((item) => (
+          <div key={item.key}>
+            {/* label */}
             <div className="flex justify-between mb-2">
-              <span className="text-sm">
-                {item.label}
-              </span>
-
+              <span className="text-sm">{item.label}</span>
               <span className="text-sm font-semibold">
-                {item.value}%
+                {item.value}
               </span>
             </div>
 
-            <div
-              className="
-                h-3
-                rounded-full
-                bg-surface-secondary
-              "
-            >
+            {/* bar background */}
+            <div className="h-3 rounded-full bg-surfaceSecondary overflow-hidden">
               <div
-                className="
-                  h-full
-                  rounded-full
-                  bg-primary
-                "
+                className={`h-full rounded-full ${item.color}`}
                 style={{
-                  width: `${item.value}%`,
+                  width: `${
+                    sprint.total
+                      ? (item.value / sprint.total) * 100
+                      : 0
+                  }%`,
                 }}
               />
             </div>

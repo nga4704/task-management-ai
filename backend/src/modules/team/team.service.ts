@@ -435,3 +435,45 @@ export const getTeamProjectsService =
     },
   });
 };
+
+export const getTeamMembersWithStatsService = async (teamId: string) => {
+  const members = await prisma.team_members.findMany({
+    where: { team_id: teamId },
+    include: {
+      users: true,
+    },
+  });
+
+  const tasks = await prisma.tasks.findMany({
+    where: { team_id: teamId },
+  });
+
+  return members.map((m) => {
+    const userTasks = tasks.filter(
+      (t) => t.assignee_id === m.user_id
+    );
+
+    const completedTasks = userTasks.filter(
+      (t) => t.status === "DONE"
+    ).length;
+
+    const completion =
+      userTasks.length > 0
+        ? Math.round((completedTasks / userTasks.length) * 100)
+        : 0;
+
+    const workload = Math.min(userTasks.length * 10, 100);
+
+    return {
+      id: m.id,
+      userId: m.user_id,
+      name: m.users.full_name || m.users.username,
+      email: m.users.email,
+      role: m.role,
+
+      tasks: userTasks.length,
+      completion,
+      workload,
+    };
+  });
+};

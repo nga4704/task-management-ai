@@ -10,6 +10,7 @@ import {
   removeMember,
   getTeamProjects,
   getTeamMembers,
+  getTeamMembersWithStats
 } from "./team.controller";
 
 import { protect }
@@ -79,5 +80,10 @@ router.delete(
 router.get("/:teamId/projects", protect, isTeamMember, getTeamProjects);
 
 router.get("/:teamId/members", protect, isTeamMember, getTeamMembers);
+
+router.get(
+  "/:teamId/members-stats",
+  getTeamMembersWithStats
+);
 
 export default router;

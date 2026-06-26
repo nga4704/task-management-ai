@@ -120,3 +120,10 @@ export const getTeamMembers = async (
 
   return response.data;
 };
+
+export const getTeamMembersStats = async (teamId: string) => {
+  const res = await axiosClient.get(
+    `/teams/${teamId}/members-stats`
+  );
+  return res.data;
+};

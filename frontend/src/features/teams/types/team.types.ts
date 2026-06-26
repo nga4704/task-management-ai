@@ -40,3 +40,14 @@ export interface Team {
 export interface TeamDetail extends Team {
   team_members: TeamMember[];
 }
+
+export type TeamMemberStats = {
+  id: string;
+  userId: string;
+  name: string;
+  email: string;
+  role: string;
+  tasks: number;
+  completion: number;
+  workload: number;
+};
