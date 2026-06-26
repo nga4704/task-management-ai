@@ -19,6 +19,8 @@ export interface CreateTaskPayload {
 
   priority: TaskPriority;
 
+  start_date?: string;
+
   deadline?: string;
 
   estimated_hours?: number;
@@ -34,6 +36,8 @@ export interface UpdateTaskPayload {
   priority?: TaskPriority;
 
   assignee_id?: string;
+
+   start_date?: string;
 
   deadline?: string;
 

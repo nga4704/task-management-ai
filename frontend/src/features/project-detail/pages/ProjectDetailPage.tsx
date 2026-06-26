@@ -144,7 +144,9 @@ function ProjectDetailPage() {
         )}
 
         {activeTab === "calendar" && (
-          <CalendarTab />
+          <CalendarTab
+            projectId={projectId}
+          />
         )}
 
         {activeTab === "timeline" && (

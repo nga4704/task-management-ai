@@ -1,28 +1,52 @@
+import { useMemo } from "react";
+
 import {
   AlertCircle,
-  Flag,
   CalendarClock,
+  Flag,
 } from "lucide-react";
 
-const events = [
-  {
-    title: "Sprint Review",
-    date: "12 Aug",
-    icon: CalendarClock,
-  },
-  {
-    title: "Backend Deadline",
-    date: "15 Aug",
-    icon: AlertCircle,
-  },
-  {
-    title: "Release v1.0",
-    date: "30 Aug",
-    icon: Flag,
-  },
-];
+import type { Task } from "@/features/tasks/types/task.types";
 
-function UpcomingEventsPanel() {
+type Props = {
+  tasks: Task[];
+};
+
+function UpcomingEventsPanel({
+  tasks,
+}: Props) {
+  const upcoming = useMemo(() => {
+    const now = new Date();
+
+    return tasks
+      .filter((task) => {
+        if (!task.deadline) return false;
+
+        return (
+          new Date(task.deadline) >= now
+        );
+      })
+      .sort(
+        (a, b) =>
+          new Date(a.deadline!).getTime() -
+          new Date(b.deadline!).getTime()
+      )
+      .slice(0, 5);
+  }, [tasks]);
+
+  const getIcon = (status: string) => {
+    switch (status) {
+      case "DONE":
+        return Flag;
+
+      case "REVIEW":
+        return AlertCircle;
+
+      default:
+        return CalendarClock;
+    }
+  };
+
   return (
     <div
       className="
@@ -44,52 +68,71 @@ function UpcomingEventsPanel() {
       </h3>
 
       <div className="mt-6 space-y-4">
-        {events.map((event) => (
-          <div
-            key={event.title}
-            className="
-              flex
-              items-center
-              gap-4
+        {upcoming.length === 0 ? (
+          <div className="py-6 text-center text-muted">
+            No upcoming deadlines.
+          </div>
+        ) : (
+          upcoming.map((task) => {
+            const Icon = getIcon(
+              task.status
+            );
 
-              rounded-2xl
-              border
-              border-border
-
-              p-4
-            "
-          >
-            <div
-              className="
-                flex
-                h-12
-                w-12
-                items-center
-                justify-center
-
-                rounded-xl
-                bg-primaryLight
-              "
-            >
-              <event.icon size={20} />
-            </div>
-
-            <div>
-              <h4 className="font-semibold">
-                {event.title}
-              </h4>
-
-              <p
+            return (
+              <div
+                key={task.id}
                 className="
-                  text-sm
-                  text-muted
+                  flex
+                  items-center
+                  gap-4
+
+                  rounded-2xl
+                  border
+                  border-border
+
+                  p-4
                 "
               >
-                {event.date}
-              </p>
-            </div>
-          </div>
-        ))}
+                <div
+                  className="
+                    flex
+                    h-12
+                    w-12
+                    items-center
+                    justify-center
+
+                    rounded-xl
+                    bg-primaryLight
+                  "
+                >
+                  <Icon size={20} />
+                </div>
+
+                <div className="min-w-0 flex-1">
+                  <h4 className="truncate font-semibold">
+                    {task.title}
+                  </h4>
+
+                  <p
+                    className="
+                      text-sm
+                      text-muted
+                    "
+                  >
+                    {new Date(
+                      task.deadline!
+                    ).toLocaleString([], {
+                      day: "2-digit",
+                      month: "short",
+                      hour: "2-digit",
+                      minute: "2-digit",
+                    })}
+                  </p>
+                </div>
+              </div>
+            );
+          })
+        )}
       </div>
     </div>
   );

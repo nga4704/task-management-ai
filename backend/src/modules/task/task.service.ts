@@ -10,6 +10,7 @@ type UpdateTaskDto = {
   description?: string;
   priority?: string;
   deadline?: string;
+  start_date?: string;
 };
 
 /* 
@@ -21,6 +22,7 @@ export const createTaskService = async (data: {
   title: string;
   description?: string;
   priority?: string;
+  start_date?: string;
   deadline?: string;
   assigneeId?: string;
   createdBy: string;
@@ -93,6 +95,7 @@ export const createTaskService = async (data: {
       title: data.title,
       description: data.description,
       priority: data.priority,
+      start_date: data.start_date ? new Date(data.start_date) : null,
       deadline: data.deadline ? new Date(data.deadline) : null,
       assignee_id: data.assigneeId,
       created_by: data.createdBy,
@@ -263,6 +266,10 @@ export const updateTaskService = async (taskId: string, data: UpdateTaskDto, use
       title: data.title,
       description: data.description,
       priority: data.priority,
+      start_date:
+        data.start_date
+          ? new Date(data.start_date)
+          : undefined,
       deadline:
         data.deadline
           ? new Date(data.deadline)

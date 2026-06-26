@@ -1,7 +1,42 @@
-import EventCard from "./EventCard";
-import { mockEvents } from "./data/mockEvents";
+import { useMemo, useState } from "react";
 
-function WeekView() {
+import EventCard from "./EventCard";
+
+import type { Task } from "@/features/tasks/types/task.types";
+import TaskDetailDrawer from "../drawer/TaskDetailDrawer";
+
+type Props = {
+  tasks: Task[];
+};
+
+function WeekView({
+  tasks,
+}: Props) {
+  const [selectedTask, setSelectedTask] = useState<Task | null>(null);
+  const events = useMemo(() => {
+    const today = new Date();
+
+    const end = new Date();
+    end.setDate(today.getDate() + 7);
+
+    return tasks
+      .filter((task) => {
+        if (!task.deadline) return false;
+
+        const deadline = new Date(task.deadline);
+
+        return (
+          deadline >= today &&
+          deadline <= end
+        );
+      })
+      .sort(
+        (a, b) =>
+          new Date(a.deadline!).getTime() -
+          new Date(b.deadline!).getTime()
+      );
+  }, [tasks]);
+
   return (
     <section
       className="
@@ -15,10 +50,10 @@ function WeekView() {
     >
       <div
         className="
+          mb-6
           flex
           items-center
           justify-between
-          mb-6
         "
       >
         <div>
@@ -38,15 +73,22 @@ function WeekView() {
       </div>
 
       <div className="space-y-4">
-        {mockEvents.map((event) => (
-          <EventCard
-            key={event.id}
-            title={event.title}
-            time={event.time}
-            type={event.type}
-          />
-        ))}
+        {events.length === 0 ? (
+          <div className="py-8 text-center text-muted">
+            No upcoming tasks this week.
+          </div>
+        ) : (
+          events.map((task) => (
+            <div key={task.id} onClick={() => setSelectedTask(task)}>
+              <EventCard task={task} />
+            </div>
+          ))
+        )}
       </div>
+      <TaskDetailDrawer
+        taskId={selectedTask?.id}
+        onClose={() => setSelectedTask(null)}
+      />
     </section>
   );
 }

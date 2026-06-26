@@ -1,4 +1,4 @@
-import type { Task } from "@/features/tasks/types/task.types";
+import type { Task, TaskPriority, TaskStatus } from "@/features/tasks/types/task.types";
 
 import { useUpdateTask } from "@/features/tasks/hooks/useUpdateTask";
 import { useTeamMembers } from "@/features/teams/hooks/useTeamMembers";
@@ -20,24 +20,22 @@ function TaskMetadata({ task }: Props) {
 
   const { mutate: assignTask } =
     useAssignTask(task.project_id);
+
   const [isOwner, setIsOwner] = useState(false);
-  const row =
-    "flex items-center justify-between py-4 px-2 rounded-xl hover:bg-surfaceSecondary transition";
 
-  const label = "text-sm text-muted flex items-center gap-2";
-  const value = "text-sm font-medium text-text";
+  // =========================
+  // LOCAL STATE (EDIT BUFFER)
+  // =========================
+  const [form, setForm] = useState({
+    status: task.status,
+    priority: task.priority,
+    assignee_id: task.assignee_id ?? "",
+    start_date: task.start_date ?? "",
+    deadline: task.deadline ?? "",
+  });
 
-  const selectStyle = `
-    rounded-xl
-    border border-border
-    bg-surfaceSecondary
-    px-3 py-2
-    text-sm
-    outline-none
-    transition
-    focus:ring-2 focus:ring-primary/20
-    hover:border-primary/30
-  `;
+  const [dirty, setDirty] = useState(false);
+
   useEffect(() => {
     const checkOwner = async () => {
       const { data } = await supabase.auth.getUser();
@@ -45,21 +43,71 @@ function TaskMetadata({ task }: Props) {
 
       if (!user) return;
 
-      // giả sử creator = owner
       setIsOwner(task.users_tasks_created_byTousers?.id === user.id);
     };
 
     checkOwner();
   }, [task]);
+
+  // reset khi task thay đổi
+  useEffect(() => {
+    setForm({
+      status: task.status,
+      priority: task.priority,
+      assignee_id: task.assignee_id ?? "",
+      start_date: task.start_date ?? "",
+      deadline: task.deadline ?? "",
+    });
+    setDirty(false);
+  }, [task]);
+
+  const handleSave = () => {
+    updateTask({
+      taskId: task.id,
+      payload: {
+        status: form.status,
+        priority: form.priority,
+        assignee_id: form.assignee_id || null,
+        start_date: form.start_date || null,
+        deadline: form.deadline || null,
+      },
+    });
+
+    setDirty(false);
+  };
+
+  const row =
+    "flex items-center justify-between py-4 px-2 rounded-xl hover:bg-surfaceSecondary transition";
+
+  const label = "text-sm text-muted flex items-center gap-2";
+  const selectStyle = `
+    rounded-xl border border-border bg-surfaceSecondary
+    px-3 py-2 text-sm outline-none
+  `;
+
   return (
     <div className="rounded-2xl border border-border bg-surface p-5 shadow-sm">
 
       {/* HEADER */}
-      <div className="flex items-center gap-2 mb-5">
-        <Info size={18} className="text-black" />
-        <h3 className="font-bold text-base">
-          Task Information
-        </h3>
+      <div className="flex items-center justify-between mb-5">
+        <div className="flex items-center gap-2">
+          <Info size={18} />
+          <h3 className="font-bold text-base">
+            Task Information
+          </h3>
+        </div>
+
+        {/* SAVE BUTTON */}
+        <button
+          onClick={handleSave}
+          disabled={!dirty || isPending}
+          className={`
+            px-4 py-2 rounded-xl text-white text-sm
+            ${dirty ? "bg-black" : "bg-gray-300"}
+          `}
+        >
+          {isPending ? "Saving..." : "Save"}
+        </button>
       </div>
 
       <div className="space-y-1">
@@ -71,20 +119,18 @@ function TaskMetadata({ task }: Props) {
           </span>
 
           <select
-            value={task.status}
-            disabled={isPending}
+            value={form.status}
+            onChange={(e) => {
+              setForm((p) => ({
+                ...p,
+                status: e.target.value as TaskStatus,
+              }));
+              setDirty(true);
+            }}
             className={selectStyle}
-            onChange={(e) =>
-              updateTask({
-                taskId: task.id,
-                payload: { status: e.target.value },
-              })
-            }
           >
             <option value="TODO">Todo</option>
-            <option value="IN_PROGRESS">
-              In Progress
-            </option>
+            <option value="IN_PROGRESS">In Progress</option>
             <option value="REVIEW">Review</option>
             <option value="DONE">Done</option>
           </select>
@@ -97,43 +143,21 @@ function TaskMetadata({ task }: Props) {
           </span>
 
           <select
-            value={task.priority}
-            disabled={!isOwner || isPending}
+            disabled={!isOwner}
+            value={form.priority}
+            onChange={(e) => {
+              setForm((p) => ({
+                ...p,
+                priority: e.target.value as TaskPriority,
+              }));
+              setDirty(true);
+            }}
             className={selectStyle}
-            onChange={(e) =>
-              updateTask({
-                taskId: task.id,
-                payload: {
-                  priority: e.target.value,
-                },
-              })
-            }
           >
             <option value="low">Low</option>
             <option value="medium">Medium</option>
             <option value="high">High</option>
           </select>
-        </div>
-
-        {/* TEAM */}
-        <div className={row}>
-          <span className={label}>
-            <User size={14} /> Team
-          </span>
-          <span className={value}>
-            {task.teams?.name ?? "-"}
-          </span>
-        </div>
-
-        {/* CREATOR */}
-        <div className={row}>
-          <span className={label}>
-            <User size={14} /> Creator
-          </span>
-          <span className={value}>
-            {task.users_tasks_created_byTousers
-              ?.full_name ?? "-"}
-          </span>
         </div>
 
         {/* ASSIGNEE */}
@@ -144,26 +168,38 @@ function TaskMetadata({ task }: Props) {
 
           <select
             disabled={!isOwner}
-            value={task.assignee_id ?? ""}
+            value={form.assignee_id}
+            onChange={(e) => {
+              setForm((p) => ({ ...p, assignee_id: e.target.value }));
+              setDirty(true);
+            }}
             className={selectStyle}
-            onChange={(e) =>
-              assignTask({
-                taskId: task.id,
-                assigneeId: e.target.value,
-              })
-            }
           >
             <option value="">Unassigned</option>
 
-            {members.map((member: any) => (
-              <option
-                key={member.user_id}
-                value={member.user_id}
-              >
-                {member.users?.full_name}
+            {members.map((m: any) => (
+              <option key={m.user_id} value={m.user_id}>
+                {m.users?.full_name}
               </option>
             ))}
           </select>
+        </div>
+
+        {/* START DATE */}
+        <div className={row}>
+          <span className={label}>
+            <Calendar size={14} /> Start Date
+          </span>
+
+          <input
+            type="date"
+            value={form.start_date ? form.start_date.split("T")[0] : ""}
+            onChange={(e) => {
+              setForm((p) => ({ ...p, start_date: e.target.value }));
+              setDirty(true);
+            }}
+            className={selectStyle}
+          />
         </div>
 
         {/* DEADLINE */}
@@ -174,23 +210,15 @@ function TaskMetadata({ task }: Props) {
 
           <input
             type="date"
-            disabled={!isOwner || isPending}
-            defaultValue={
-              task.deadline
-                ? task.deadline.split("T")[0]
-                : ""
-            }
+            value={form.deadline ? form.deadline.split("T")[0] : ""}
+            onChange={(e) => {
+              setForm((p) => ({ ...p, deadline: e.target.value }));
+              setDirty(true);
+            }}
             className={selectStyle}
-            onBlur={(e) =>
-              updateTask({
-                taskId: task.id,
-                payload: {
-                  deadline: e.target.value,
-                },
-              })
-            }
           />
         </div>
+
       </div>
     </div>
   );

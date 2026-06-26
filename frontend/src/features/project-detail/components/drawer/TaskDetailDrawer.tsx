@@ -201,9 +201,9 @@ function TaskDetailDrawer({
           <div className="flex justify-end pb-12 pr-10">
             <button
               onClick={() => setShowConfirm(true)}
-              className="w-44 rounded-xl bg-red-500 py-3 text-white hover:bg-red-600 transition"
+              className="w-44 rounded-xl bg-black py-3 text-white hover:bg-red-600 transition"
             >
-              Delete Task
+              Delete
             </button>
           </div>
         )}

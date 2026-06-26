@@ -38,11 +38,11 @@ const tabs = [
     icon: CalendarDays,
   },
 
-  {
-    key: "timeline",
-    label: "Timeline",
-    icon: GitBranch,
-  },
+  // {
+  //   key: "timeline",
+  //   label: "Timeline",
+  //   icon: GitBranch,
+  // },
 
   {
     key: "members",

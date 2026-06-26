@@ -1,14 +1,5 @@
-import {
-  useState,
-} from "react";
-
-import {
-  X,
-} from "lucide-react";
-
-import {
-  taskApi,
-} from "../../../tasks/api/taskApi";
+import { useState } from "react";
+import { X } from "lucide-react";
 
 import { useCreateTask } from "@/features/tasks/hooks/useCreateTask";
 import { useTeamMembers } from "@/features/teams/hooks/useTeamMembers";
@@ -16,7 +7,6 @@ import { useTeamMembers } from "@/features/teams/hooks/useTeamMembers";
 type Props = {
   open: boolean;
   onClose: () => void;
-
   projectId: string;
   teamId: string;
 };
@@ -27,303 +17,148 @@ function CreateTaskModal({
   projectId,
   teamId,
 }: Props) {
-
+  const [startDate, setStartDate] = useState<string>("");
   const [assigneeId, setAssigneeId] = useState<string>("");
-  const { data: members = [] } = useTeamMembers(teamId);
 
+  const { data: members = [] } = useTeamMembers(teamId);
   const { mutateAsync: createTask } = useCreateTask(projectId);
 
-  const [loading, setLoading] =
-    useState(false);
+  const [loading, setLoading] = useState(false);
+
+  const [title, setTitle] = useState("");
+  const [description, setDescription] = useState("");
+  const [priority, setPriority] = useState("medium");
+  const [deadline, setDeadline] = useState("");
+  const [estimatedHours, setEstimatedHours] = useState("");
 
   const options = (members ?? []).map((m: any) => ({
     id: m.user_id,
     name: m.users?.full_name ?? m.users?.email ?? "Unknown",
   }));
 
-  const [title, setTitle] =
-    useState("");
-
-  const [
-    description,
-    setDescription,
-  ] = useState("");
-
-  const [priority, setPriority] =
-    useState("medium");
-
-  const [deadline, setDeadline] =
-    useState("");
-
-  const [
-    estimatedHours,
-    setEstimatedHours,
-  ] = useState("");
-
   if (!open) return null;
 
-  const handleSubmit =
-    async (
-      e: React.FormEvent
-    ) => {
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
 
-      e.preventDefault();
+    try {
+      setLoading(true);
 
-      try {
+      await createTask({
+        team_id: teamId,
+        project_id: projectId,
+        title,
+        description,
+        priority: priority as "low" | "medium" | "high",
 
-        setLoading(true);
+        start_date: startDate ? new Date(startDate).toISOString() : undefined,
 
-        await createTask({
-          team_id: teamId,
+        deadline: deadline ? new Date(deadline).toISOString() : undefined,
 
-          project_id: projectId,
+        estimated_hours: Number(estimatedHours),
 
-          title,
+        assignee_id: assigneeId || undefined,
+      });
 
-          description,
-
-          priority:
-            priority as
-            | "low"
-            | "medium"
-            | "high",
-
-          deadline,
-
-          estimated_hours:
-            Number(
-              estimatedHours
-            ),
-        });
-
-        onClose();
-
-      } catch (error) {
-
-        console.error(
-          error
-        );
-
-        alert(
-          "Create task failed"
-        );
-
-      } finally {
-
-        setLoading(false);
-      }
-    };
+      onClose();
+    } catch (error) {
+      console.error(error);
+      alert("Create task failed");
+    } finally {
+      setLoading(false);
+    }
+  };
 
   return (
-    <div
-      className="
-        fixed
-        inset-0
-        z-[100]
+    <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black/40">
+      <div className="w-full max-w-2xl rounded-3xl bg-white p-8 shadow-2xl">
+        <div className="mb-6 flex items-center justify-between">
+          <h2 className="text-2xl font-bold">Create Task</h2>
 
-        flex
-        items-center
-        justify-center
-
-        bg-black/40
-      "
-    >
-      <div
-        className="
-          w-full
-          max-w-2xl
-
-          rounded-3xl
-
-          bg-white
-
-          p-8
-
-          shadow-2xl
-        "
-      >
-        <div
-          className="
-            mb-6
-            flex
-            items-center
-            justify-between
-          "
-        >
-          <h2
-            className="
-              text-2xl
-              font-bold
-            "
-          >
-            Create Task
-          </h2>
-
-          <button
-            onClick={onClose}
-          >
+          <button onClick={onClose}>
             <X />
           </button>
         </div>
 
-        <form
-          onSubmit={
-            handleSubmit
-          }
-          className="space-y-5"
-        >
+        <form onSubmit={handleSubmit} className="space-y-5">
+          {/* TITLE */}
           <div>
-            <label>
-              Title
-            </label>
-
+            <label>Title</label>
             <input
               value={title}
-              onChange={(e) =>
-                setTitle(
-                  e.target.value
-                )
-              }
-              className="
-                mt-2
-                w-full
-                rounded-xl
-                border
-                p-3
-              "
+              onChange={(e) => setTitle(e.target.value)}
+              className="mt-2 w-full rounded-xl border p-3"
             />
           </div>
 
+          {/* DESCRIPTION */}
           <div>
-            <label>
-              Description
-            </label>
-
+            <label>Description</label>
             <textarea
-              value={
-                description
-              }
-              onChange={(e) =>
-                setDescription(
-                  e.target.value
-                )
-              }
+              value={description}
+              onChange={(e) => setDescription(e.target.value)}
               rows={4}
-              className="
-                mt-2
-                w-full
-                rounded-xl
-                border
-                p-3
-              "
+              className="mt-2 w-full rounded-xl border p-3"
             />
           </div>
 
-          <div
-            className="
-              grid
-              grid-cols-2
-              gap-4
-            "
-          >
+          {/* PRIORITY + HOURS */}
+          <div className="grid grid-cols-2 gap-4">
             <div>
-              <label>
-                Priority
-              </label>
-
+              <label>Priority</label>
               <select
-                value={
-                  priority
-                }
-                onChange={(e) =>
-                  setPriority(
-                    e.target.value
-                  )
-                }
-                className="
-                  mt-2
-                  w-full
-                  rounded-xl
-                  border
-                  p-3
-                "
+                value={priority}
+                onChange={(e) => setPriority(e.target.value)}
+                className="mt-2 w-full rounded-xl border p-3"
               >
-                <option value="low">
-                  Low
-                </option>
-
-                <option value="medium">
-                  Medium
-                </option>
-
-                <option value="high">
-                  High
-                </option>
+                <option value="low">Low</option>
+                <option value="medium">Medium</option>
+                <option value="high">High</option>
               </select>
             </div>
 
             <div>
-              <label>
-                Estimated Hours
-              </label>
-
+              <label>Estimated Hours</label>
               <input
                 type="number"
-                value={
-                  estimatedHours
-                }
-                onChange={(e) =>
-                  setEstimatedHours(
-                    e.target.value
-                  )
-                }
-                className="
-                  mt-2
-                  w-full
-                  rounded-xl
-                  border
-                  p-3
-                "
+                value={estimatedHours}
+                onChange={(e) => setEstimatedHours(e.target.value)}
+                className="mt-2 w-full rounded-xl border p-3"
               />
             </div>
           </div>
 
+          {/* START DATE */}
           <div>
-            <label>
-              Deadline
-            </label>
-
+            <label>Start Date</label>
             <input
               type="datetime-local"
-              value={
-                deadline
-              }
-              onChange={(e) =>
-                setDeadline(
-                  e.target.value
-                )
-              }
-              className="
-                mt-2
-                w-full
-                rounded-xl
-                border
-                p-3
-              "
+              value={startDate}
+              onChange={(e) => setStartDate(e.target.value)}
+              className="mt-2 w-full rounded-xl border p-3"
             />
           </div>
 
+          {/* DEADLINE */}
           <div>
-            <label>
-              Assignee
-            </label>
+            <label>Deadline</label>
+            <input
+              type="datetime-local"
+              value={deadline}
+              onChange={(e) => setDeadline(e.target.value)}
+              className="mt-2 w-full rounded-xl border p-3"
+            />
+          </div>
+
+          {/* ASSIGNEE */}
+          <div>
+            <label>Assignee</label>
             <select
               value={assigneeId}
               onChange={(e) => setAssigneeId(e.target.value)}
               className="mt-2 w-full rounded-xl border p-3"
             >
               <option value="">Unassigned</option>
-
               {options.map((m) => (
                 <option key={m.id} value={m.id}>
                   {m.name}
@@ -331,25 +166,14 @@ function CreateTaskModal({
               ))}
             </select>
           </div>
+
+          {/* SUBMIT */}
           <button
             type="submit"
             disabled={loading}
-            className="
-              w-full
-
-              rounded-2xl
-
-              bg-black
-
-              py-4
-
-              font-semibold
-              text-white
-            "
+            className="w-full rounded-2xl bg-black py-4 font-semibold text-white"
           >
-            {loading
-              ? "Creating..."
-              : "Create Task"}
+            {loading ? "Creating..." : "Create Task"}
           </button>
         </form>
       </div>

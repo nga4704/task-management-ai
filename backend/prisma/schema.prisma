@@ -68,6 +68,7 @@ model tasks {
   status   TaskStatus @default(TODO)
   progress Int?       @default(0)
 
+  start_date  DateTime?
   deadline        DateTime? @db.Timestamp(6)
   estimated_hours Int?
 
