@@ -222,19 +222,21 @@ model team_invites {
 }
 
 model project_activities {
+  id          String   @id @default(uuid())
+  team_id     String   @db.Uuid
+  project_id  String   @db.Uuid
+  task_id     String?  @db.Uuid
 
-  id String @id @default(uuid())
+  actor_id    String   @db.Uuid
 
-  project_id String @db.Uuid
+  type        String   // "PROJECT_CREATED", "TASK_UPDATED", ...
 
-  type String
+  payload     Json?   
 
-  payload Json?
+  created_at  DateTime @default(now())
 
-  created_at DateTime @default(now())
-
-  project projects @relation(fields:[project_id], references:[id], onDelete:Cascade)
+  project     projects @relation(fields: [project_id], references: [id], onDelete: Cascade)
 
   @@index([project_id])
-
+  @@index([team_id])
 }

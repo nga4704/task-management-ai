@@ -1,26 +1,21 @@
 import { useEffect, useState } from "react";
+import api from "@/lib/api";
 
-import { getOverview } from "../services/dashboard.service";
-
-export default function useDashboard(
-  teamId: string
-) {
-  const [overview, setOverview] =
-    useState<any>(null);
+export default function useDashboard(teamId: string) {
+  const [data, setData] = useState<any>(null);
 
   useEffect(() => {
+    if (!teamId) return;
 
-  if (!teamId) return;
-
-  getOverview(teamId)
-    .then((res) =>
-      setOverview(res.data)
-    )
-    .catch(console.error);
-
-}, [teamId]);
+    api
+      .get(`/dashboard/full/${teamId}`)
+      .then((res) => setData(res.data))
+      .catch(console.error);
+  }, [teamId]);
 
   return {
-    overview,
+    overview: data?.overview,
+    sprintProgress: data?.sprintProgress,
+    workload: data?.workload,
   };
 }

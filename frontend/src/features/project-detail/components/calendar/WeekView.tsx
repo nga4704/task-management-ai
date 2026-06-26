@@ -9,11 +9,10 @@ type Props = {
   tasks: Task[];
 };
 
-function WeekView({
-  tasks,
-}: Props) {
+function WeekView({ tasks }: Props) {
   const [selectedTask, setSelectedTask] = useState<Task | null>(null);
-  const events = useMemo(() => {
+
+  const weeklyEvents = useMemo(() => {
     const today = new Date();
 
     const end = new Date();
@@ -25,10 +24,7 @@ function WeekView({
 
         const deadline = new Date(task.deadline);
 
-        return (
-          deadline >= today &&
-          deadline <= end
-        );
+        return deadline >= today && deadline <= end;
       })
       .sort(
         (a, b) =>
@@ -38,53 +34,34 @@ function WeekView({
   }, [tasks]);
 
   return (
-    <section
-      className="
-        rounded-[32px]
-        border
-        border-border
-        bg-surface
-        p-6
-        shadow-soft
-      "
-    >
-      <div
-        className="
-          mb-6
-          flex
-          items-center
-          justify-between
-        "
-      >
-        <div>
-          <h3
-            className="
-              text-xl
-              font-bold
-            "
-          >
-            Weekly Schedule
-          </h3>
-
-          <p className="text-sm text-muted">
-            Meetings, deadlines and milestones
-          </p>
-        </div>
+    <section className="rounded-[32px] border border-border bg-surface p-6 shadow-soft">
+      <div className="mb-6">
+        <h3 className="text-xl font-bold">
+          Weekly Schedule
+        </h3>
+        <p className="text-sm text-muted">
+          Tasks planned for the next 7 days
+        </p>
       </div>
 
       <div className="space-y-4">
-        {events.length === 0 ? (
+        {weeklyEvents.length === 0 ? (
           <div className="py-8 text-center text-muted">
-            No upcoming tasks this week.
+            No tasks this week.
           </div>
         ) : (
-          events.map((task) => (
-            <div key={task.id} onClick={() => setSelectedTask(task)}>
+          weeklyEvents.map((task) => (
+            <div
+              key={task.id}
+              onClick={() => setSelectedTask(task)}
+              className="cursor-pointer"
+            >
               <EventCard task={task} />
             </div>
           ))
         )}
       </div>
+
       <TaskDetailDrawer
         taskId={selectedTask?.id}
         onClose={() => setSelectedTask(null)}

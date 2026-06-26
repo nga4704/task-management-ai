@@ -65,12 +65,12 @@ export const projectApi = {
     return res.data;
   },
 
-  async getProjectActivities(projectId: string) {
-    const res = await apiClient.get(
-      `/projects/${projectId}/activities`
-    );
-    return res.data;
-  },
+  // async getProjectActivities(projectId: string) {
+  //   const res = await apiClient.get(
+  //     `/projects/${projectId}/activities`
+  //   );
+  //   return res.data;
+  // },
 
   async getProjectOverview(
     projectId: string
@@ -84,5 +84,14 @@ export const projectApi = {
     return res.data;
 
   },
+
+async getProjectActivities(projectId: string) {
+  const res = await apiClient.get(
+    `/projects/${projectId}/activities`
+  );
+
+  return res.data.data; 
+}
+
 };
 

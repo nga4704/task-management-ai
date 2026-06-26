@@ -20,6 +20,7 @@ import attachmentRoutes from "./modules/attachment/attachment.routes";
 import commentRoutes from "./modules/comment/comment.routes";
 import { errorHandler } from "./middlewares/error.middleware";
 import inviteRoutes from "./modules/team-invites/invite.routes";
+import activityRoutes from "./modules/activity/activity.routes";
 
 dotenv.config();
 
@@ -92,6 +93,7 @@ app.use("/api/v1/subtasks", subtaskRoutes);
 app.use("/api/v1/attachments", attachmentRoutes);
 app.use("/api/v1/comments", commentRoutes);
 app.use("/api/v1/team-invites", inviteRoutes);
+app.use("/api/v1", activityRoutes);
 
 app.use(errorHandler);
 

@@ -1,7 +1,7 @@
 import { useMemo } from "react";
 
 import {
-  AlertCircle,
+  AlertTriangle,
   CalendarClock,
   Flag,
 } from "lucide-react";
@@ -12,19 +12,21 @@ type Props = {
   tasks: Task[];
 };
 
-function UpcomingEventsPanel({
-  tasks,
-}: Props) {
-  const upcoming = useMemo(() => {
+function UpcomingEventsPanel({ tasks }: Props) {
+  const upcomingUrgent = useMemo(() => {
     const now = new Date();
 
     return tasks
       .filter((task) => {
         if (!task.deadline) return false;
 
-        return (
-          new Date(task.deadline) >= now
-        );
+        const deadline = new Date(task.deadline);
+        const diffHours =
+          (deadline.getTime() - now.getTime()) /
+          (1000 * 60 * 60);
+
+        // chỉ lấy task trong 48h tới
+        return diffHours >= 0 && diffHours <= 48;
       })
       .sort(
         (a, b) =>
@@ -38,73 +40,34 @@ function UpcomingEventsPanel({
     switch (status) {
       case "DONE":
         return Flag;
-
       case "REVIEW":
-        return AlertCircle;
-
+        return AlertTriangle;
       default:
         return CalendarClock;
     }
   };
 
   return (
-    <div
-      className="
-        rounded-[32px]
-        border
-        border-border
-        bg-surface
-        p-6
-        shadow-soft
-      "
-    >
-      <h3
-        className="
-          text-lg
-          font-bold
-        "
-      >
-        Upcoming Events
+    <div className="rounded-[32px] border border-border bg-surface p-6 shadow-soft">
+      <h3 className="text-lg font-bold">
+        Urgent Deadlines (48h)
       </h3>
 
       <div className="mt-6 space-y-4">
-        {upcoming.length === 0 ? (
+        {upcomingUrgent.length === 0 ? (
           <div className="py-6 text-center text-muted">
-            No upcoming deadlines.
+            No urgent tasks.
           </div>
         ) : (
-          upcoming.map((task) => {
-            const Icon = getIcon(
-              task.status
-            );
+          upcomingUrgent.map((task) => {
+            const Icon = getIcon(task.status);
 
             return (
               <div
                 key={task.id}
-                className="
-                  flex
-                  items-center
-                  gap-4
-
-                  rounded-2xl
-                  border
-                  border-border
-
-                  p-4
-                "
+                className="flex items-center gap-4 rounded-2xl border border-border p-4"
               >
-                <div
-                  className="
-                    flex
-                    h-12
-                    w-12
-                    items-center
-                    justify-center
-
-                    rounded-xl
-                    bg-primaryLight
-                  "
-                >
+                <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-primaryLight">
                   <Icon size={20} />
                 </div>
 
@@ -113,20 +76,9 @@ function UpcomingEventsPanel({
                     {task.title}
                   </h4>
 
-                  <p
-                    className="
-                      text-sm
-                      text-muted
-                    "
-                  >
-                    {new Date(
-                      task.deadline!
-                    ).toLocaleString([], {
-                      day: "2-digit",
-                      month: "short",
-                      hour: "2-digit",
-                      minute: "2-digit",
-                    })}
+                  <p className="text-sm text-muted">
+                    Due:{" "}
+                    {new Date(task.deadline!).toLocaleString()}
                   </p>
                 </div>
               </div>

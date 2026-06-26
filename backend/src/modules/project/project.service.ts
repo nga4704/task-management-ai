@@ -13,6 +13,7 @@ import {
 import {
   calculateAIScore,
 } from "./project.utils";
+import { createActivity } from "../activity/activity.service";
 
 type UpdateProjectDto = {
   name?: string;
@@ -28,8 +29,10 @@ export const createProjectService =
     description: string,
     teamId: string,
     status: ProjectStatus,
+    userId: string,
     startDate?: Date,
-    endDate?: Date
+    endDate?: Date,
+    
   ) => {
 
     const team =
@@ -87,6 +90,17 @@ export const createProjectService =
             endDate,
         },
       });
+
+    await createActivity({
+      teamId,
+      projectId: project.id,
+      actorId: userId,
+      type: "PROJECT_CREATED",
+      payload: {
+        name,
+        status,
+      },
+    });
 
     // getIO().emit(
     //   "projectCreated",
@@ -193,6 +207,17 @@ export const updateProjectService =
         ...(endDate !== undefined && {
           end_date: new Date(endDate),
         }),
+      },
+    });
+
+    await createActivity({
+      teamId: project.team_id,
+      projectId,
+      actorId: userId,
+      type: "PROJECT_UPDATED",
+      payload: {
+        before: project,
+        after: data,
       },
     });
 
@@ -346,19 +371,6 @@ export const getProjectTasksService = async (projectId: string) => {
       task_progress: true,
     },
     orderBy: { created_at: "desc" },
-  });
-};
-
-export const getProjectActivitiesService = async (
-  projectId: string
-) => {
-  return prisma.project_activities.findMany({
-    where: {
-      project_id: projectId,
-    },
-    orderBy: {
-      created_at: "desc",
-    },
   });
 };
 
@@ -589,4 +601,51 @@ export const getProjectOverviewService = async (
 
   };
 
+};
+
+export const getProjectActivitiesService = async (projectId: string) => {
+  const activities = await prisma.project_activities.findMany({
+    where: { project_id: projectId },
+    orderBy: { created_at: "desc" },
+    take: 20,
+  });
+
+  const userIds = activities.map(a => a.actor_id);
+  const taskIds = activities
+    .map(a => a.task_id)
+    .filter(Boolean) as string[];
+
+  const [users, tasks] = await Promise.all([
+    prisma.users.findMany({
+      where: { id: { in: userIds } },
+      select: {
+        id: true,
+        full_name: true,
+        username: true,
+        avatar: true,
+      },
+    }),
+
+    prisma.tasks.findMany({
+      where: { id: { in: taskIds } },
+      select: {
+        id: true,
+        title: true,
+      },
+    }),
+  ]);
+
+  const userMap = new Map(users.map(u => [u.id, u]));
+  const taskMap = new Map(tasks.map(t => [t.id, t]));
+
+  return activities.map(a => ({
+    id: a.id,
+    type: a.type,
+    created_at: a.created_at,
+    payload: a.payload,
+
+    user: userMap.get(a.actor_id) || null,
+
+    task: a.task_id ? taskMap.get(a.task_id) || null : null,
+  }));
 };

@@ -4,6 +4,7 @@ import { AppError } from "../../middlewares/error.middleware";
 import { mapTaskStatusToPrisma } from "./task.mapper";
 import { assertProjectAccess, assertTeamMember } from "./task.permission";
 import { findMyTasks, findProjectTasks } from "./task.query";
+import { createActivity } from "../activity/activity.service";
 
 type UpdateTaskDto = {
   title?: string;
@@ -101,6 +102,18 @@ export const createTaskService = async (data: {
       created_by: data.createdBy,
       estimated_hours:
         data.estimatedHours,
+    },
+  });
+
+  await createActivity({
+    teamId: data.teamId,
+    projectId: data.projectId,
+    taskId: task.id,
+    actorId: data.createdBy,
+    type: "TASK_CREATED",
+    payload: {
+      title: task.title,
+      assigneeId: task.assignee_id,
     },
   });
 
@@ -382,6 +395,18 @@ export const updateTaskStatusService = async (
     },
   });
 
+  await createActivity({
+    teamId: existingTask.team_id,
+    projectId: existingTask.project_id,
+    taskId,
+    actorId: userId,
+    type: "TASK_STATUS_CHANGED",
+    payload: {
+      from: existingTask.status,
+      to: status,
+    },
+  });
+
   const io = getIO();
   io.to(`project_${task.project_id}`).emit("taskUpdated", task);
 
@@ -449,6 +474,16 @@ export const updateTaskProgressService = async (
     },
   });
 
+  await createActivity({
+    teamId: task.team_id,
+    projectId: task.project_id,
+    taskId,
+    actorId: userId,
+    type: "TASK_PROGRESS_UPDATED",
+    payload: {
+      progress,
+    },
+  });
 
   const io = getIO();
   io.emit("taskUpdated", updatedTask);
@@ -491,6 +526,17 @@ export const assignTaskService = async (
       task_id: taskId,
       note: "Assignee updated",
       updated_by: userId,
+    },
+  });
+
+  await createActivity({
+    teamId: task.team_id,
+    projectId: task.project_id,
+    taskId,
+    actorId: userId,
+    type: "TASK_ASSIGNED",
+    payload: {
+      assigneeId,
     },
   });
 

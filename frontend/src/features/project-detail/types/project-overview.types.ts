@@ -45,15 +45,25 @@ export interface WorkloadMember {
   workload: number;
 }
 
-export interface ActivityItem {
+export type ActivityItem = {
   id: string;
-
   type: string;
+  created_at: string;
+
+  user?: {
+    id: string;
+    full_name?: string;
+    username?: string;
+    avatar?: string;
+  } | null;
+
+  task?: {
+    id: string;
+    title: string;
+  } | null;
 
   payload?: any;
-
-  created_at: string;
-}
+};
 
 export interface AIInsight {
   score: number;

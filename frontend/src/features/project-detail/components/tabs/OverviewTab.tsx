@@ -50,9 +50,7 @@ function OverviewTab() {
       />
 
       {/* Activity */}
-      <ProjectActivity
-        activities={data.activities}
-      />
+      <ProjectActivity projectId={projectId!} />
 
       {/* Recent Tasks */}
       <RecentTasks

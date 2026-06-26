@@ -5,6 +5,7 @@ import { AuthRequest } from "../../middlewares/auth.middleware";
 export const createProject = async (req: any, res: Response) => {
   try {
     const teamId = req.params.teamId; 
+    const userId = req.user.id;
     const {
       name,
       description,
@@ -18,8 +19,10 @@ export const createProject = async (req: any, res: Response) => {
       description,
       teamId,
       status,
+      userId, 
       startDate,
-      endDate
+      endDate,
+      
     );
 
     res.status(201).json(project);
