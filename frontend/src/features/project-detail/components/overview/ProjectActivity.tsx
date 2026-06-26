@@ -1,123 +1,60 @@
 import {
-  CheckCircle2,
-  MessageSquare,
-  UserPlus,
-  Brain,
+  Activity,
 } from "lucide-react";
 
-const activities = [
-  {
-    icon: CheckCircle2,
-    title:
-      "Task 'Dashboard UI' marked as completed",
-    time: "15 minutes ago",
-  },
+import type {
+  ActivityItem,
+} from "../../types/project-overview.types";
 
-  {
-    icon: UserPlus,
-    title:
-      "Sarah joined the project",
-    time: "1 hour ago",
-  },
+type Props = {
+  activities: ActivityItem[];
+};
 
-  {
-    icon: MessageSquare,
-    title:
-      "New comment added to API Integration task",
-    time: "2 hours ago",
-  },
-
-  {
-    icon: Brain,
-    title:
-      "AI detected schedule risk in Backend Sprint",
-    time: "5 hours ago",
-  },
-];
-
-function ProjectActivity() {
+function ProjectActivity({
+  activities,
+}: Props) {
   return (
-    <section
-      className="
-        rounded-[32px]
-        border
-        border-border
-        bg-surface
-        p-6
-        shadow-soft
-      "
-    >
-      <div className="flex items-center justify-between">
-        <div>
-          <h3 className="text-lg font-bold">
-            Recent Activity
-          </h3>
+    <div className="rounded-[32px] border border-border bg-surface p-6 shadow-soft">
 
-          <p className="text-sm text-muted mt-1">
-            Latest project updates
+      <h3 className="text-lg font-bold">
+        Recent Activity
+      </h3>
+
+      <div className="mt-6 space-y-4">
+
+        {activities.length === 0 && (
+          <p className="text-muted">
+            No activity.
           </p>
-        </div>
-      </div>
-
-      <div className="mt-8 space-y-5">
-
-        {activities.map(
-          (activity, index) => {
-            const Icon =
-              activity.icon;
-
-            return (
-              <div
-                key={index}
-                className="
-                  flex
-                  gap-4
-
-                  rounded-2xl
-                  border
-                  border-border
-
-                  p-4
-                "
-              >
-                <div
-                  className="
-                    flex
-                    h-11
-                    w-11
-                    shrink-0
-                    items-center
-                    justify-center
-
-                    rounded-xl
-
-                    bg-primaryLight
-                  "
-                >
-                  <Icon size={18} />
-                </div>
-
-                <div>
-                  <h4 className="font-medium">
-                    {activity.title}
-                  </h4>
-
-                  <p
-                    className="
-                      mt-1
-                      text-sm
-                      text-muted
-                    "
-                  >
-                    {activity.time}
-                  </p>
-                </div>
-              </div>
-            );
-          }
         )}
+
+        {activities.map((item) => (
+          <div
+            key={item.id}
+            className="flex gap-4"
+          >
+            <div className="rounded-xl bg-primaryLight p-2">
+              <Activity size={16} />
+            </div>
+
+            <div className="flex-1">
+
+              <p className="font-medium">
+                {item.type}
+              </p>
+
+              <p className="text-xs text-muted">
+                {new Date(
+                  item.created_at
+                ).toLocaleString()}
+              </p>
+
+            </div>
+          </div>
+        ))}
+
       </div>
-    </section>
+    </div>
   );
 }
 

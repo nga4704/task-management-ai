@@ -1,31 +1,64 @@
+import { useParams } from "react-router-dom";
+
+import { useProjectOverview }
+  from "../../hooks/useProjectOverview";
+
 import ProjectStatistics from "../overview/ProjectStatistics";
-import ProjectProgressChart from "../overview/ProjectProgressChart";
-import RecentTasks from "../overview/RecentTasks";
 import ProjectAIInsights from "../overview/ProjectAIInsights";
 import SprintHealthCard from "../overview/SprintHealthCard";
 import TeamWorkloadCard from "../overview/TeamWorkloadCard";
 import ProjectActivity from "../overview/ProjectActivity";
+import RecentTasks from "../overview/RecentTasks";
+
 function OverviewTab() {
+  const { projectId } = useParams();
+
+  const {
+    data,
+    isLoading,
+  } = useProjectOverview(projectId!);
+
+  if (isLoading || !data) {
+    return <div>Loading...</div>;
+  }
+
   return (
     <div className="space-y-6">
-      <ProjectStatistics />
 
-      <div className="grid gap-6 xl:grid-cols-3">
-        <div className="xl:col-span-2">
-          <ProjectProgressChart />
+      <ProjectStatistics
+        statistics={data.statistics}
+      />
+
+      {/* AI + Sprint */}
+      <div className="grid gap-6 lg:grid-cols-3">
+
+        <div className="lg:col-span-2">
+          <ProjectAIInsights
+            ai={data.ai}
+          />
         </div>
 
-        <ProjectAIInsights />
+        <SprintHealthCard
+          statistics={data.statistics}
+        />
+
       </div>
 
-      <div className="grid gap-6 xl:grid-cols-2">
-        <SprintHealthCard />
-        <TeamWorkloadCard />
-      </div>
+      {/* Workload */}
+      <TeamWorkloadCard
+        workload={data.workload}
+      />
 
-      <ProjectActivity />
+      {/* Activity */}
+      <ProjectActivity
+        activities={data.activities}
+      />
 
-      <RecentTasks />
+      {/* Recent Tasks */}
+      <RecentTasks
+        tasks={data.recentTasks}
+      />
+
     </div>
   );
 }

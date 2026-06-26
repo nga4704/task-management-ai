@@ -137,8 +137,9 @@ function ProjectDetailPage() {
 
         {activeTab === "board" && (
           <BoardTab
-            projectId={project.id}
             scope="project"
+            projectId={projectId}
+            teamId={project?.teamId}
           />
         )}
 

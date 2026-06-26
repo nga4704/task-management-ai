@@ -136,6 +136,8 @@ model projects {
 
   tasks tasks[]
 
+  project_activities project_activities[]
+
   @@index([team_id])
 }
 
@@ -219,11 +221,19 @@ model team_invites {
 }
 
 model project_activities {
-  id        String @id @default(uuid())
-  project_id String
 
-  type      String // CREATED, UPDATED, MEMBER_ADDED...
-  payload   Json?
+  id String @id @default(uuid())
+
+  project_id String @db.Uuid
+
+  type String
+
+  payload Json?
 
   created_at DateTime @default(now())
+
+  project projects @relation(fields:[project_id], references:[id], onDelete:Cascade)
+
+  @@index([project_id])
+
 }

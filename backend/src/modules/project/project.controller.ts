@@ -145,3 +145,15 @@ export const getProjectActivities = async (
     });
   }
 };
+
+export const getProjectOverview = async (
+  req: AuthRequest,
+  res: Response
+) => {
+  const data =
+    await projectService.getProjectOverviewService(
+      req.params.projectId as string
+    );
+
+  res.json(data);
+};

@@ -1,45 +1,71 @@
 import {
   TrendingUp,
   CheckCircle2,
-  Activity,
+  AlertTriangle,
   Brain,
 } from "lucide-react";
 
 import StatCard from "@/shared/components/cards/StatCard";
 
-const stats = [
-  {
-    title: "Project Progress",
-    value: "72%",
-    growth: "+8%",
-    icon: TrendingUp,
-    highlight: true,
-  },
+import type {
+  ProjectStatisticsData,
+} from "../../types/project-overview.types";
 
-  {
-    title: "Completed Tasks",
-    value: "94/124",
-    growth: "+12",
-    icon: CheckCircle2,
-  },
+import type {
+  StatCardItem,
+} from "@/shared/types/stat.types";
 
-  {
-    title: "Team Velocity",
-    value: "32",
-    growth: "+5%",
-    icon: Activity,
-  },
+type Props = {
+  statistics: ProjectStatisticsData;
+};
 
-  {
-    title: "AI Health Score",
-    value: "89%",
-    growth: "+3%",
-    icon: Brain,
-    highlighted: true,
-  },
-];
+function ProjectStatistics({
+  statistics,
+}: Props) {
+  const stats: StatCardItem[] = [
+    {
+      title: "Project Progress",
+      value: `${statistics.progress}%`,
+      change: `${statistics.progress}%`,
+      icon: TrendingUp,
+      highlighted: true,
+    },
 
-function ProjectStatistics() {
+    {
+      title: "Completed Tasks",
+      value: `${statistics.completedTasks}/${statistics.totalTasks}`,
+      change: `${statistics.completedTasks} done`,
+      icon: CheckCircle2,
+    },
+
+    {
+      title: "Overdue Tasks",
+      value: statistics.overdueTasks.toString(),
+      change:
+        statistics.overdueTasks === 0
+          ? "Healthy"
+          : `${statistics.overdueTasks} overdue`,
+      icon: AlertTriangle,
+      trend:
+        statistics.overdueTasks === 0
+          ? "positive"
+          : "negative",
+    },
+
+    {
+      title: "AI Health Score",
+      value: `${statistics.aiHealthScore}%`,
+      change:
+        statistics.aiHealthScore >= 80
+          ? "Excellent"
+          : statistics.aiHealthScore >= 60
+            ? "Good"
+            : "Needs Attention",
+      icon: Brain,
+      highlighted: true,
+    },
+  ];
+
   return (
     <section
       className="

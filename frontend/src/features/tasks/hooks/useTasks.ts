@@ -1,8 +1,12 @@
-// @/features/tasks/hooks/useTasks.ts
 import { useQuery } from "@tanstack/react-query";
+
 import { taskApi } from "../api/taskApi";
 
-import type { Task, TaskPriority, TaskStatus } from "../types/task.types";
+import type {
+  Task,
+  TaskPriority,
+  TaskStatus,
+} from "../types/task.types";
 
 type UseTasksParams = {
   scope: "my" | "project";
@@ -10,55 +14,100 @@ type UseTasksParams = {
   projectId?: string;
   teamId?: string;
 
+  userId?: string;
+
   filters?: {
     status?: TaskStatus;
     priority?: TaskPriority;
-  };
 
-  userId?: string; // dùng cho "my tasks"
+    search?: string;
+
+    assignee?: string;
+
+    aiRisk?: boolean;
+  };
 };
 
-export function useTasks(params: UseTasksParams) {
-  const mapStatus = (status?: string): TaskStatus | undefined => {
-    if (!status || status === "all" || status === "overdue") return undefined;
-    return status as TaskStatus;
-  };
-
-  const mapPriority = (priority?: string): TaskPriority | undefined => {
-    if (!priority || priority === "all") return undefined;
-    return priority as TaskPriority;
-  };
-
+export function useTasks(
+  params: UseTasksParams
+) {
   return useQuery<Task[]>({
     queryKey: [
       "tasks",
+
       params.scope,
+
       params.projectId,
+
       params.teamId,
-      params.filters,
+
+      params.filters?.status,
+
+      params.filters?.priority,
+
+      params.filters?.search,
+
+      params.filters?.assignee,
+
+      params.filters?.aiRisk,
     ],
 
     queryFn: async () => {
-      const response = await taskApi.getTasks({
-        project_id: params.scope === "project" ? params.projectId : undefined,
-        team_id: params.teamId,
+      const response =
+        await taskApi.getTasks({
+          project_id:
+            params.scope === "project"
+              ? params.projectId
+              : undefined,
 
-        // backend sẽ tự xử lý nếu là "my"
-        status: mapStatus(params.filters?.status),
-        priority: mapPriority(params.filters?.priority),
-      });
+          team_id: params.teamId,
 
-      return response.data.map((task: any) => ({
-        ...task,
-        assignee: task.users_tasks_assignee_idTousers
-          ? {
-              id: task.users_tasks_assignee_idTousers.id,
-              full_name: task.users_tasks_assignee_idTousers.full_name,
-              avatar: task.users_tasks_assignee_idTousers.avatar,
-            }
-          : undefined,
-      }));
+          assignee_id:
+            params.filters?.assignee &&
+            params.filters.assignee !==
+              "all"
+              ? params.filters.assignee
+              : undefined,
+
+          status:
+            params.filters?.status,
+
+          priority:
+            params.filters?.priority,
+
+          search:
+            params.filters?.search ||
+            undefined,
+
+          aiRisk:
+            params.filters?.aiRisk,
+        });
+
+      return response.data.map(
+        (task: any) => ({
+          ...task,
+
+          assignee:
+            task.users_tasks_assignee_idTousers
+              ? {
+                  id:
+                    task
+                      .users_tasks_assignee_idTousers
+                      .id,
+
+                  full_name:
+                    task
+                      .users_tasks_assignee_idTousers
+                      .full_name,
+
+                  avatar:
+                    task
+                      .users_tasks_assignee_idTousers
+                      .avatar,
+                }
+              : undefined,
+        })
+      );
     },
   });
 }
-

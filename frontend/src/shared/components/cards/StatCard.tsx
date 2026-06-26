@@ -24,11 +24,11 @@ function StatCard({
 
         p-4
 
-        transition-all duration-200
+   
 
         ${
           highlighted
-            ? "bg-primaryLight border-primary/30"
+            ? "bg-white border-primary/30"
             : "bg-surface border-border hover:border-primary/30"
         }
 

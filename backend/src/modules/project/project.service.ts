@@ -338,7 +338,7 @@ export const getProjectsDashboardService =
     };
   };
 
-  export const getProjectTasksService = async (projectId: string) => {
+export const getProjectTasksService = async (projectId: string) => {
   return prisma.tasks.findMany({
     where: { project_id: projectId },
     include: {
@@ -360,4 +360,233 @@ export const getProjectActivitiesService = async (
       created_at: "desc",
     },
   });
+};
+
+export const getProjectOverviewService = async (
+  projectId: string
+) => {
+
+  const project =
+    await prisma.projects.findUnique({
+
+      where: {
+        id: projectId,
+      },
+
+      include: {
+
+        tasks: {
+
+          include: {
+
+            users_tasks_assignee_idTousers: true,
+
+          },
+
+        },
+
+        teams: {
+
+          include: {
+
+            team_members: {
+
+              include: {
+
+                users: true,
+
+              },
+
+            },
+
+          },
+
+        },
+
+      },
+
+    });
+
+  if (!project) {
+    throw new AppError(
+      "Project not found",
+      404
+    );
+  }
+
+  const totalTasks =
+    project.tasks.length;
+
+  const completedTasks =
+    project.tasks.filter(
+      t => t.status === "DONE"
+    ).length;
+
+  const inProgressTasks =
+    project.tasks.filter(
+      t => t.status === "IN_PROGRESS"
+    ).length;
+
+  const reviewTasks =
+    project.tasks.filter(
+      t => t.status === "REVIEW"
+    ).length;
+
+  const todoTasks =
+    project.tasks.filter(
+      t => t.status === "TODO"
+    ).length;
+
+  const overdueTasks =
+    project.tasks.filter(task => {
+
+      if (!task.deadline)
+        return false;
+
+      return (
+        task.status !== "DONE" &&
+        task.deadline < new Date()
+      );
+
+    }).length;
+
+  const progress =
+    totalTasks === 0
+      ? 0
+      : Math.round(
+        completedTasks /
+        totalTasks *
+        100
+      );
+
+  const aiHealthScore =
+    calculateAIScore(
+      project.tasks
+    );
+
+  const recentTasks =
+    [...project.tasks]
+      .sort(
+        (a, b) =>
+          new Date(
+            b.created_at!
+          ).getTime() -
+          new Date(
+            a.created_at!
+          ).getTime()
+      )
+      .slice(0, 5);
+
+  const workload =
+    project.teams.team_members.map(
+      member => {
+
+        const assigned =
+          project.tasks.filter(
+            task =>
+              task.assignee_id ===
+              member.user_id
+          );
+
+        return {
+
+          id:
+            member.user_id,
+
+          name:
+            member.users.full_name ??
+            member.users.username,
+
+          assignedTasks:
+            assigned.length,
+
+          workload:
+            assigned.length *
+            10,
+
+        };
+
+      }
+    );
+
+  const activities =
+    await prisma.project_activities.findMany({
+      where: {
+        project_id: projectId,
+      },
+      orderBy: {
+        created_at: "desc",
+      },
+      take: 8,
+    });
+
+  const aiPrediction =
+    await prisma.ai_predictions.findFirst({
+      where: {
+        task_id: {
+          in: project.tasks.map(t => t.id),
+        },
+      },
+
+      orderBy: {
+        created_at: "desc",
+      },
+    });
+
+  const sprintProgress = {
+    completed: completedTasks,
+    inProgress: inProgressTasks,
+    review: reviewTasks,
+    todo: todoTasks,
+    total: totalTasks,
+    percentage: progress,
+  };
+
+  return {
+
+    statistics: {
+
+      progress,
+
+      totalTasks,
+
+      completedTasks,
+
+      inProgressTasks,
+
+      reviewTasks,
+
+      todoTasks,
+
+      overdueTasks,
+
+      aiHealthScore,
+
+    },
+
+    recentTasks,
+
+    workload,
+
+    activities,
+
+    sprintProgress,
+
+    ai: {
+
+      score: aiHealthScore,
+
+      prediction:
+        aiPrediction?.predicted_status,
+
+      recommendation:
+        aiPrediction?.recommendation,
+
+      overdueRisk:
+        aiPrediction?.overdue_risk
+
+    }
+
+  };
+
 };

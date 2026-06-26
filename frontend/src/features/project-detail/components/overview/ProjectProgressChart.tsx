@@ -1,11 +1,35 @@
-function ProjectProgressChart() {
-  const sprints = [
-    32,
-    45,
-    58,
-    63,
-    72,
+import type {
+  ProjectStatisticsData,
+} from "../../types/project-overview.types";
+
+type Props = {
+  statistics: ProjectStatisticsData;
+};
+
+function ProjectProgressChart({
+  statistics,
+}: Props) {
+  const bars = [
+    {
+      label: "Todo",
+      value: statistics.todoTasks,
+    },
+    {
+      label: "Progress",
+      value: statistics.inProgressTasks,
+    },
+    {
+      label: "Review",
+      value: statistics.reviewTasks,
+    },
+    {
+      label: "Done",
+      value: statistics.completedTasks,
+    },
   ];
+
+  const max =
+    Math.max(...bars.map((b) => b.value), 1);
 
   return (
     <div
@@ -21,11 +45,11 @@ function ProjectProgressChart() {
       <div className="flex items-center justify-between">
         <div>
           <h3 className="text-lg font-bold">
-            Sprint Progress
+            Task Distribution
           </h3>
 
           <p className="text-sm text-muted">
-            Completion trend over time
+            Current project progress
           </p>
         </div>
 
@@ -40,7 +64,7 @@ function ProjectProgressChart() {
             text-success
           "
         >
-          On Track
+          {statistics.progress}% Complete
         </span>
       </div>
 
@@ -51,33 +75,38 @@ function ProjectProgressChart() {
           h-[260px]
           items-end
           justify-between
-          gap-4
+          gap-5
         "
       >
-        {sprints.map((value, index) => (
+        {bars.map((bar) => (
           <div
-            key={index}
-            className="flex-1"
+            key={bar.label}
+            className="flex flex-1 flex-col items-center"
           >
+            <span className="mb-2 text-xs font-semibold">
+              {bar.value}
+            </span>
+
             <div
               style={{
-                height: `${value}%`,
+                height: `${(bar.value / max) * 100}%`,
               }}
               className="
+                w-full
                 rounded-t-xl
                 bg-primary
+                transition-all
               "
             />
 
             <p
               className="
                 mt-3
-                text-center
                 text-xs
                 text-muted
               "
             >
-              S{index + 1}
+              {bar.label}
             </p>
           </div>
         ))}

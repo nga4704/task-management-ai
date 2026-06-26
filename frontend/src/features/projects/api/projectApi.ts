@@ -59,17 +59,30 @@ export const projectApi = {
   },
 
   async getProjectTasks(projectId: string) {
-  const res = await apiClient.get(
-    `/projects/${projectId}/tasks`
-  );
-  return res.data;
-},
+    const res = await apiClient.get(
+      `/projects/${projectId}/tasks`
+    );
+    return res.data;
+  },
 
-async getProjectActivities(projectId: string) {
-  const res = await apiClient.get(
-    `/projects/${projectId}/activities`
-  );
-  return res.data;
-},
+  async getProjectActivities(projectId: string) {
+    const res = await apiClient.get(
+      `/projects/${projectId}/activities`
+    );
+    return res.data;
+  },
+
+  async getProjectOverview(
+    projectId: string
+  ) {
+
+    const res =
+      await apiClient.get(
+        `/projects/${projectId}/overview`
+      );
+
+    return res.data;
+
+  },
 };
 

@@ -1,38 +1,75 @@
-import { useState, useMemo } from "react";
-import TaskColumn from "./TaskColumn";
-import TaskDetailDrawer from "../drawer/TaskDetailDrawer";
-
-import type { Task, TaskStatus } from "@/features/tasks/types/task.types";
-import { useTasks } from "@/features/tasks/hooks/useTasks";
-import { useTaskSocket } from "@/features/tasks/hooks/useTaskSocket";
-import { taskApi } from "@/features/tasks/api/taskApi";
-import { useQueryClient } from "@tanstack/react-query";
+import { useMemo, useState } from "react";
 
 import {
   DndContext,
-  pointerWithin,
   DragOverlay,
   PointerSensor,
+  pointerWithin,
   useSensor,
   useSensors,
+  type DragEndEvent,
+  type DragStartEvent,
 } from "@dnd-kit/core";
+
+import { useQueryClient } from "@tanstack/react-query";
+
+import TaskColumn from "./TaskColumn";
+import TaskDetailDrawer from "../drawer/TaskDetailDrawer";
+
+import { useTasks } from "@/features/tasks/hooks/useTasks";
+import { useTaskSocket } from "@/features/tasks/hooks/useTaskSocket";
+import { taskApi } from "@/features/tasks/api/taskApi";
+
+import type {
+  Task,
+  TaskPriority,
+  TaskStatus,
+} from "@/features/tasks/types/task.types";
 
 type Props = {
   projectId?: string;
+
   scope: "project";
+
   filters?: {
+    search?: string;
+
     status?: TaskStatus;
-    priority?: any;
+
+    priority?: TaskPriority;
+
+    assignee?: string;
+
+    aiRisk?: boolean;
   };
 };
 
-function KanbanBoard({ projectId, scope, filters }: Props) {
-  const [activeTask, setActiveTask] = useState<Task | null>(null);
-  const [selectedTask, setSelectedTask] = useState<Task | null>(null);
+function KanbanBoard({
+  projectId,
+  scope,
+  filters,
+}: Props) {
+  const queryClient =
+    useQueryClient();
 
-  const queryClient = useQueryClient();
+  const [
+    activeTask,
+    setActiveTask,
+  ] = useState<Task | null>(
+    null
+  );
 
-  const { data: tasks = [], isLoading } = useTasks({
+  const [
+    selectedTask,
+    setSelectedTask,
+  ] = useState<Task | null>(
+    null
+  );
+
+  const {
+    data: tasks = [],
+    isLoading,
+  } = useTasks({
     scope,
     projectId,
     filters,
@@ -41,130 +78,251 @@ function KanbanBoard({ projectId, scope, filters }: Props) {
   useTaskSocket(projectId);
 
   const sensors = useSensors(
-    useSensor(PointerSensor, {
-      activationConstraint: { distance: 5 },
-    })
+    useSensor(
+      PointerSensor,
+      {
+        activationConstraint: {
+          distance: 5,
+        },
+      }
+    )
   );
 
+  const todoTasks =
+    useMemo(
+      () =>
+        tasks.filter(
+          (t) =>
+            t.status === "TODO"
+        ),
+      [tasks]
+    );
 
+  const inProgressTasks =
+    useMemo(
+      () =>
+        tasks.filter(
+          (t) =>
+            t.status ===
+            "IN_PROGRESS"
+        ),
+      [tasks]
+    );
 
-  // 🔥 OPTIMIZE FILTER (avoid re-filter every render in JSX)
-  const todoTasks = useMemo(
-    () => tasks.filter((t) => t.status === "TODO"),
-    [tasks]
-  );
+  const reviewTasks =
+    useMemo(
+      () =>
+        tasks.filter(
+          (t) =>
+            t.status ===
+            "REVIEW"
+        ),
+      [tasks]
+    );
 
-  const inProgressTasks = useMemo(
-    () => tasks.filter((t) => t.status === "IN_PROGRESS"),
-    [tasks]
-  );
+  const doneTasks =
+    useMemo(
+      () =>
+        tasks.filter(
+          (t) =>
+            t.status === "DONE"
+        ),
+      [tasks]
+    );
 
-  const reviewTasks = useMemo(
-    () => tasks.filter((t) => t.status === "REVIEW"),
-    [tasks]
-  );
+  if (isLoading) {
+    return (
+      <div className="py-20 text-center text-muted">
+        Loading tasks...
+      </div>
+    );
+  }
 
-  const doneTasks = useMemo(
-    () => tasks.filter((t) => t.status === "DONE"),
-    [tasks]
-  );
+  const handleDragStart = (
+    event: DragStartEvent
+  ) => {
+    const task =
+      tasks.find(
+        (t) =>
+          t.id ===
+          event.active.id
+      ) ?? null;
 
-  if (isLoading) return <div>Loading tasks...</div>;
-
-  const handleDragStart = (event: any) => {
-    const task = tasks.find((t) => t.id === event.active.id);
-    setActiveTask(task || null);
+    setActiveTask(task);
   };
 
-  const handleDragEnd = (event: any) => {
+  const handleDragEnd = async (
+    event: DragEndEvent
+  ) => {
     setActiveTask(null);
 
-    const { active, over } = event;
+    const {
+      active,
+      over,
+    } = event;
+
     if (!over) return;
 
-    const taskId = active.id;
-    const newStatus = over.id;
+    const taskId =
+      String(active.id);
 
-    if (!taskId || !newStatus) return;
+    const newStatus =
+      String(
+        over.id
+      ) as TaskStatus;
 
-    const queryKey = ["tasks", projectId, filters?.status, filters?.priority];
-
-    // 🔥 1. OPTIMISTIC UPDATE (NO LAG)
-    queryClient.setQueryData(queryKey, (old: any) => {
-      if (!old) return old;
-
-      return old.map((t: Task) =>
-        t.id === taskId ? { ...t, status: newStatus } : t
+    const current =
+      tasks.find(
+        (t) =>
+          t.id === taskId
       );
-    });
 
-    // 🔥 2. FIRE AND FORGET API (no await => no lag)
-    taskApi.moveTask(taskId, newStatus).catch(() => {
-      // rollback nếu fail
-      queryClient.invalidateQueries({ queryKey: ["tasks"], exact: false });
-    });
+    if (!current) return;
 
-    // 🔥 3. SOFT SYNC (optional)
-    queryClient.invalidateQueries({
-      queryKey: ["tasks"],
-      exact: false,
-    });
+    if (
+      current.status ===
+      newStatus
+    )
+      return;
+
+    const queryKey = [
+      "tasks",
+      scope,
+      projectId,
+      undefined,
+      filters?.status,
+      filters?.priority,
+      filters?.search,
+      filters?.assignee,
+      filters?.aiRisk,
+    ];
+
+    queryClient.setQueryData<Task[]>(
+      queryKey,
+      (old = []) =>
+        old.map((task) =>
+          task.id === taskId
+            ? {
+                ...task,
+                status:
+                  newStatus,
+              }
+            : task
+        )
+    );
+
+    try {
+      await taskApi.moveTask(
+        taskId,
+        newStatus
+      );
+    } catch {
+      queryClient.invalidateQueries(
+        {
+          queryKey: [
+            "tasks",
+          ],
+        }
+      );
+    }
+
+    queryClient.invalidateQueries(
+      {
+        queryKey: ["tasks"],
+      }
+    );
   };
 
   return (
     <>
       <DndContext
         sensors={sensors}
-        collisionDetection={pointerWithin}
-        onDragStart={handleDragStart}
-        onDragEnd={handleDragEnd}
+        collisionDetection={
+          pointerWithin
+        }
+        onDragStart={
+          handleDragStart
+        }
+        onDragEnd={
+          handleDragEnd
+        }
       >
         <div className="grid gap-6 xl:grid-cols-4">
           <TaskColumn
             title="Todo"
             status="TODO"
             tasks={todoTasks}
-            onTaskClick={setSelectedTask}
+            onTaskClick={
+              setSelectedTask
+            }
           />
 
           <TaskColumn
             title="In Progress"
             status="IN_PROGRESS"
-            tasks={inProgressTasks}
-            onTaskClick={setSelectedTask}
+            tasks={
+              inProgressTasks
+            }
+            onTaskClick={
+              setSelectedTask
+            }
           />
 
           <TaskColumn
             title="Review"
             status="REVIEW"
-            tasks={reviewTasks}
-            onTaskClick={setSelectedTask}
+            tasks={
+              reviewTasks
+            }
+            onTaskClick={
+              setSelectedTask
+            }
           />
 
           <TaskColumn
             title="Done"
             status="DONE"
             tasks={doneTasks}
-            onTaskClick={setSelectedTask}
+            onTaskClick={
+              setSelectedTask
+            }
           />
         </div>
 
-        <TaskDetailDrawer
-          taskId={selectedTask?.id}
-          onClose={() => setSelectedTask(null)}
-        />
-
-        {/* 🔥 DRAG PREVIEW (LIGHTWEIGHT) */}
         <DragOverlay>
-          {activeTask ? (
-            <div className="px-3 py-2 bg-white shadow-lg rounded-xl text-sm">
-              {activeTask.title}
+          {activeTask && (
+            <div
+              className="
+                rounded-2xl
+                border
+                border-primary/30
+                bg-white
+                px-4
+                py-3
+                shadow-xl
+              "
+            >
+              <p className="font-semibold">
+                {
+                  activeTask.title
+                }
+              </p>
             </div>
-          ) : null}
+          )}
         </DragOverlay>
       </DndContext>
+
+      <TaskDetailDrawer
+        taskId={
+          selectedTask?.id
+        }
+        onClose={() =>
+          setSelectedTask(
+            null
+          )
+        }
+      />
     </>
   );
 }
-
 export default KanbanBoard;

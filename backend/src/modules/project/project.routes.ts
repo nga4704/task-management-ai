@@ -9,7 +9,8 @@ import {
   getProjectsDashboard,
   getProjectsActivity,
   getProjectTasks,
-  getProjectActivities
+  getProjectActivities,
+  getProjectOverview
 } from "./project.controller";
 
 import { protect } from "../../middlewares/auth.middleware";
@@ -65,6 +66,13 @@ router.get(
  protect,
  isProjectMember,
  getProjectDetail
+);
+
+router.get(
+  "/:projectId/overview",
+  protect,
+  isProjectMember,
+  getProjectOverview
 );
 
 router.get(

@@ -1,89 +1,152 @@
-const tasks = [
-  {
-    title: "Implement Dashboard",
-    assignee: "John",
-    priority: "High",
-    status: "In Progress",
-    due: "Jun 10",
-  },
-  {
-    title: "AI Prediction Service",
-    assignee: "Anna",
-    priority: "Critical",
-    status: "Review",
-    due: "Jun 12",
-  },
-  {
-    title: "Database Optimization",
-    assignee: "David",
-    priority: "Medium",
-    status: "Done",
-    due: "Jun 08",
-  },
-];
+import {
+  Calendar,
+  CheckCircle2,
+} from "lucide-react";
 
-function RecentTasks() {
+import {
+  statusLabel,
+  statusStyles,
+} from "@/shared/constants/task";
+
+import type {
+  OverviewTask,
+} from "../../types/project-overview.types";
+
+type Props = {
+  tasks: OverviewTask[];
+};
+
+function RecentTasks({
+  tasks,
+}: Props) {
   return (
     <div
       className="
         rounded-[32px]
-
         border
         border-border
-
-        bg-white/70
-
+        bg-surface
         p-6
-
         shadow-soft
       "
     >
-      <h3
-        className="
-          text-lg
-          font-bold
-        "
-      >
-        Recent Tasks
-      </h3>
+      <div className="flex items-center justify-between">
+
+        <div>
+          <h3 className="text-lg font-bold">
+            Recent Tasks
+          </h3>
+
+          <p className="text-sm text-muted">
+            Latest project updates
+          </p>
+        </div>
+
+      </div>
 
       <div className="mt-6 space-y-4">
+
+        {tasks.length === 0 && (
+          <p className="text-sm text-muted">
+            No recent tasks.
+          </p>
+        )}
+
         {tasks.map((task) => (
           <div
-            key={task.title}
+            key={task.id}
             className="
-              flex
-              items-center
-              justify-between
-
               rounded-2xl
-
               border
               border-border
-
               p-4
+              transition-all
+              hover:border-primary/30
+              hover:shadow-soft
             "
           >
-            <span>{task.title}</span>
+            <div className="flex items-start justify-between">
 
-            <span
-              className="
-                rounded-full
+              <div className="min-w-0">
 
-                bg-primaryLight
+                <p className="truncate font-semibold">
+                  {task.title}
+                </p>
 
-                px-3
-                py-1
+                <div className="mt-2 flex items-center gap-2">
 
-                text-xs
-                font-semibold
-              "
-            >
-              {task.status}
-            </span>
+                  <span
+                    className={`
+                      rounded-full
+                      px-2.5
+                      py-1
+                      text-[11px]
+                      font-semibold
+                      ${statusStyles[task.status]}
+                    `}
+                  >
+                    {statusLabel[task.status]}
+                  </span>
+
+                  {task.deadline && (
+                    <span className="flex items-center gap-1 text-xs text-muted">
+                      <Calendar size={12} />
+                      {new Date(task.deadline).toLocaleDateString()}
+                    </span>
+                  )}
+
+                </div>
+
+              </div>
+
+              <CheckCircle2
+                size={18}
+                className={
+                  task.status === "DONE"
+                    ? "text-success"
+                    : "text-muted"
+                }
+              />
+
+            </div>
+
+            <div className="mt-4">
+
+              <div className="mb-2 flex justify-between text-xs">
+
+                <span className="text-muted">
+                  Progress
+                </span>
+
+                <span className="font-semibold">
+                  {task.progress}%
+                </span>
+
+              </div>
+
+              <div className="h-2 rounded-full bg-surfaceSecondary">
+
+                <div
+                  className="
+                    h-2
+                    rounded-full
+                    bg-primary
+                    transition-all
+                  "
+                  style={{
+                    width: `${task.progress}%`,
+                  }}
+                />
+
+              </div>
+
+            </div>
+
           </div>
         ))}
+
       </div>
+
     </div>
   );
 }

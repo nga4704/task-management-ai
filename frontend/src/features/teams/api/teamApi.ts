@@ -1,7 +1,7 @@
 import axiosClient from "@/lib/api";
 
 import type {
-  Team, TeamDetail
+  Team, TeamDetail, TeamMember
 } from "../types/team.types";
 
 export const getTeams =
@@ -105,6 +105,17 @@ export const deleteTeam = async (
   const response =
     await axiosClient.delete(
       `/teams/${teamId}`
+    );
+
+  return response.data;
+};
+
+export const getTeamMembers = async (
+  teamId: string
+): Promise<TeamMember[]> => {
+  const response =
+    await axiosClient.get(
+      `/teams/${teamId}/members`
     );
 
   return response.data;
