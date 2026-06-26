@@ -1,33 +1,42 @@
 import { useState } from "react";
+import api from "@/lib/api";
 
-import {
-  generatedTasks,
-} from "../data/mockPlanner";
+import type { GeneratedTask } from "../types/planner.types";
 
 export function useAIPlanner() {
-  const [loading, setLoading] =
-    useState(false);
+  const [plans, setPlans] = useState<GeneratedTask[]>([]);
+  const [summary, setSummary] = useState(null);
+  const [reasoning, setReasoning] = useState<string[]>([]);
+  const [loading, setLoading] = useState(false);
 
-  const [plans, setPlans] =
-    useState(generatedTasks);
+  const generatePlan = async (input: {
+    goal: string;
+    deadline: string;
+    workload: string;
+  }) => {
+    try {
+      setLoading(true);
 
-  const generatePlan = async () => {
-    setLoading(true);
+      const res = await api.post(
+        "/ai/planner/generate",
+        input
+      );
 
-    await new Promise((resolve) =>
-      setTimeout(resolve, 1500)
-    );
-
-    setPlans(generatedTasks);
-
-    setLoading(false);
+      setPlans(res.data.tasks);
+      setSummary(res.data.summary);
+      setReasoning(res.data.reasoning);
+    } catch (err) {
+      console.error("AI Planner error:", err);
+    } finally {
+      setLoading(false);
+    }
   };
 
   return {
     plans,
-
+    summary,
+    reasoning,
     loading,
-
     generatePlan,
   };
 }

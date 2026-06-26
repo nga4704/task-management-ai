@@ -1,15 +1,15 @@
 export const priorityStyles = {
-  High: `
+  high: `
     bg-dangerLight
     text-danger
   `,
 
-  Medium: `
+  medium: `
     bg-warningLight
     text-warning
   `,
 
-  Low: `
+  low: `
     bg-successLight
     text-success
   `,

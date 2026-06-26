@@ -1,11 +1,12 @@
 import { useState } from "react";
+import { Sparkles } from "lucide-react";
 
 import Button from "../../../shared/components/common/Button";
 import Input from "../../../shared/components/common/Input";
+import type { PlannerFormValues } from "../types/planner.types";
 
 type PlannerFormProps = {
-  onGenerate: () => void;
-
+  onGenerate: (input: PlannerFormValues) => void | Promise<void>;
   loading: boolean;
 };
 
@@ -13,75 +14,81 @@ function PlannerForm({
   onGenerate,
   loading,
 }: PlannerFormProps) {
-  const [goal, setGoal] =
-    useState("");
-
-  const [deadline, setDeadline] =
-    useState("");
-
-  const [workload, setWorkload] =
-    useState("");
+  const [goal, setGoal] = useState("");
+  const [deadline, setDeadline] = useState("");
+  const [workload, setWorkload] = useState("");
 
   return (
     <section
       className="
-        rounded-xl
+        rounded-3xl
         border
         border-border
         bg-surface
-        p-6
-        shadow-soft
+        p-8
+        shadow-sm
       "
     >
-      <div>
-        <h2 className="text-2xl font-bold">
-          Generate AI Schedule
+      {/* HEADER */}
+      <div className="space-y-2">
+        <div className="flex items-center gap-2 text-sm text-muted">
+          <Sparkles size={14} />
+          AI Generator
+        </div>
+
+        <h2 className="text-xl font-semibold tracking-tight">
+          Create Your AI Schedule
         </h2>
 
-        <p className="mt-1 text-muted">
-          AI analyzes workload and priorities
+        <p className="text-sm text-muted">
+          Enter your goal and constraints, AI will optimize your plan automatically.
         </p>
       </div>
 
-      <div className="mt-6 space-y-5">
+      {/* FORM */}
+      <div className="mt-6 space-y-4">
 
-        <Input
-          label="Project Goal"
-          placeholder="
-            Build AI productivity dashboard
-          "
-          value={goal}
-          onChange={(e) =>
-            setGoal(e.target.value)
-          }
-        />
+        <div>
+          <Input
+            label="Project Goal"
+            placeholder="Build AI productivity dashboard"
+            value={goal}
+            onChange={(e) => setGoal(e.target.value)}
+          />
+        </div>
 
-        <Input
-          label="Deadline"
-          type="date"
-          value={deadline}
-          onChange={(e) =>
-            setDeadline(e.target.value)
-          }
-        />
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
 
-        <Input
-          label="Daily Workload"
-          placeholder="6 hours/day"
-          value={workload}
-          onChange={(e) =>
-            setWorkload(e.target.value)
-          }
-        />
+          <Input
+            label="Deadline"
+            type="date"
+            value={deadline}
+            onChange={(e) => setDeadline(e.target.value)}
+          />
 
-        <Button
-          title={
-            loading
-              ? "Generating..."
-              : "Generate AI Plan"
-          }
-          onClick={onGenerate}
-        />
+          <Input
+            label="Daily Workload"
+            placeholder="6 hours/day"
+            value={workload}
+            onChange={(e) => setWorkload(e.target.value)}
+          />
+
+        </div>
+
+        {/* ACTION */}
+        <div className="pt-2">
+          <Button
+            title={loading ? "Generating plan..." : "Generate AI Plan"}
+            onClick={() =>
+              onGenerate({
+                goal,
+                deadline,
+                workload,
+              })
+            }
+          />
+        </div>
+
       </div>
     </section>
   );

@@ -1,88 +1,86 @@
-import {
-  Sparkles,
-  BrainCircuit,
-} from "lucide-react";
+import { Sparkles, BrainCircuit } from "lucide-react";
 
 function PlannerHeader() {
   return (
     <section
       className="
-        rounded-xl
+        rounded-3xl
         border
         border-border
-        bg-white/70
-        p-7
-        shadow-soft
+        bg-primaryLight
+        p-6
+        shadow-sm
         backdrop-blur-md
       "
     >
-      <div
-        className="
-          flex
-          flex-col
-          gap-6
-          xl:flex-row
-          xl:items-center
-          xl:justify-between
-        "
-      >
-        <div>
+      <div className="flex items-start justify-between gap-6">
 
+        {/* LEFT CONTENT */}
+        <div className="space-y-4">
+
+          {/* badge */}
           <div
             className="
               inline-flex
               items-center
               gap-2
               rounded-full
-              bg-primaryLight
-              px-4
-              py-2
-              text-sm
+              bg-black
+              text-white
+              px-3
+              py-1.5
+              text-xs
               font-medium
             "
           >
-            <Sparkles size={16} />
-
+            <Sparkles size={14} />
             AI Planning Assistant Active
           </div>
 
+          {/* title */}
           <h1
             className="
-              mt-5
-              text-4xl
+              text-2xl
               font-bold
+              tracking-tight
+              text-foreground
             "
           >
             AI Smart Planner
           </h1>
 
+          {/* description */}
           <p
             className="
-              mt-3
-              max-w-2xl
-              text-lg
+              max-w-xl
+              text-sm
+              leading-6
               text-muted
             "
           >
-            Generate intelligent schedules,
-            prioritize tasks and optimize
-            productivity using AI analysis.
+            Generate optimized schedules, prioritize tasks, and improve productivity
+            with AI-powered insights.
           </p>
         </div>
 
+        {/* RIGHT ICON */}
         <div
           className="
             flex
-            h-20
-            w-20
+            h-14
+            w-14
             items-center
             justify-center
-            rounded-[28px]
-            bg-primaryLight
+            rounded-2xl
+            bg-black
+            text-white
+            ring-1
+            ring-black/5
           "
         >
-          <BrainCircuit size={34} />
+          <BrainCircuit size={24} />
         </div>
+
       </div>
     </section>
   );

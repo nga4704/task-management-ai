@@ -21,6 +21,7 @@ import commentRoutes from "./modules/comment/comment.routes";
 import { errorHandler } from "./middlewares/error.middleware";
 import inviteRoutes from "./modules/team-invites/invite.routes";
 import activityRoutes from "./modules/activity/activity.routes";
+import aiPlannerRoutes from "./modules/ai/ai-planner/aiPlanner.routes";
 
 dotenv.config();
 
@@ -94,6 +95,7 @@ app.use("/api/v1/attachments", attachmentRoutes);
 app.use("/api/v1/comments", commentRoutes);
 app.use("/api/v1/team-invites", inviteRoutes);
 app.use("/api/v1", activityRoutes);
+app.use("/api/v1/ai/planner", aiPlannerRoutes);
 
 app.use(errorHandler);
 
