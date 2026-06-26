@@ -35,6 +35,7 @@ const stats = [
     value: "89%",
     growth: "+3%",
     icon: Brain,
+    highlighted: true,
   },
 ];
 

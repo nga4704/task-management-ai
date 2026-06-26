@@ -217,3 +217,13 @@ model team_invites {
 
   teams teams @relation(fields: [team_id], references: [id], onDelete: Cascade)
 }
+
+model project_activities {
+  id        String @id @default(uuid())
+  project_id String
+
+  type      String // CREATED, UPDATED, MEMBER_ADDED...
+  payload   Json?
+
+  created_at DateTime @default(now())
+}

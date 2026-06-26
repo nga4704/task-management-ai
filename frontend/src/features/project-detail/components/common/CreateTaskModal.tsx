@@ -27,6 +27,7 @@ function CreateTaskModal({
   projectId,
   teamId,
 }: Props) {
+
   const [assigneeId, setAssigneeId] = useState<string>("");
   const { data: members = [] } = useTeamMembers(teamId);
 
@@ -34,6 +35,11 @@ function CreateTaskModal({
 
   const [loading, setLoading] =
     useState(false);
+
+  const options = (members ?? []).map((m: any) => ({
+    id: m.user_id,
+    name: m.users?.full_name ?? m.users?.email ?? "Unknown",
+  }));
 
   const [title, setTitle] =
     useState("");
@@ -318,9 +324,9 @@ function CreateTaskModal({
             >
               <option value="">Unassigned</option>
 
-              {members.map((m: any) => (
-                <option key={m.user_id} value={m.user_id}>
-                  {m.users.full_name}
+              {options.map((m) => (
+                <option key={m.id} value={m.id}>
+                  {m.name}
                 </option>
               ))}
             </select>

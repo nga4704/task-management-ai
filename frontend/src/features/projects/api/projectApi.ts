@@ -42,9 +42,9 @@ export const projectApi = {
     return res.data;
   },
 
-  async getProjectsDashboard() {
+  async getProjectsDashboard(teamId: string) {
     const res = await apiClient.get(
-      "/projects/dashboard"
+      `/teams/${teamId}/dashboard`
     );
 
     return res.data;
@@ -57,4 +57,19 @@ export const projectApi = {
 
     return res.data;
   },
+
+  async getProjectTasks(projectId: string) {
+  const res = await apiClient.get(
+    `/projects/${projectId}/tasks`
+  );
+  return res.data;
+},
+
+async getProjectActivities(projectId: string) {
+  const res = await apiClient.get(
+    `/projects/${projectId}/activities`
+  );
+  return res.data;
+},
 };
+

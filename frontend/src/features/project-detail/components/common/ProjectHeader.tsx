@@ -6,23 +6,13 @@ import {
   BarChart3,
 } from "lucide-react";
 
-import {
-  useNavigate,
-} from "react-router-dom";
-
-import {
-  useState,
-} from "react";
+import { useNavigate } from "react-router-dom";
+import { useState } from "react";
 
 import CreateTaskModal from "../common/CreateTaskModal";
 
-import type {
-  ProjectStatus,
-} from "@/features/projects/types/project.types";
-
-import {
-  projectStatusConfig,
-} from "@/features/projects/constants/projectStatus";
+import type { ProjectStatus } from "@/features/projects/types/project.types";
+import { projectStatusConfig } from "@/features/projects/constants/projectStatus";
 
 type ProjectHeaderProps = {
   projectId: string;
@@ -47,315 +37,123 @@ function ProjectHeader({
   teamId,
   name,
   description,
-
   progress,
   status,
-
   totalTasks = 0,
   totalMembers = 0,
-
   dueDate = "N/A",
-
   onEdit,
   onDelete,
-
 }: ProjectHeaderProps) {
-  const navigate =
-    useNavigate();
+  const navigate = useNavigate();
+  const [isOpen, setIsOpen] = useState(false);
 
-  const [
-    isOpen,
-    setIsOpen,
-  ] = useState(false);
+  const statusUI = projectStatusConfig[status];
 
   return (
     <>
-      <section
-        className="
-          rounded-[32px]
-          border
-          border-border/60
-          bg-white/70
-          backdrop-blur-md
+      <section className="rounded-3xl border border-border/60 bg-surface p-6 md:p-8 shadow-soft">
+        
+        <div className="flex flex-col xl:flex-row gap-8">
 
-          p-6
-          md:p-8
+          {/* LEFT CONTENT */}
+          <div className="flex-1 space-y-6">
 
-          shadow-soft
-        "
-      >
-        <div
-          className="
-            flex
-            flex-col
-            gap-8
+            {/* HEADER */}
+            <div className="space-y-2">
+              <span className={`inline-flex items-center rounded-full px-3 py-1 text-[11px] font-medium ${statusUI.className}`}>
+                {statusUI.label}
+              </span>
 
-            xl:flex-row
-            xl:items-start
-            xl:justify-between
-          "
-        >
-          {/* LEFT */}
-          <div className="flex-1">
-            {/* STATUS */}
-            <div
-              className={`
-                  inline-flex
-                  items-center
-                  gap-2
-                  rounded-full
-                  px-3
-                  py-1.5
-                  text-xs
-                  font-semibold
-                  ${projectStatusConfig[status].className}
-                `}
-            >
-              {projectStatusConfig[status].label}
+              <h1 className="text-3xl font-bold tracking-tight">
+                {name}
+              </h1>
+
+              <p className="text-sm text-muted max-w-2xl leading-6">
+                {description}
+              </p>
             </div>
 
-            {/* TITLE */}
-            <h1
-              className="
-                mt-4
+            {/* META - CHIP STYLE */}
+            <div className="flex flex-wrap gap-2 text-sm">
 
-                text-3xl
-                md:text-4xl
-
-                font-bold
-                tracking-tight
-              "
-            >
-              {name}
-            </h1>
-
-            {/* DESCRIPTION */}
-            <p
-              className="
-                mt-3
-                max-w-2xl
-
-                leading-7
-                text-muted
-              "
-            >
-              {description}
-            </p>
-
-            {/* PROJECT META */}
-            <div
-              className="
-                mt-6
-
-                flex
-                flex-wrap
-                items-center
-                gap-5
-
-                text-sm
-                text-muted
-              "
-            >
-              <div className="flex items-center gap-2">
-                <FolderKanban size={18} />
-                <span>
-                  {totalTasks} Tasks
-                </span>
+              <div className="flex items-center gap-2 rounded-full bg-muted/10 px-3 py-1.5">
+                <FolderKanban size={14} />
+                <span className="font-medium">{totalTasks}</span>
+                <span className="text-muted">tasks</span>
               </div>
 
-              <div className="flex items-center gap-2">
-                <Users size={18} />
-                <span>
-                  {totalMembers} Members
-                </span>
+              <div className="flex items-center gap-2 rounded-full bg-muted/10 px-3 py-1.5">
+                <Users size={14} />
+                <span className="font-medium">{totalMembers}</span>
+                <span className="text-muted">members</span>
               </div>
 
-              <div className="flex items-center gap-2">
-                <CalendarDays size={18} />
-                <span>
-                  {dueDate}
-                </span>
+              <div className="flex items-center gap-2 rounded-full bg-muted/10 px-3 py-1.5">
+                <CalendarDays size={14} />
+                <span className="text-muted">{dueDate}</span>
               </div>
+
             </div>
 
             {/* PROGRESS */}
-            <div className="mt-8">
-              <div
-                className="
-                  mb-2
-
-                  flex
-                  items-center
-                  justify-between
-
-                  text-sm
-                  font-medium
-                "
-              >
-                <span>
-                  Project Progress
-                </span>
-
-                <span>
-                  {progress}%
-                </span>
+            <div className="space-y-2">
+              <div className="flex justify-between text-xs text-muted">
+                <span>Progress</span>
+                <span className="text-text font-medium">{progress}%</span>
               </div>
 
-              <div
-                className="
-                  h-3
-                  overflow-hidden
-
-                  rounded-full
-
-                  bg-surface-secondary
-                "
-              >
+              <div className="h-2.5 rounded-full bg-muted/20 overflow-hidden">
                 <div
-                  className="
-                    h-full
-                    rounded-full
-                    bg-primary
-                    transition-all
-                  "
-                  style={{
-                    width: `${progress}%`,
-                  }}
+                  className="h-full bg-primary rounded-full transition-all"
+                  style={{ width: `${progress}%` }}
                 />
               </div>
             </div>
+
           </div>
 
-          {/* RIGHT */}
-          <div
-            className="
-              flex
-              flex-col
-              gap-4
+          {/* RIGHT ACTION PANEL */}
+          <div className="xl:w-[220px] space-y-3">
 
-              xl:min-w-[220px]
-            "
-          >
             <button
-              onClick={() =>
-                navigate(
-                  `/projects/${projectId}/insights`
-                )
-              }
-              className="
-                flex
-                items-center
-                justify-center
-                gap-2
-
-                rounded-2xl
-
-                border
-                border-border
-
-                bg-white
-
-                px-5
-                py-3
-
-                font-medium
-
-                transition-all
-                hover:shadow-soft
-              "
+              onClick={() => navigate(`/projects/${projectId}/insights`)}
+              className="w-full flex items-center justify-center gap-2 rounded-xl border border-border bg-white px-4 py-2.5 text-sm font-medium hover:shadow-soft transition"
             >
-              <BarChart3 size={18} />
-
+              <BarChart3 size={16} />
               Analytics
             </button>
 
             <button
               onClick={onEdit}
-              className="
-                flex
-                items-center
-                justify-center
-                gap-2
-
-                rounded-2xl
-
-                border
-                border-border
-
-                bg-white
-
-                px-5
-                py-3
-
-                font-medium
-              "
+              className="w-full rounded-xl border border-border bg-white px-4 py-2.5 text-sm font-medium hover:bg-muted/10 transition"
             >
               Edit Project
             </button>
 
             <button
               onClick={onDelete}
-              className="
-                flex
-                items-center
-                justify-center
-                gap-2
-
-                rounded-2xl
-                border
-                border-red-200
-
-                bg-red-50
-                text-red-600
-
-                px-5
-                py-3
-
-                font-medium
-
-                hover:bg-red-100
-              "
+              className="w-full rounded-xl border border-red-200 bg-red-50 text-red-600 px-4 py-2.5 text-sm font-medium hover:bg-red-100 transition"
             >
-              Delete Project
+              Delete
             </button>
 
             <button
-              onClick={() =>
-                setIsOpen(true)
-              }
-              className="
-                flex
-                items-center
-                justify-center
-                gap-2
-
-                rounded-2xl
-
-                bg-black
-                text-white
-
-                px-5
-                py-3
-
-                font-semibold
-
-                transition-all
-                hover:opacity-90
-              "
+              onClick={() => setIsOpen(true)}
+              className="w-full flex items-center justify-center gap-2 rounded-xl bg-black text-white px-4 py-2.5 text-sm font-semibold hover:opacity-90 transition"
             >
-              <Plus size={18} />
-
+              <Plus size={16} />
               Create Task
             </button>
+
           </div>
+
         </div>
       </section>
 
       <CreateTaskModal
         open={isOpen}
-        onClose={() =>
-          setIsOpen(false)
-        }
+        onClose={() => setIsOpen(false)}
         projectId={projectId}
         teamId={teamId}
       />

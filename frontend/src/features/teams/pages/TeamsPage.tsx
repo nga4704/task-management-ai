@@ -6,6 +6,8 @@ import TeamsHeader from "../components/TeamsHeader";
 import TeamsGrid from "../components/TeamsGrid";
 import CreateTeamModal from "../components/CreateTeamModal";
 import { useTeams } from "../hooks/useTeams";
+import TeamsStatsBar from "../components/TeamsStatsBar";
+import TeamsSearchBar from "../components/TeamsSearchBar";
 
 function TeamsPage() {
   const [isOpen, setIsOpen] = useState(false);
@@ -13,6 +15,12 @@ function TeamsPage() {
   const { data: teams, isLoading } = useTeams();
 
   const hasTeams = teams && teams.length > 0;
+
+  const [search, setSearch] = useState("");
+
+  const filteredTeams = (teams || []).filter((team) =>
+  team.name.toLowerCase().includes(search.toLowerCase())
+);
 
   return (
     <MainLayout
@@ -28,6 +36,7 @@ function TeamsPage() {
           />
         )}
 
+
         {/* LOADING */}
         {isLoading && (
           <div className="rounded-2xl border border-border bg-surface p-6 text-sm text-muted">
@@ -38,7 +47,7 @@ function TeamsPage() {
         {/* EMPTY STATE (🔥 IMPORTANT) */}
         {!isLoading && !hasTeams && (
           <div className="flex flex-col items-center justify-center rounded-3xl border border-dashed border-border bg-surface p-16 text-center">
-            
+
             <div className="mb-4 rounded-2xl bg-primary/10 p-4">
               <Users size={28} className="text-primary" />
             </div>
@@ -61,9 +70,19 @@ function TeamsPage() {
           </div>
         )}
 
+        {!isLoading && hasTeams && (
+          <TeamsStatsBar teams={teams || []} />
+        )}
+
+        {hasTeams && (
+          <div className="flex items-center justify-between gap-4">
+            <TeamsSearchBar value={search} onChange={setSearch} />
+          </div>
+        )}
+
         {/* GRID */}
         {!isLoading && hasTeams && (
-          <TeamsGrid teams={teams || []} />
+          <TeamsGrid teams={filteredTeams} />
         )}
       </div>
 

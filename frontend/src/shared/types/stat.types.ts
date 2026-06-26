@@ -8,7 +8,7 @@ export type StatTrend =
 export type StatCardItem = {
   title: string;
 
-  value: string;
+  value: string | number;
 
   change?: string;
 

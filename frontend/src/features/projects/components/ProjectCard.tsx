@@ -1,208 +1,138 @@
-import {
-  BarChart3,
-  CheckCircle2,
-} from "lucide-react";
-
+import { BarChart3, CheckCircle2 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
-
 import type { Project } from "../types/project.types";
-
-import {
-  projectStatusConfig,
-} from "../constants/projectStatus";
+import { projectStatusConfig } from "../constants/projectStatus";
 
 type ProjectCardProps = {
   project: Project;
 };
 
-function ProjectCard({
-  project,
-}: ProjectCardProps) {
-  const navigate =
-    useNavigate();
-
-  const statusConfig =
-    projectStatusConfig[
-    project.status
-    ];
+function ProjectCard({ project }: ProjectCardProps) {
+  const navigate = useNavigate();
+  const statusConfig = projectStatusConfig[project.status];
 
   const handleOpenProject = () => {
-    navigate(
-      `/teams/${project.team_id}/projects/${project.id}`
-    );
+    navigate(`/teams/${project.team_id}/projects/${project.id}`);
   };
 
   return (
     <article
       onClick={handleOpenProject}
       className="
-        cursor-pointer
-        rounded-2xl
-        border
-        border-border
-        bg-surface
-        p-6
-        shadow-soft
-        transition-all
-        duration-200
-        hover:-translate-y-1
-        hover:shadow-lg
+        group cursor-pointer
+
+        rounded-2xl border border-border bg-surface
+        p-5
+
+        transition-all duration-200
+
+        hover:-translate-y-0.5
+        hover:border-primary/30
+        hover:shadow-soft
       "
     >
+
       {/* HEADER */}
-      <div
-        className="
-          flex
-          items-start
-          justify-between
-          gap-4
-        "
-      >
-        <div className="flex-1">
+      <div className="flex items-start justify-between gap-4">
+
+        <div className="flex-1 min-w-0">
+
           <span
             className={`
+              inline-flex
               rounded-full
-              px-3
-              py-1
-              text-xs
-              font-semibold
-
+              px-2.5 py-1
+              text-[11px]
+              font-medium
               ${statusConfig.className}
             `}
           >
             {statusConfig.label}
           </span>
 
-          <h3
-            className="
-              mt-4
-              line-clamp-1
-              text-xl
-              font-bold
-            "
-          >
+          <h3 className="mt-3 text-lg font-semibold text-text line-clamp-1 group-hover:text-primary transition">
             {project.name}
           </h3>
 
-          <p
-            className="
-              mt-3
-              line-clamp-2
-              leading-7
-              text-muted
-            "
-          >
+          <p className="mt-2 text-sm text-muted line-clamp-2">
             {project.description}
           </p>
         </div>
 
         <div
           className="
-            flex
-            h-14
-            w-14
-            shrink-0
-            items-center
-            justify-center
-            rounded-2xl
-            bg-primaryLight
+            flex h-12 w-12 shrink-0
+            items-center justify-center
+            rounded-xl
+            bg-primaryLight text-black
           "
         >
-          <BarChart3 size={22} />
+          <BarChart3 size={18} />
         </div>
       </div>
 
       {/* PROGRESS */}
-      <div className="mt-6">
-        <div
-          className="
-            mb-2
-            flex
-            items-center
-            justify-between
-            text-sm
-          "
-        >
-          <span className="text-muted">
-            Progress
-          </span>
+      <div className="mt-5">
 
-          <span className="font-semibold">
+        <div className="flex items-center justify-between text-xs text-muted mb-2">
+          <span>Progress</span>
+          <span className="font-medium text-text">
             {project.progress}%
           </span>
         </div>
 
-        <div
-          className="
-            h-2.5
-            overflow-hidden
-            rounded-full
-            bg-surfaceSecondary
-          "
-        >
+        <div className="h-2 rounded-full bg-muted/20 overflow-hidden">
           <div
-            style={{
-              width: `${project.progress}%`,
-            }}
+            style={{ width: `${project.progress}%` }}
             className="
               h-full
-              rounded-full
               bg-primary
-              transition-all
+              rounded-full
+              transition-all duration-300
             "
           />
         </div>
+
       </div>
 
       {/* FOOTER */}
-      <div
-        className="
-          mt-6
-          flex
-          items-center
-          justify-between
-        "
-      >
-        <div className="flex gap-6">
-          <div>
-            <p className="text-sm text-muted">
-              Tasks
-            </p>
+      <div className="mt-5 flex items-center justify-between">
 
-            <h4 className="font-bold">
+        <div className="flex gap-5 text-sm">
+
+          <div>
+            <p className="text-xs text-muted">Tasks</p>
+            <p className="font-medium text-text">
               {project.taskCount}
-            </h4>
+            </p>
           </div>
 
           <div>
-            <p className="text-sm text-muted">
-              Members
-            </p>
-
-            <h4 className="font-bold">
+            <p className="text-xs text-muted">Members</p>
+            <p className="font-medium text-text">
               {project.memberCount}
-            </h4>
+            </p>
           </div>
+
         </div>
 
         <div
           className="
-            inline-flex
-            items-center
-            gap-2
+            inline-flex items-center gap-1.5
+
             rounded-full
-            bg-successLight
-            px-3
-            py-2
-            text-sm
-            font-semibold
-            text-success
+            bg-successLight/70
+            px-2.5 py-1.5
+
+            text-xs font-medium text-success
           "
         >
-          <CheckCircle2 size={16} />
+          <CheckCircle2 size={14} />
           AI {project.aiScore}%
         </div>
+
       </div>
+
     </article>
   );
 }

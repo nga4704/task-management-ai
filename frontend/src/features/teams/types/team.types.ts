@@ -34,6 +34,7 @@ export interface Team {
   members_count?: number;
 
   team_members?: TeamMember[];
+  projects_count?: number;
 }
 
 export interface TeamDetail extends Team {

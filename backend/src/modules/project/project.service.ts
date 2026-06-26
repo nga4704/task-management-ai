@@ -337,3 +337,27 @@ export const getProjectsDashboardService =
       productivity,
     };
   };
+
+  export const getProjectTasksService = async (projectId: string) => {
+  return prisma.tasks.findMany({
+    where: { project_id: projectId },
+    include: {
+      users_tasks_assignee_idTousers: true,
+      task_progress: true,
+    },
+    orderBy: { created_at: "desc" },
+  });
+};
+
+export const getProjectActivitiesService = async (
+  projectId: string
+) => {
+  return prisma.project_activities.findMany({
+    where: {
+      project_id: projectId,
+    },
+    orderBy: {
+      created_at: "desc",
+    },
+  });
+};

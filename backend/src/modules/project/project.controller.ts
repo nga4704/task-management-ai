@@ -110,3 +110,38 @@ export const getProjectsActivity =
 
     res.json(data);
   };
+
+  export const getProjectTasks = async (req: AuthRequest, res: Response) => {
+  const tasks = await projectService.getProjectTasksService(
+    req.params.projectId as string
+  );
+
+  res.json(tasks);
+};
+
+export const getProjectActivities = async (
+  req: AuthRequest,
+  res: Response
+) => {
+  try {
+    const projectId = req.params.projectId as string;
+
+    if (!projectId) {
+      return res.status(400).json({
+        message: "projectId is required",
+      });
+    }
+
+    const activities =
+      await projectService.getProjectActivitiesService(projectId);
+
+    return res.json({
+      success: true,
+      data: activities,
+    });
+  } catch (error: any) {
+    return res.status(500).json({
+      message: error.message || "Get project activities failed",
+    });
+  }
+};

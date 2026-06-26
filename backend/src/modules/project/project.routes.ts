@@ -8,6 +8,8 @@ import {
   deleteProject,
   getProjectsDashboard,
   getProjectsActivity,
+  getProjectTasks,
+  getProjectActivities
 } from "./project.controller";
 
 import { protect } from "../../middlewares/auth.middleware";
@@ -63,6 +65,20 @@ router.get(
  protect,
  isProjectMember,
  getProjectDetail
+);
+
+router.get(
+  "/:projectId/tasks",
+  protect,
+  isProjectMember,
+  getProjectTasks
+);
+
+router.get(
+  "/:projectId/activities",
+  protect,
+  isProjectMember,
+  getProjectActivities
 );
 
 export default router;

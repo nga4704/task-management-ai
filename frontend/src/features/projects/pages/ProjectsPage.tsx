@@ -5,13 +5,9 @@ import { useNavigate, useParams } from "react-router-dom";
 
 import MainLayout from "@/app/layouts/MainLayout";
 
-import { Users, Settings } from "lucide-react";
-
-import ProjectsHeader from "../components/ProjectsHeader";
 import ProjectsStats from "../components/ProjectsStats";
 import ProjectCard from "../components/ProjectCard";
 import CreateProjectModal from "../components/CreateProjectModal";
-import ProjectsActivity from "../components/ProjectsActivity";
 import ProjectSkeleton from "../components/ProjectSkeleton";
 
 import BoardFilter from "@/shared/components/cards/BoardFilter";
@@ -22,6 +18,7 @@ import { useTeams } from "@/features/teams/hooks/useTeams";
 
 import MembersModal from "@/features/teams/components/MembersModal";
 import SettingsModal from "@/features/teams/components/TeamSettingsModal";
+import WorkspaceHeader from "../components/WorkspaceHeader";
 
 function ProjectsPage() {
   const { teamId } = useParams();
@@ -34,6 +31,25 @@ function ProjectsPage() {
   const { data: teams } = useTeams();
   const { data: team } = useTeamDetail(teamId || "");
   const { data: projects, isLoading } = useTeamProjects(teamId);
+
+  const [search, setSearch] = useState("");
+  const [filter, setFilter] = useState<"all" | "high" | "ai">("all");
+
+  const filteredProjects = projects?.filter((p: any) => {
+    const matchSearch =
+      p.name?.toLowerCase().includes(search.toLowerCase());
+
+    const matchFilter =
+      filter === "all"
+        ? true
+        : filter === "high"
+          ? p.priority === "high"
+          : filter === "ai"
+            ? p.is_ai_suggested
+            : true;
+
+    return matchSearch && matchFilter;
+  });
 
   useEffect(() => {
     if (teams && teams.length === 0) {
@@ -48,60 +64,31 @@ function ProjectsPage() {
     >
       <div className="space-y-6">
 
-        {/* WORKSPACE HEADER */}
-        <div className="rounded-3xl border bg-surface p-6 flex items-center justify-between">
 
-          <div>
-            <h2 className="text-2xl font-bold">
-              {team?.name || "Select team"}
-            </h2>
-            <p className="text-sm text-muted">
-              {team?.description || "Choose workspace"}
-            </p>
-          </div>
 
-          <div className="flex gap-3">
-
-            <button
-              onClick={() => setOpenMembers(true)}
-              className="flex items-center gap-2 rounded-xl border px-4 py-2"
-            >
-              <Users size={16} />
-              Members
-            </button>
-
-            <button
-              onClick={() => setOpenSettings(true)}
-              className="flex items-center gap-2 rounded-xl border px-4 py-2"
-            >
-              <Settings size={16} />
-              Settings
-            </button>
-
-            <button
-              onClick={() => navigate("/teams")}
-              className="rounded-xl border px-4 py-2"
-            >
-              Switch
-            </button>
-
-          </div>
-
-        </div>
-
-        {/* HEADER */}
-        <ProjectsHeader
+        <WorkspaceHeader
+          team={team}
           onCreateProject={() => setIsCreateOpen(true)}
+          onOpenMembers={() => setOpenMembers(true)}
+          onOpenSettings={() => setOpenSettings(true)}
         />
 
-        <BoardFilter />
-        <ProjectsStats />
+        <ProjectsStats teamId={teamId} />
+
+        <BoardFilter
+          search={search}
+          onSearchChange={setSearch}
+          filter={filter}
+          onFilterChange={setFilter}
+        />
+
+
 
         {/* MAIN */}
         <section className="grid grid-cols-12 gap-6">
 
           {/* PROJECT LIST */}
-          <div className="col-span-12 xl:col-span-8">
+          <div className="col-span-12">
 
             {isLoading ? (
               <ProjectSkeleton />
@@ -111,26 +98,21 @@ function ProjectsPage() {
                   No projects yet
                 </h3>
 
-                <button
+                {/* <button
                   onClick={() => setIsCreateOpen(true)}
                   className="mt-4 rounded-xl bg-black px-4 py-2 text-white"
                 >
                   Create Project
-                </button>
+                </button> */}
               </div>
             ) : (
-              <div className="grid lg:grid-cols-2 gap-6">
-                {projects.map((project: any) => (
+              <div className="grid lg:grid-cols-2 xl:grid-cols-3 gap-6">
+                {filteredProjects?.map((project: any) => (
                   <ProjectCard key={project.id} project={project} />
                 ))}
               </div>
             )}
 
-          </div>
-
-          {/* ACTIVITY */}
-          <div className="col-span-12 xl:col-span-4">
-            <ProjectsActivity />
           </div>
 
         </section>

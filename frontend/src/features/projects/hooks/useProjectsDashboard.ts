@@ -1,19 +1,13 @@
-import { useQuery }
-from "@tanstack/react-query";
+import { useQuery } from "@tanstack/react-query";
+import { projectApi } from "../api/projectApi";
+import type { ProjectDashboard } from "../types/projectDashboard.types";
 
-import { projectApi }
-from "../api/projectApi";
-
-import type { ProjectDashboard }
-from "../types/projectDashboard.types";
-
-export function useProjectsDashboard() {
+export function useProjectsDashboard(teamId?: string) {
   return useQuery<ProjectDashboard>({
-    queryKey: [
-      "projects-dashboard",
-    ],
+    queryKey: ["projects-dashboard", teamId],
 
-    queryFn: () =>
-      projectApi.getProjectsDashboard(),
+    queryFn: () => projectApi.getProjectsDashboard(teamId!),
+
+    enabled: !!teamId,
   });
 }

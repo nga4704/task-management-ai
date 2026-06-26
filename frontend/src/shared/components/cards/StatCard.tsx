@@ -1,3 +1,5 @@
+// @/shared/components/cards/StatCard.tsx
+
 import type {
   StatCardItem,
 } from "@/shared/types/stat.types";
@@ -16,190 +18,85 @@ function StatCard({
       className={`
         group
         relative
-        overflow-hidden
 
-        rounded-[28px]
-
+        rounded-2xl
         border
 
-        backdrop-blur-md
+        p-4
 
-        p-5
-        md:p-6
-
-        transition-all
-        duration-300
-
-        hover:-translate-y-1
+        transition-all duration-200
 
         ${
           highlighted
-            ? `
-              border-primary/40
-              bg-primaryLight
-              shadow-card
-            `
-            : `
-              border-white/50
-              bg-white/70
-              shadow-soft
-              hover:shadow-card
-            `
+            ? "bg-primaryLight border-primary/30"
+            : "bg-surface border-border hover:border-primary/30"
         }
+
+        hover:-translate-y-0.5 hover:shadow-soft
       `}
     >
-      {/* GLOW */}
-      {/* <div
-        className={`
-          absolute
-          right-[-50px]
-          top-[-50px]
+      {/* TOP */}
+      <div className="flex items-start justify-between gap-3">
 
-          h-[150px]
-          w-[150px]
+        <div className="min-w-0">
+          <p className="text-xs font-medium text-muted">
+            {title}
+          </p>
 
-          rounded-full
-
-          blur-3xl
-
-          transition-all
-          duration-500
-
-          ${
-            highlighted
-              ? "bg-primary/20"
-              : "bg-primary/10"
-          }
-        `}
-      /> */}
-
-      <div className="relative z-10">
-        {/* HEADER */}
-        <div className="flex items-start justify-between gap-4">
-
-          <div className="min-w-0">
-
-            <p
-              className="
-                text-sm
-                font-medium
-                text-muted
-              "
-            >
-              {title}
-            </p>
-
-            <h2
-              className="
-                mt-3
-
-                truncate
-
-                text-3xl
-                md:text-4xl
-
-                font-bold
-                tracking-tight
-              "
-            >
-              {value}
-            </h2>
-          </div>
-
-          {Icon && (
-            <div
-              className={`
-                flex
-                h-12
-                w-12
-                shrink-0
-                items-center
-                justify-center
-
-                rounded-2xl
-
-                transition-all
-                duration-300
-
-                ${
-                  highlighted
-                    ? `
-                      bg-black
-                      text-white
-                      shadow-soft
-                    `
-                    : `
-                      bg-primaryLight
-                      text-black
-                    `
-                }
-              `}
-            >
-              <Icon size={22} />
-            </div>
-          )}
+          <h2 className="mt-1 text-2xl font-bold text-text truncate">
+            {value}
+          </h2>
         </div>
 
-        {/* FOOTER */}
-        {(change || description) && (
+        {Icon && (
           <div
-            className="
-              mt-6
-              flex
-              items-center
-              justify-between
-              gap-3
-            "
+            className={`
+              flex h-9 w-9 items-center justify-center
+              rounded-xl
+
+              ${
+                highlighted
+                  ? "bg-black text-white"
+                  : "bg-primaryLight text-black"
+              }
+            `}
           >
-            {change && (
-              <span
-                className={`
-                  rounded-full
-
-                  px-3
-                  py-1
-
-                  text-xs
-                  font-semibold
-
-                  ${
-                    trend === "positive"
-                      ? `
-                        bg-successLight
-                        text-success
-                      `
-                      : trend === "negative"
-                      ? `
-                        bg-dangerLight
-                        text-danger
-                      `
-                      : `
-                        bg-surfaceSecondary
-                        text-muted
-                      `
-                  }
-                `}
-              >
-                {change}
-              </span>
-            )}
-
-            {description && (
-              <p
-                className="
-                  truncate
-                  text-xs
-                  text-muted
-                "
-              >
-                {description}
-              </p>
-            )}
+            <Icon size={16} />
           </div>
         )}
       </div>
+
+      {/* BOTTOM */}
+      {(change || description) && (
+        <div className="mt-3 flex items-center justify-between gap-2">
+
+          {change && (
+            <span
+              className={`
+                text-[11px] font-semibold px-2.5 py-1 rounded-full
+
+                ${
+                  trend === "positive"
+                    ? "bg-successLight text-success"
+                    : trend === "negative"
+                    ? "bg-dangerLight text-danger"
+                    : "bg-surfaceSecondary text-muted"
+                }
+              `}
+            >
+              {change}
+            </span>
+          )}
+
+          {description && (
+            <span className="text-[11px] text-muted truncate">
+              {description}
+            </span>
+          )}
+
+        </div>
+      )}
     </div>
   );
 }
-
 export default StatCard;

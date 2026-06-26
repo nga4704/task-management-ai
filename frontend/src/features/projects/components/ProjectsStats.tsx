@@ -10,11 +10,9 @@ import StatCard from "@/shared/components/cards/StatCard";
 import { useProjectsDashboard }
   from "../hooks/useProjectsDashboard";
 
-function ProjectsStats() {
-  const {
-    data,
-    isLoading,
-  } = useProjectsDashboard();
+function ProjectsStats({ teamId }: { teamId?: string }) {
+  const { data, isLoading } = useProjectsDashboard(teamId);
+
 
 if (isLoading) {
   return (

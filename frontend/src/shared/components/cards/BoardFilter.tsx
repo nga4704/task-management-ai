@@ -4,17 +4,29 @@ import {
   Sparkles,
 } from "lucide-react";
 
-function BoardFilter() {
+interface Props {
+  search: string;
+  onSearchChange: (v: string) => void;
+
+  filter: "all" | "high" | "ai";
+  onFilterChange: (v: "all" | "high" | "ai") => void;
+}
+
+function BoardFilter({
+  search,
+  onSearchChange,
+  filter,
+  onFilterChange,
+}: Props) {
   return (
     <div
       className="
-        bg-white/80
-        backdrop-blur-md
+        rounded-3xl
         border
-        border-white/50
-        rounded-[32px]
+        border-border
+        bg-surface
         p-5
-        shadow-soft
+        shadow-sm
       "
     >
       <div
@@ -27,100 +39,149 @@ function BoardFilter() {
           justify-between
         "
       >
+
         {/* SEARCH */}
         <div
           className="
             flex
             items-center
             gap-3
-            bg-surface-secondary
-            px-4
-            py-3
-            rounded-2xl
+
             w-full
             xl:max-w-md
+
+            rounded-2xl
+            border
+            border-border
+            bg-white
+
+            px-4
+            py-3
+
+            focus-within:ring-2
+            focus-within:ring-black/5
+            transition
           "
         >
-          <Search
-            size={18}
-            className="text-muted"
-          />
+          <Search size={18} className="text-muted" />
 
           <input
-            type="text"
-            placeholder="Search tasks, projects..."
+            value={search}
+            onChange={(e) => onSearchChange(e.target.value)}
+            placeholder="Search projects..."
             className="
+              w-full
               bg-transparent
               outline-none
-              w-full
+              text-sm
             "
           />
         </div>
 
         {/* FILTERS */}
-        <div className="flex flex-wrap gap-3">
+        <div className="flex flex-wrap gap-2">
 
+          {/* ALL */}
           <button
-            className="
-              bg-primaryLight
-              px-4
-              py-2.5
-              rounded-2xl
-              font-medium
-            "
+            onClick={() => onFilterChange("all")}
+            className={
+              filter === "all"
+                ? `
+                  rounded-full
+                  px-4 py-2
+                  text-sm font-medium
+                  bg-black
+                  text-white
+                  transition
+                `
+                : `
+                  rounded-full
+                  px-4 py-2
+                  text-sm font-medium
+                  border border-border
+                  bg-white
+                  hover:bg-muted/10
+                  transition
+                `
+            }
           >
-            All Tasks
+            All
           </button>
 
+          {/* HIGH PRIORITY */}
           <button
-            className="
-              bg-dangerLight
-              text-danger
-              px-4
-              py-2.5
-              rounded-2xl
-              font-medium
-            "
+            onClick={() => onFilterChange("high")}
+            className={
+              filter === "high"
+                ? `
+                  rounded-full
+                  px-4 py-2
+                  text-sm font-medium
+                  bg-black
+                  text-white
+                  transition
+                `
+                : `
+                  rounded-full
+                  px-4 py-2
+                  text-sm font-medium
+                  border border-border
+                  bg-white
+                  hover:bg-muted/10
+                  transition
+                `
+            }
           >
             High Priority
           </button>
 
+          {/* AI */}
           <button
-            className="
-              bg-infoLight
-              text-info
-              px-4
-              py-2.5
-              rounded-2xl
-              font-medium
-              flex
-              items-center
-              gap-2
-            "
+            onClick={() => onFilterChange("ai")}
+            className={
+              filter === "ai"
+                ? `
+                  rounded-full
+                  px-4 py-2
+                  text-sm font-medium
+                  bg-black
+                  text-white
+                  transition
+                  flex items-center gap-2
+                `
+                : `
+                  rounded-full
+                  px-4 py-2
+                  text-sm font-medium
+                  border border-border
+                  bg-white
+                  hover:bg-muted/10
+                  transition
+                  flex items-center gap-2
+                `
+            }
           >
-            <Sparkles size={16} />
-
+            <Sparkles size={14} />
             AI Suggested
           </button>
 
+          {/* FILTER ICON BUTTON */}
           <button
             className="
+              rounded-full
+              px-4 py-2
+              text-sm font-medium
+              border border-border
               bg-white
-              border
-              border-border
-              px-4
-              py-2.5
-              rounded-2xl
-              font-medium
-              flex
-              items-center
-              gap-2
+              hover:bg-muted/10
+              transition
+              flex items-center gap-2
             "
           >
-            <SlidersHorizontal size={16} />
-
-            Filters
+            <SlidersHorizontal size={14} />
+            More
           </button>
+
         </div>
       </div>
     </div>
