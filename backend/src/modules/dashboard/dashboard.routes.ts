@@ -3,24 +3,31 @@ import express from "express";
 import {
   getOverview,
   getTeamProgress,
+  getFullDashboard,
 } from "./dashboard.controller";
 
-import { protect } from "../../middlewares/auth.middleware";
+import {
+  protect,
+} from "../../middlewares/auth.middleware";
 
 const router = express.Router();
 
-// overview dashboard
 router.get(
   "/overview",
   protect,
   getOverview
 );
 
-// team progress
 router.get(
   "/team-progress/:teamId",
   protect,
   getTeamProgress
+);
+
+router.get(
+  "/full/:teamId",
+  protect,
+  getFullDashboard
 );
 
 export default router;

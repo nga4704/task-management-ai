@@ -1,55 +1,53 @@
 import { Sparkles } from "lucide-react";
+import { useNavigate } from "react-router-dom";
 
 import Button from "@/shared/components/common/Button";
-import {
-  useNavigate,
-} from "react-router-dom";
 
-type DashboardHeroProps = {
+import type {
+  SprintProgress,
+} from "../types/dashboard.types";
+
+type Props = {
   projectId: string | null;
   projectName: string | null;
+  sprintProgress?: SprintProgress;
 };
 
 function DashboardHero({
-  projectId, projectName
-}: DashboardHeroProps) {
-  const navigate =
-    useNavigate();
+  projectName,
+  sprintProgress,
+}: Props) {
+
+  const navigate = useNavigate();
+
+  const score =
+    sprintProgress?.overallProgress ?? 0;
+
   return (
     <section
       className="
         relative
         overflow-hidden
-
         rounded-[32px]
-
         border
         border-primary/20
-
         bg-primaryLight
-
         px-6
         py-6
         md:px-8
         md:py-7
-
         shadow-soft
       "
     >
-      {/* GLOW */}
       <div
         className="
           absolute
           right-[-80px]
           top-[-80px]
-
           h-52
           w-52
-
           rounded-full
-
           bg-white/30
-
           blur-3xl
         "
       />
@@ -58,83 +56,66 @@ function DashboardHero({
         className="
           relative
           z-10
-
           flex
           flex-col
           gap-6
-
           lg:flex-row
           lg:items-center
           lg:justify-between
         "
       >
-        {/* LEFT */}
         <div className="max-w-2xl">
+
           <div
             className="
               inline-flex
               items-center
               gap-2
-
               rounded-full
-
               bg-black
-
               px-3
               py-1.5
-
               text-xs
               font-semibold
               text-white
             "
           >
             <Sparkles size={14} />
-
             AI ACTIVE
           </div>
 
           <h2
             className="
               mt-4
-
               text-2xl
               md:text-3xl
-
               font-bold
-              tracking-tight
             "
           >
-            Your team productivity score is
+            Team productivity score
+
             <span className="ml-2">
-              92%
+              {score}%
             </span>
           </h2>
 
           <p
             className="
-    mt-3
-    text-sm
-    md:text-base
-    text-black/65
-  "
+              mt-3
+              text-black/70
+            "
           >
             Current Project:
 
             {" "}
 
-            {projectName ??
-              "No project selected"}
+            {projectName || "No Project Selected"}
           </p>
+
         </div>
 
-        {/* RIGHT */}
-        <div
-          className="
-            flex
-            flex-wrap
-            gap-3
-          "
-        >
+        <div className="flex gap-3">
+
           <Button
             title="Generate Plan"
             variant="dark"
@@ -152,7 +133,9 @@ function DashboardHero({
               navigate("/insights")
             }
           />
+
         </div>
+
       </div>
     </section>
   );

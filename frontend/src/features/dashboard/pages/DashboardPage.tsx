@@ -1,4 +1,7 @@
-import MainLayout from "../../../app/layouts/MainLayout";
+import { useEffect } from "react";
+import { useNavigate, useParams } from "react-router-dom";
+
+import MainLayout from "@/app/layouts/MainLayout";
 
 import DashboardHero from "../components/DashboardHero";
 import DashboardStats from "../components/DashboardStats";
@@ -8,43 +11,47 @@ import TeamActivities from "../components/TeamActivities";
 
 import useDashboard from "../hooks/useDashboard";
 
-import {
-  useActiveProject,
-} from "@/shared/hooks/useActiveProject";
-
-import {
-  useParams,
-} from "react-router-dom";
-
-import { useEffect } from "react";
-import { useNavigate } from "react-router-dom";
+import { useActiveProject } from "@/shared/hooks/useActiveProject";
+import { useActiveTeam } from "@/shared/hooks/useActiveTeam";
 import { useTeams } from "@/features/teams/hooks/useTeams";
 
-
 function DashboardPage() {
-
   const navigate = useNavigate();
+
   const { data: teams, isLoading } = useTeams();
 
-  const { teamId } =
-    useParams();
-
-  const { overview } =
-    useDashboard(
-      teamId || ""
-    );
+  const { teamId } = useActiveTeam();
 
   const {
     projectId,
     projectName,
-  } =
-    useActiveProject();
+  } = useActiveProject();
+
+  const {
+    overview,
+    sprintProgress,
+    tasks,
+    activities,
+    insights,
+    loading,
+  } = useDashboard(teamId ?? "");
 
   useEffect(() => {
     if (!isLoading && (!teams || teams.length === 0)) {
       navigate("/teams");
     }
-  }, [teams, isLoading]);
+  }, [teams, isLoading, navigate]);
+
+  if (loading) {
+    return (
+      <MainLayout
+        title="Dashboard"
+        description="Loading..."
+      >
+        Loading...
+      </MainLayout>
+    );
+  }
 
   return (
     <MainLayout
@@ -55,17 +62,15 @@ function DashboardPage() {
 
         <DashboardHero
           projectId={projectId}
-          projectName={
-            projectName ||
-            "No Project Selected"
-          }
+          projectName={projectName}
+          sprintProgress={sprintProgress}
         />
 
-        <DashboardStats
-          overview={overview}
-        />
+        <DashboardStats overview={overview} />
 
-        <DashboardInsights />
+        <DashboardInsights
+          insights={insights}
+        />
 
         <section
           className="
@@ -75,11 +80,15 @@ function DashboardPage() {
           "
         >
           <div className="col-span-12 xl:col-span-8">
-            <PrioritizedTasks />
+            <PrioritizedTasks
+              tasks={tasks}
+            />
           </div>
 
           <div className="col-span-12 xl:col-span-4">
-            <TeamActivities />
+            <TeamActivities
+              activities={activities}
+            />
           </div>
         </section>
 

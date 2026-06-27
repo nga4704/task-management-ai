@@ -1,86 +1,68 @@
-import {
-  ArrowRight,
-  Sparkles,
-} from "lucide-react";
+import { Lightbulb } from "lucide-react";
 
-function RecommendationCard() {
+type Props = {
+  recommendation: string;
+};
+
+function RecommendationCard({
+  recommendation,
+}: Props) {
   return (
     <div
       className="
-        rounded-[28px]
-
+        rounded-2xl
         border
         border-border
-
         bg-surface
-
         p-5
-
         shadow-soft
       "
     >
-      <div className="flex items-start gap-4">
+      <div className="flex items-center gap-3">
         <div
           className="
             flex
-            h-12
-            w-12
-            shrink-0
+            h-11
+            w-11
             items-center
             justify-center
-
-            rounded-2xl
-
-            bg-secondaryLight
+            rounded-xl
+            bg-primaryLight
           "
         >
-          <Sparkles size={20} />
+          <Lightbulb
+            size={20}
+            className="text-black"
+          />
         </div>
 
         <div>
-          <h3
-            className="
-              text-lg
-              font-bold
-            "
-          >
+          <h3 className="font-semibold">
             AI Recommendation
           </h3>
 
-          <p
-            className="
-              mt-3
-
-              text-sm
-              leading-7
-
-              text-muted
-            "
-          >
-            Prioritize database optimization
-            today and postpone UI testing
-            until tomorrow.
+          <p className="text-sm text-muted">
+            Suggested next action
           </p>
-
-          <button
-            className="
-              mt-4
-
-              inline-flex
-              items-center
-              gap-2
-
-              text-sm
-              font-semibold
-
-              text-secondary
-            "
-          >
-            Apply suggestion
-
-            <ArrowRight size={14} />
-          </button>
         </div>
+      </div>
+
+      <div
+        className="
+          mt-5
+          rounded-xl
+          bg-surfaceSecondary
+          p-4
+        "
+      >
+        <p
+          className="
+            text-sm
+            leading-6
+          "
+        >
+          {recommendation}
+        </p>
       </div>
     </div>
   );

@@ -1,3 +1,5 @@
+// @/features/project-detail/components/drawer/TaskDetailDrawer.tsx
+
 import { X } from "lucide-react";
 
 import { useTaskDetail }

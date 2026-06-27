@@ -20,6 +20,8 @@ import MembersModal from "@/features/teams/components/MembersModal";
 import SettingsModal from "@/features/teams/components/TeamSettingsModal";
 import WorkspaceHeader from "../components/WorkspaceHeader";
 
+import { useTeamStore } from "@/store/teamStore";
+
 function ProjectsPage() {
   const { teamId } = useParams();
   const navigate = useNavigate();
@@ -34,6 +36,11 @@ function ProjectsPage() {
 
   const [search, setSearch] = useState("");
   const [filter, setFilter] = useState<"all" | "high" | "ai">("all");
+
+  const setSelectedTeam =
+    useTeamStore(
+      (s) => s.setSelectedTeam
+    );
 
   const filteredProjects = projects?.filter((p: any) => {
     const matchSearch =
@@ -52,10 +59,10 @@ function ProjectsPage() {
   });
 
   useEffect(() => {
-    if (teams && teams.length === 0) {
-      navigate("/teams");
+    if (team?.id && team?.name) {
+      setSelectedTeam(team.id, team.name);
     }
-  }, [teams, navigate]);
+  }, [team, setSelectedTeam]);
 
   return (
     <MainLayout

@@ -4,61 +4,74 @@ import {
   Sparkles,
 } from "lucide-react";
 
-function AIInsightCard() {
+import type {
+  DashboardInsight,
+} from "../types/dashboard.types";
+
+type Props = {
+  insights: DashboardInsight;
+};
+
+function AIInsightCard({
+  insights,
+}: Props) {
+
+  const trend =
+    insights.productivityScore >= 80
+      ? "Excellent"
+      : insights.productivityScore >= 60
+      ? "Good"
+      : "Needs Improvement";
+
   return (
     <div
       className="
         relative
         overflow-hidden
-
         rounded-[28px]
-
-        bg-primaryLight
-
+        border
+        bg-white
         p-5
         md:p-6
-
         shadow-card
       "
     >
-      {/* DECORATION */}
+      {/* Decoration */}
       <div
         className="
           absolute
           -right-8
           -top-8
-
           h-28
           w-28
-
           rounded-full
-
-          bg-white/20
+          bg-primaryLight
         "
       />
 
       <div className="relative z-10">
+
         {/* HEADER */}
         <div className="flex items-center justify-between">
+
           <div
             className="
               inline-flex
               items-center
               gap-2
-
               rounded-full
-
-              bg-black/10
-
+              bg-secondaryLight
               px-3
               py-1.5
-
               text-xs
               font-medium
+              text-secondary
             "
           >
             <Sparkles size={14} />
+
             AI Insight
+
           </div>
 
           <div
@@ -68,25 +81,24 @@ function AIInsightCard() {
               w-10
               items-center
               justify-center
-
               rounded-xl
-
               bg-black
-
-              text-white
-            "
-          >
+              text-white"
+            >
             <BrainCircuit size={18} />
           </div>
+
         </div>
 
         {/* SCORE */}
         <div className="mt-5">
+
           <p className="text-sm text-black/60">
             Productivity Score
           </p>
 
           <div className="mt-2 flex items-end gap-3">
+
             <h2
               className="
                 text-5xl
@@ -94,51 +106,47 @@ function AIInsightCard() {
                 leading-none
               "
             >
-              92%
+              {insights.productivityScore}%
             </h2>
 
             <div
               className="
                 mb-1
-
                 flex
                 items-center
                 gap-1
-
                 rounded-full
-
                 bg-successLight
-
                 px-2.5
                 py-1
-
                 text-xs
                 font-semibold
                 text-success
               "
             >
               <TrendingUp size={12} />
-              +24%
+
+              {trend}
             </div>
+
           </div>
+
         </div>
 
         {/* METRICS */}
         <div
           className="
             mt-5
-
             grid
             grid-cols-2
             gap-3
           "
         >
+
           <div
             className="
               rounded-xl
-
-              bg-white/40
-
+              bg-primaryLight
               px-4
               py-3
             "
@@ -148,16 +156,15 @@ function AIInsightCard() {
             </p>
 
             <h4 className="mt-1 font-semibold">
-              08:00–12:00
+              {insights.focusWindow}
             </h4>
+
           </div>
 
           <div
             className="
               rounded-xl
-
-              bg-white/40
-
+              bg-primaryLight
               px-4
               py-3
             "
@@ -167,20 +174,19 @@ function AIInsightCard() {
             </p>
 
             <h4 className="mt-1 font-semibold">
-              89%
+              {insights.sprintSuccess}%
             </h4>
+
           </div>
+
         </div>
 
-        {/* INSIGHT */}
+        {/* Recommendation */}
         <div
           className="
             mt-5
-
             rounded-xl
-
             bg-white/50
-
             px-4
             py-3
           "
@@ -192,11 +198,10 @@ function AIInsightCard() {
               text-black/75
             "
           >
-            Schedule backend development
-            tasks before 1 PM for maximum
-            productivity.
+            {insights.recommendation}
           </p>
         </div>
+
       </div>
     </div>
   );

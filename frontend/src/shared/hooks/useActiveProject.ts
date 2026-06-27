@@ -1,24 +1,27 @@
-import {
-  useProjectStore,
-} from "@/store/projectStore";
+import { useProjectStore } from "@/store/projectStore";
+import { useTeamStore } from "@/store/teamStore";
 
-export const useActiveProject =
-  () => {
+export const useActiveProject = () => {
+  const projectId = useProjectStore(
+    (s) => s.selectedProjectId
+  );
 
-    const projectId =
-      useProjectStore(
-        (state) =>
-          state.selectedProjectId
-      );
+  const projectName = useProjectStore(
+    (s) => s.selectedProjectName
+  );
 
-    const projectName =
-      useProjectStore(
-        (state) =>
-          state.selectedProjectName
-      );
+  const teamId = useTeamStore(
+    (s) => s.selectedTeamId
+  );
 
-    return {
-      projectId,
-      projectName,
-    };
+  const teamName = useTeamStore(
+    (s) => s.selectedTeamName
+  );
+
+  return {
+    teamId,
+    teamName,
+    projectId,
+    projectName,
   };
+};

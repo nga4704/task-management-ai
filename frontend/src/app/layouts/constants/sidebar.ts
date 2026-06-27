@@ -52,11 +52,11 @@ export const sidebarSections = [
         icon: Brain,
         path: "/planner",
       },
-      {
-        title: "AI Insights",
-        icon: Sparkles,
-        path: "/insights",
-      },
+      // {
+      //   title: "AI Insights",
+      //   icon: Sparkles,
+      //   path: "/insights",
+      // },
 
       // {
       //   title: "Analytics",

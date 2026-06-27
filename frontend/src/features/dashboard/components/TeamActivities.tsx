@@ -1,8 +1,17 @@
 import ActivityCard from "./ActivityCard";
 
-import { activityData } from "../data/activityData";
+import type {
+  DashboardActivity,
+} from "../types/dashboard.types";
 
-function TeamActivities() {
+type Props = {
+  activities: DashboardActivity[];
+};
+
+function TeamActivities({
+  activities,
+}: Props) {
+
   return (
     <section
       className="
@@ -25,19 +34,45 @@ function TeamActivities() {
         </h2>
 
         <p className="mt-1 text-muted">
-          Recent collaboration updates
+          Latest project activities
         </p>
       </div>
 
-      <div className="mt-6 space-y-5">
-        {activityData.map((item) => (
+      <div
+        className="
+    mt-6
+    max-h-[650px]
+    overflow-y-auto
+    pr-2
+    space-y-5
+  "
+      >
+
+        {activities.length === 0 && (
+          <div
+            className="
+        rounded-xl
+        border
+        border-dashed
+        border-border
+        py-10
+        text-center
+        text-muted
+      "
+          >
+            No recent activities.
+          </div>
+        )}
+
+        {activities.map((activity) => (
           <ActivityCard
-            key={item.id}
-            text={item.text}
-            time={item.time}
+            key={activity.id}
+            activity={activity}
           />
         ))}
+
       </div>
+
     </section>
   );
 }

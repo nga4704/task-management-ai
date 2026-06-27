@@ -9,8 +9,10 @@ type Props = {
 };
 
 function ProjectActivity({ projectId }: Props) {
-  const { data: activities = [], isLoading } =
-    useProjectActivities(projectId);
+  const {
+    data: activities = [],
+    isLoading,
+  } = useProjectActivities(projectId);
 
   return (
     <div className="rounded-[32px] border border-border bg-surface p-6 shadow-soft">
@@ -19,7 +21,15 @@ function ProjectActivity({ projectId }: Props) {
         Recent Activity
       </h3>
 
-      <div className="mt-6 space-y-5">
+      <div
+        className="
+          mt-6
+          max-h-[400px]
+          overflow-y-auto
+          space-y-5
+          pr-2
+        "
+      >
 
         {isLoading && (
           <p className="text-muted">
@@ -39,32 +49,27 @@ function ProjectActivity({ projectId }: Props) {
             item.user?.username ||
             "Unknown user";
 
-          const taskTitle =
-            item.payload?.taskTitle ||
-            item.payload?.task?.title ||
-            item.payload?.name;
-
           let actionText = "";
 
           switch (item.type) {
             case "PROJECT_CREATED":
-              actionText = `created project`;
+              actionText = "created project";
               break;
 
             case "PROJECT_UPDATED":
-              actionText = `updated project`;
+              actionText = "updated project";
               break;
 
             case "TASK_CREATED":
-              actionText = `created task`;
+              actionText = "created task";
               break;
 
             case "TASK_UPDATED":
-              actionText = `updated task`;
+              actionText = "updated task";
               break;
 
             case "TASK_COMPLETED":
-              actionText = `completed task`;
+              actionText = "completed task";
               break;
 
             default:
@@ -72,31 +77,47 @@ function ProjectActivity({ projectId }: Props) {
           }
 
           return (
-            <div key={item.id} className="flex gap-4">
-
-              <div className="rounded-xl bg-primaryLight p-2">
+            <div
+              key={item.id}
+              className="flex gap-4"
+            >
+              <div
+                className="
+                  flex
+                  h-10
+                  w-10
+                  shrink-0
+                  items-center
+                  justify-center
+                  rounded-xl
+                  bg-primaryLight
+                "
+              >
                 <Activity size={16} />
               </div>
 
-              <div className="flex-1">
+              <div className="flex-1 min-w-0">
 
-                {/* USER + ACTION */}
-                <p className="font-medium">
+                <p className="leading-6">
+
                   <span className="font-semibold">
                     {userName}
                   </span>{" "}
+
                   {actionText}{" "}
 
                   {item.task?.title && (
-                    <span className="text-black font-semibold">
+                    <span className="font-semibold text-black">
                       "{item.task.title}"
                     </span>
                   )}
+
                 </p>
 
-                {/* TIME */}
-                <p className="text-xs text-muted">
-                  {new Date(item.created_at).toLocaleString()}
+                <p className="mt-1 text-xs text-muted">
+                  {new Date(
+                    item.created_at
+                  ).toLocaleString()}
                 </p>
 
               </div>
@@ -106,6 +127,7 @@ function ProjectActivity({ projectId }: Props) {
         })}
 
       </div>
+
     </div>
   );
 }

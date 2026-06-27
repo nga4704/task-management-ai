@@ -2,23 +2,34 @@ import AIInsightCard from "./AIInsightCard";
 import RecommendationCard from "./RecommendationCard";
 import RiskAlertCard from "./RiskAlertCard";
 
-function DashboardInsights() {
+import type {
+  DashboardInsight as DashboardInsightsType,
+} from "../types/dashboard.types";
+
+type Props = {
+  insights?: DashboardInsightsType;
+};
+
+function DashboardInsights({
+  insights,
+}: Props) {
+  if (!insights) return null;
+
   return (
     <section
       className="
         grid
         gap-5
-
         grid-cols-1
         xl:grid-cols-3
       "
     >
-      {/* MAIN AI INSIGHT */}
       <div className="xl:col-span-2">
-        <AIInsightCard />
+        <AIInsightCard
+          insights={insights}
+        />
       </div>
 
-      {/* SIDE CARDS */}
       <div
         className="
           flex
@@ -26,9 +37,15 @@ function DashboardInsights() {
           gap-5
         "
       >
-        <RiskAlertCard />
+        <RiskAlertCard
+          risk={insights.risk}
+        />
 
-        <RecommendationCard />
+        <RecommendationCard
+          recommendation={
+            insights.recommendation
+          }
+        />
       </div>
     </section>
   );

@@ -1,85 +1,93 @@
 import {
   AlertTriangle,
-  ArrowRight,
+  ShieldCheck,
 } from "lucide-react";
 
-function RiskAlertCard() {
+type Props = {
+  risk: string;
+};
+
+function RiskAlertCard({
+  risk,
+}: Props) {
+  const hasRisk =
+    !risk
+      .toLowerCase()
+      .includes("no critical");
+
   return (
     <div
-      className="
-        rounded-[28px]
-
+      className={`
+        rounded-2xl
         border
-        border-danger/20
-
-        bg-dangerLight
-
         p-5
-      "
+        shadow-soft
+
+        ${
+          hasRisk
+            ? "border-warning bg-warningLight/30"
+            : "border-success bg-successLight/30"
+        }
+      `}
     >
-      <div className="flex items-start gap-4">
+      <div className="flex items-center gap-3">
+
         <div
-          className="
+          className={`
             flex
-            h-12
-            w-12
-            shrink-0
+            h-11
+            w-11
             items-center
             justify-center
+            rounded-xl
 
-            rounded-2xl
-
-            bg-danger
-
-            text-white
-          "
+            ${
+              hasRisk
+                ? "bg-warningLight"
+                : "bg-successLight"
+            }
+          `}
         >
-          <AlertTriangle size={20} />
+          {hasRisk ? (
+            <AlertTriangle
+              size={20}
+              className="text-warning"
+            />
+          ) : (
+            <ShieldCheck
+              size={20}
+              className="text-success"
+            />
+          )}
         </div>
 
         <div>
-          <h3
-            className="
-              text-lg
-              font-bold
-            "
-          >
-            High Risk Task
+          <h3 className="font-semibold">
+            Risk Alert
           </h3>
 
-          <p
-            className="
-              mt-3
-
-              text-sm
-              leading-7
-
-              text-black/70
-            "
-          >
-            Backend API Integration has an
-            82% overdue probability.
+          <p className="text-sm text-muted">
+            AI project monitoring
           </p>
-
-          <button
-            className="
-              mt-4
-
-              inline-flex
-              items-center
-              gap-2
-
-              text-sm
-              font-semibold
-
-              text-danger
-            "
-          >
-            View details
-
-            <ArrowRight size={14} />
-          </button>
         </div>
+      </div>
+
+      <div
+        className="
+          mt-5
+          rounded-xl
+          bg-white/70
+          p-4
+        "
+      >
+        <p
+          className="
+            text-sm
+            leading-6
+          "
+        >
+          {risk}
+        </p>
       </div>
     </div>
   );

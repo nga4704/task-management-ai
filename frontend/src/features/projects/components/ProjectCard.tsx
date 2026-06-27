@@ -9,17 +9,41 @@ import {
 import { useNavigate } from "react-router-dom";
 import type { Project } from "../types/project.types";
 import { projectStatusConfig } from "../constants/projectStatus";
+import { useProjectStore } from "@/store/projectStore";
+import { useTeamStore } from "@/store/teamStore";
 
 type ProjectCardProps = {
   project: Project;
 };
 
 function ProjectCard({ project }: ProjectCardProps) {
+  const setSelectedProject =
+    useProjectStore(
+      state => state.setSelectedProject
+    );
+
+  const setSelectedTeam =
+    useTeamStore(
+      state => state.setSelectedTeam
+    );
   const navigate = useNavigate();
   const statusConfig = projectStatusConfig[project.status];
 
   const handleOpenProject = () => {
-    navigate(`/teams/${project.team_id}/projects/${project.id}`);
+
+    setSelectedTeam(
+      project.team_id,
+      ""
+    );
+
+    setSelectedProject(
+      project.id,
+      project.name
+    );
+
+    navigate(
+      `/teams/${project.team_id}/projects/${project.id}`
+    );
   };
 
   return (
@@ -90,12 +114,12 @@ function ProjectCard({ project }: ProjectCardProps) {
           <div>
             <div className="flex items-center gap-2 text-muted">
               <ListTodo size={14} />
-              <span>Tasks</span> 
+              <span>Tasks</span>
               <p className="font-medium text-text  text-md">
-              {project.taskCount}
-            </p>
+                {project.taskCount}
+              </p>
             </div>
-            
+
           </div>
 
           {/* MEMBERS */}
@@ -103,11 +127,11 @@ function ProjectCard({ project }: ProjectCardProps) {
             <div className="flex items-center gap-2 text-muted">
               <Users size={14} />
               <span>Members</span>
-               <p className="font-medium text-text text-md">
-              {project.memberCount}
-            </p>
+              <p className="font-medium text-text text-md">
+                {project.memberCount}
+              </p>
             </div>
-           
+
           </div>
         </div>
 

@@ -45,9 +45,9 @@ function OverviewTab() {
       </div>
 
       {/* Workload */}
-      <TeamWorkloadCard
+      {/* <TeamWorkloadCard
         workload={data.workload}
-      />
+      /> */}
 
       {/* Activity */}
       <ProjectActivity projectId={projectId!} />
