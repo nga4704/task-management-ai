@@ -1,57 +1,50 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { taskApi } from "../api/taskApi";
 import type { TaskStatus } from "../types/task.types";
+import { tasksQueryKey } from "../utils/tasksQueryKey";
 
 type MovePayload = {
   taskId: string;
   status: TaskStatus;
 };
 
-export function useMoveTask(projectId?: string) {
+export function useMoveTask(params: {
+  scope: "my" | "project";
+  projectId?: string;
+  teamId?: string;
+  filters?: any;
+}) {
   const queryClient = useQueryClient();
+
+  const baseKey = tasksQueryKey(params);
 
   return useMutation({
     mutationFn: ({ taskId, status }: MovePayload) =>
       taskApi.moveTask(taskId, status),
 
     onMutate: async ({ taskId, status }) => {
-      await queryClient.cancelQueries({
-  queryKey: ["tasks"],
-});
+      await queryClient.cancelQueries({ queryKey: baseKey });
 
-      const previousTasks =
-  queryClient.getQueryData([
-    "tasks",
-    projectId,
-  ]);
+      const previous = queryClient.getQueryData(baseKey);
 
-      queryClient.setQueryData(
-         ["tasks", projectId],
-        (old: any = []) => {
-          return old.map((task: any) =>
-            task.id === taskId
-              ? { ...task, status }
-              : task
-          );
-        }
+      queryClient.setQueryData(baseKey, (old: any = []) =>
+        old.map((t: any) =>
+          t.id === taskId ? { ...t, status } : t
+        )
       );
 
-      return { previousTasks };
+      return { previous };
     },
 
-    onError: (_err, _vars, context) => {
-      queryClient.setQueryData(
-        [
-          "tasks",
-          projectId,
-        ],
-        context?.previousTasks
-      );
+    onError: (_err, _vars, ctx) => {
+      if (ctx?.previous) {
+        queryClient.setQueryData(baseKey, ctx.previous);
+      }
     },
+
     onSettled: () => {
-      queryClient.invalidateQueries({
-  queryKey: ["tasks"],
-});
+      // chỉ invalidate đúng scope này thôi
+      queryClient.invalidateQueries({ queryKey: baseKey });
     },
   });
 }

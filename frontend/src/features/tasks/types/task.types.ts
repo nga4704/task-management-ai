@@ -33,6 +33,8 @@ export interface Task {
 
   progress?: number;
 
+  ai_suggested?: boolean;
+
   assignee?: {
     id: string;
     full_name?: string;

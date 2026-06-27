@@ -14,6 +14,19 @@ type TaskBoardCardProps = {
 function TaskBoardCard({
   task,
 }: TaskBoardCardProps) {
+
+  const formatDate = (date?: string | Date) => {
+    if (!date) return "No deadline";
+
+    const d = new Date(date);
+
+    return new Intl.DateTimeFormat("vi-VN", {
+      day: "2-digit",
+      month: "2-digit",
+      year: "numeric",
+    }).format(d);
+  };
+
   return (
     <article
       className="
@@ -91,9 +104,7 @@ function TaskBoardCard({
           text-muted
         "
       >
-        AI predicts this task should be completed
-        before the deadline to maintain team
-        productivity performance.
+        {task.description}
       </p>
 
       {/* PROGRESS */}
@@ -155,11 +166,11 @@ function TaskBoardCard({
           />
 
           <span className="text-sm text-muted">
-            Due {task.deadline}
+            Due {formatDate(task.deadline)}
           </span>
         </div>
 
-        <div className="flex -space-x-2">
+        {/* <div className="flex -space-x-2">
 
           <div
             className="
@@ -182,7 +193,7 @@ function TaskBoardCard({
               bg-secondaryLight
             "
           />
-        </div>
+        </div> */}
       </div>
     </article>
   );
