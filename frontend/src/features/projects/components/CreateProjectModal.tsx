@@ -269,10 +269,6 @@ function CreateProjectModal({
                 On Hold
               </option>
 
-              <option value="REVIEW">
-                Review
-              </option>
-
               <option value="COMPLETED">
                 Completed
               </option>

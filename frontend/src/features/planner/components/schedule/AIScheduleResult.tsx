@@ -1,13 +1,12 @@
 import ScheduleTimeline from "./ScheduleTimeline";
-import TaskBreakdown from "./TaskBreakdown";
 import AIRecommendationCard from "./AIRecommendationCard";
 import ProductivityScoreCard from "./ProductivityScoreCard";
-
-import type { GeneratedTask } from "../../types/planner.types";
 import AIReasoning from "./AIReasoning";
 
+import type { PlannerTask } from "../../types/planner.types";
+
 type Props = {
-  plans: GeneratedTask[];
+  plans: PlannerTask[];
   summary: any;
   reasoning: string[];
 };
@@ -25,26 +24,18 @@ function AIScheduleResult({ plans, summary, reasoning }: Props) {
     <section className="space-y-6">
       <div className="grid grid-cols-12 gap-8">
 
-        {/* LEFT */}
         <div className="col-span-12 lg:col-span-6">
           <ScheduleTimeline plans={plans} />
         </div>
 
-        {/* RIGHT */}
         <div className="col-span-12 lg:col-span-6 flex flex-col gap-6">
 
-          <TaskBreakdown plans={plans} />
-
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-
             <AIRecommendationCard summary={summary} />
-
             <ProductivityScoreCard summary={summary} />
-
           </div>
 
           <AIReasoning reasoning={reasoning} />
-
         </div>
 
       </div>

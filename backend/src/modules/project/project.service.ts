@@ -32,7 +32,7 @@ export const createProjectService =
     userId: string,
     startDate?: Date,
     endDate?: Date,
-    
+
   ) => {
 
     const team =
@@ -46,6 +46,13 @@ export const createProjectService =
       throw new AppError(
         "Team not found",
         404
+      );
+    }
+
+    if (team.owner_id !== userId) {
+      throw new AppError(
+        "Forbidden: Only team owner can create project",
+        403
       );
     }
 
@@ -75,6 +82,10 @@ export const createProjectService =
       );
     }
 
+    if (!Object.values(ProjectStatus).includes(status)) {
+      throw new AppError("Invalid project status", 400);
+    }
+
     const project =
       await prisma.projects.create({
         data: {
@@ -83,11 +94,8 @@ export const createProjectService =
 
           team_id: teamId,
           status: status as ProjectStatus,
-          start_date:
-            startDate,
-
-          end_date:
-            endDate,
+          start_date: startDate ? new Date(startDate) : null,
+          end_date: endDate ? new Date(endDate) : null,
         },
       });
 

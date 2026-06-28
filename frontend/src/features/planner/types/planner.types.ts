@@ -1,30 +1,68 @@
-export type TaskPriority =
-  | "high"
-  | "medium"
-  | "low";
+export type TaskPriority = "high" | "medium" | "low";
 
-export interface GeneratedTask {
+// ==============================
+// 🧠 INPUT
+// ==============================
+export interface PlannerFormValues {
+  goal: string;
+  deadline: string;
+  workload: string;
+  startDate: string;
+}
+
+// ==============================
+// 🧠 TASK (UNIFIED CONTRACT)
+// ==============================
+export interface PlannerTask {
   id: string;
   title: string;
-  priority: "high" | "medium" | "low";
-  duration: string;
-  aiNote: string;
 
-  dependsOn?: string[];
-  risk?: "low" | "medium" | "high";
+  priority: TaskPriority;
 
-  startDay: number;
-  endDay: number;
+  durationHours: number;
+
+  aiNote?: string;
+
+  dependsOn: string[];
+
+  risk: "low" | "medium" | "high";
+
+  // ======================
+  // REAL SCHEDULE (BACKEND GENERATED)
+  // ======================
+  startDate: string; // ISO string
+  endDate: string;   // ISO string
+
+  // ======================
+  // UI DISPLAY
+  // ======================
+  startDateLabel: string; // "28/06/2026"
+  endDateLabel: string;
+
   allocatedHours: number;
 }
 
-export interface PlannerFormValues {
-  goal: string;
+// ==============================
+// 📊 SUMMARY
+// ==============================
+export interface PlannerSummary {
+  riskLevel: "low" | "medium" | "high";
+  recommendation: string;
+  estimatedDays: number;
+  productivityScore: number;
 
-  deadline: string;
-
-  workload: string;
+  breakdown: {
+    deadlineFit: number;
+    workloadFit: number;
+    complexity: number;
+  };
 }
 
-
-
+// ==============================
+// 📦 RESPONSE
+// ==============================
+export interface PlannerResponse {
+  tasks: PlannerTask[];
+  summary: PlannerSummary;
+  reasoning: string[];
+}

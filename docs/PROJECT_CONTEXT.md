@@ -2,10 +2,10 @@
 
 ## Project Name
 
-AI-Powered Project Management System
+Development of an AI-Integrated Team Task Management System
 
 Tiếng Việt:
-Xây dựng hệ thống quản lý dự án thông minh tích hợp trí tuệ nhân tạo
+Hệ thống quản lý công việc nhóm có tích hợp AI
 
 ---
 
@@ -53,27 +53,15 @@ Xây dựng hệ thống quản lý dự án hiện đại hỗ trợ:
 
 ### AI
 
-* OpenAI API
+* Groq API
 
 ---
 
 ## Core AI Features
 
-### Progress Prediction (4)
-
-Dự đoán khả năng hoàn thành dự án.
-
-### Delay Risk Detection (2)
-
-Phát hiện nguy cơ trễ tiến độ. (+)
-
 ### Schedule Suggestion (3)
 
 Đề xuất lịch trình tối ưu.
-
-### Team Productivity Analysis (1)
-
-Đánh giá hiệu suất nhóm. (+)
 
 ---
 
@@ -115,18 +103,9 @@ Phát hiện nguy cơ trễ tiến độ. (+)
 - Calendar
 - Timeline
 
-### Analytics
-
-- Performance Metrics
-- Progress Reports
-- Team Productivity Analysis
-
 ### AI Insights
 
-- Progress Prediction
-- Delay Risk Detection
 - Schedule Suggestion
-- Productivity Analysis
 
 ---
 
@@ -166,7 +145,7 @@ Supabase PostgreSQL
 
 ↓
 
-OpenAI API
+Groq API
 
 ---
 

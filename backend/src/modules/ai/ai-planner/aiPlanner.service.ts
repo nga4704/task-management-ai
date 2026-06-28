@@ -12,6 +12,9 @@ export class AIPlannerService {
     timeout: 30000,
   });
 
+  // =========================
+  // MAIN ENTRY
+  // =========================
   async generatePlan(input: PlannerInput): Promise<PlannerResponse> {
     const prompt = buildPlannerPrompt(input);
 
@@ -20,8 +23,7 @@ export class AIPlannerService {
       messages: [
         {
           role: "system",
-          content:
-            "You are a SaaS AI Project Manager. Return ONLY JSON.",
+          content: "You are a SaaS AI Project Manager. Return ONLY JSON.",
         },
         { role: "user", content: prompt },
       ],
@@ -30,7 +32,7 @@ export class AIPlannerService {
 
     const text = response.data?.choices?.[0]?.message?.content;
 
-    if (!text) throw new Error("Empty response");
+    if (!text) throw new Error("Empty response from AI");
 
     const parsed = this.safeParse(text);
 
@@ -38,7 +40,7 @@ export class AIPlannerService {
   }
 
   // =========================
-  // SAFE PARSER
+  // SAFE PARSER (ANTI AI ERROR)
   // =========================
   private safeParse(text: string): PlannerResponse {
     try {
@@ -73,50 +75,104 @@ export class AIPlannerService {
   }
 
   // =========================
-  // (1) SCHEDULING ENGINE FIX
+  // REAL CALENDAR HELPERS
+  // =========================
+  private addDays(date: Date, days: number): Date {
+    const d = new Date(date);
+    d.setDate(d.getDate() + days);
+    return d;
+  }
+
+  private startOfDay(date: Date): Date {
+    const d = new Date(date);
+    d.setHours(0, 0, 0, 0);
+    return d;
+  }
+
+  private formatDate(date: Date): string {
+    return date.toLocaleDateString("en-GB"); // 28/06/2026
+  }
+
+  // =========================
+  // MAIN SCHEDULER (FIXED)
   // =========================
   private enrichPlanner(
     data: PlannerResponse,
     input: PlannerInput
   ): PlannerResponse {
-    const capacity = input.workload; // 6h/day
+    const capacity = input.workload ?? 4; // 4h/day default
 
-    let day = 1;
-    let used = 0;
+    const startDate = input.startDate
+      ? this.startOfDay(new Date(input.startDate))
+      : this.startOfDay(new Date());
+
+    let currentDate = new Date(startDate);
+    let usedHours = 0;
+
+    const taskMap = new Map<string, any>();
 
     const tasks = data.tasks.map((task) => {
       const hours = task.durationHours ?? 1;
+      const deps = task.dependsOn ?? [];
 
-      // dependency enforcement (FIX #2 support)
-      const deps = task.dependsOn || [];
+      // =========================
+      // DEPENDENCY RESOLUTION
+      // =========================
+      let taskStartDate = new Date(currentDate);
 
       if (deps.length > 0) {
-        // phụ thuộc → đẩy sang sau task trước
-        day += 1;
-        used = 0;
+        const depEndDates = deps
+          .map((id) => taskMap.get(id)?.endDate)
+          .filter(Boolean) as Date[];
+
+        if (depEndDates.length > 0) {
+          const latestDepEnd = new Date(
+            Math.max(...depEndDates.map((d) => d.getTime()))
+          );
+
+          taskStartDate = this.addDays(latestDepEnd, 1);
+          currentDate = new Date(taskStartDate);
+          usedHours = 0;
+        }
       }
 
-      if (used + hours > capacity) {
-        day += 1;
-        used = 0;
+      // =========================
+      // WORKLOAD ENFORCEMENT (REAL 4H/DAY)
+      // =========================
+      if (usedHours + hours > capacity) {
+        currentDate = this.addDays(currentDate, 1);
+        usedHours = 0;
+        taskStartDate = new Date(currentDate);
       }
 
-      const startDay = day;
-      const endDay = Math.max(day, startDay + Math.ceil(hours / capacity) - 1);
+      const durationDays = Math.ceil(hours / capacity);
+      const taskEndDate = this.addDays(taskStartDate, durationDays - 1);
 
-      used += hours;
+      usedHours += hours;
 
-      return {
+      const enrichedTask = {
         ...task,
-        startDay,
-        endDay,
+
+        // RAW DATE
+        startDate: taskStartDate,
+        endDate: taskEndDate,
+
+        // UI FRIENDLY FORMAT
+        startDateLabel: this.formatDate(taskStartDate),
+        endDateLabel: this.formatDate(taskEndDate),
+
         allocatedHours: hours,
       };
+
+      taskMap.set(task.id, enrichedTask);
+
+      return enrichedTask;
     });
 
     return {
       ...data,
       tasks,
+
       summary: {
         ...data.summary,
         productivityScore: this.calculateScore(data),
@@ -125,7 +181,7 @@ export class AIPlannerService {
   }
 
   // =========================
-  // (3) SCORE FORMULA FIX
+  // SCORE ENGINE (UNCHANGED)
   // =========================
   private calculateScore(data: PlannerResponse): number {
     const b = data.summary.breakdown;

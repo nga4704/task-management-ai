@@ -10,13 +10,13 @@ type PlannerFormProps = {
   loading: boolean;
 };
 
-function PlannerForm({
-  onGenerate,
-  loading,
-}: PlannerFormProps) {
+function PlannerForm({ onGenerate, loading }: PlannerFormProps) {
+  const today = new Date().toISOString().split("T")[0];
+
   const [goal, setGoal] = useState("");
   const [deadline, setDeadline] = useState("");
-  const [workload, setWorkload] = useState("");
+  const [workload, setWorkload] = useState("4");
+  const [startDate, setStartDate] = useState(today);
 
   return (
     <section
@@ -47,17 +47,20 @@ function PlannerForm({
 
       {/* FORM */}
       <div className="mt-6 space-y-4">
-
-        <div>
-          <Input
-            label="Project Goal"
-            placeholder="Build AI productivity dashboard"
-            value={goal}
-            onChange={(e) => setGoal(e.target.value)}
-          />
-        </div>
+        <Input
+          label="Project Goal"
+          placeholder="Build AI productivity dashboard"
+          value={goal}
+          onChange={(e) => setGoal(e.target.value)}
+        />
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <Input
+            label="Start Date"
+            type="date"
+            value={startDate}
+            onChange={(e) => setStartDate(e.target.value)}
+          />
 
           <Input
             label="Deadline"
@@ -65,15 +68,14 @@ function PlannerForm({
             value={deadline}
             onChange={(e) => setDeadline(e.target.value)}
           />
-
-          <Input
-            label="Daily Workload"
-            placeholder="6 hours/day"
-            value={workload}
-            onChange={(e) => setWorkload(e.target.value)}
-          />
-
         </div>
+
+        <Input
+          label="Daily Workload (hours/day)"
+          placeholder="4"
+          value={workload}
+          onChange={(e) => setWorkload(e.target.value)}
+        />
 
         {/* ACTION */}
         <div className="pt-2">
@@ -84,11 +86,11 @@ function PlannerForm({
                 goal,
                 deadline,
                 workload,
+                startDate, // ✅ FIXED
               })
             }
           />
         </div>
-
       </div>
     </section>
   );
