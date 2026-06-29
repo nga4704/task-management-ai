@@ -58,21 +58,42 @@ export class AIEvaluationService {
     let workloadFit = 1;
     const capacity = input.workload;
 
-    const dailyMap = new Map<string, number>();
+    const dailyLoad = new Map<string, number>();
 
     for (const t of tasks) {
-      const day = t.startDateLabel || "";
-      dailyMap.set(day, (dailyMap.get(day) || 0) + (t.allocatedHours || 0));
-    }
+      if (!t.startDate || !t.endDate) continue;
 
-    for (const hours of dailyMap.values()) {
-      if (hours > capacity) {
-        workloadFit = 0;
-        issues.push(`Overloaded day detected (> ${capacity}h)`);
-        break;
+      let d = new Date(t.startDate);
+
+      while (d <= t.endDate) {
+        const key = d.toISOString().split("T")[0];
+
+        const durationPerDay =
+          t.durationHours /
+          Math.max(
+            1,
+            (t.endDate.getTime() - t.startDate.getTime()) /
+            (1000 * 60 * 60 * 24)
+          );
+
+        dailyLoad.set(
+          key,
+          (dailyLoad.get(key) || 0) + durationPerDay
+        );
+
+        d.setDate(d.getDate() + 1);
       }
     }
+    for (const hours of dailyLoad.values()) {
+      if (hours > capacity) {
+        workloadFit = Math.max(
+          0,
+          1 - (hours - capacity) / capacity
+        );
 
+        issues.push(`Overloaded day: ${hours.toFixed(1)}h`);
+      }
+    }
     // ======================
     // 3. DEPENDENCY FIT
     // ======================
@@ -92,7 +113,10 @@ export class AIEvaluationService {
     // ======================
     // 4. COVERAGE (IMPORTANT)
     // ======================
-    const expected = 8;
+    const expected = Math.max(
+      6,
+      Math.floor((input.workload * 2) + (input.goal.length / 100))
+    );
     const coverage = Math.min(tasks.length / expected, 1);
 
     if (coverage < 0.5) {
@@ -108,21 +132,23 @@ export class AIEvaluationService {
     // ======================
     // 6. PRODUCTIVITY SCORE (REALISTIC)
     // ======================
-    const productivityScore = Math.round(
-      deadlineFit * 30 +
-      workloadFit * 25 +
-      dependencyFit * 20 +
-      feasibility * 15 +
-      coverage * 10
-    );
+    const rawScore =
+      deadlineFit * 0.37 +
+      workloadFit * 0.23 +
+      dependencyFit * 0.22 +
+      feasibility * 0.12 +
+      coverage * 0.06;
+
+    const productivityScore = Math.round(rawScore * 1000) / 10;
 
     // ======================
     // 7. CONFIDENCE (NOT FAKE 100%)
     // ======================
-    const confidence = Math.round(
-      productivityScore * 0.9 + coverage * 10
-    );
-
+    const confidence =
+      Math.round(
+        (productivityScore * 0.7) +
+        (feasibility * 100 * 0.3)
+      );
     // ======================
     // 8. RECOMMENDATION
     // ======================

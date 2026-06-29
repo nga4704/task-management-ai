@@ -6,6 +6,7 @@ import {
   PlannerTask,
 } from "./aiPlanner.types";
 import { AIEvaluationService } from "./aiEvaluation.service";
+import { CriticalPathService } from "./criticalPath.service";
 
 export class AIPlannerService {
   private groq = axios.create({
@@ -53,6 +54,11 @@ export class AIPlannerService {
     }
 
     const parsed = this.safeParse(text);
+    const sanitizedTasks = this.sanitizeDependencies(parsed.tasks);
+    this.validateDAG(sanitizedTasks);
+
+    parsed.tasks = sanitizedTasks;
+
     const planner = this.enrichPlanner(parsed, input);
 
     const evaluation =
@@ -292,138 +298,65 @@ export class AIPlannerService {
     orderedTasks: PlannerTask[],
     input: PlannerInput
   ): PlannerTask[] {
-    const capacity =
-      input.workload ?? 4;
 
-    const projectStart =
-      input.startDate
-        ? this.startOfDay(
-          new Date(input.startDate)
-        )
-        : this.startOfDay(new Date());
-
-    const scheduled =
-      new Map<string, PlannerTask>();
-
-    const workload =
-      new Map<string, number>();
-
+    const capacity = input.workload ?? 4;
+    const calendar = new Map<string, number>();
     const result: PlannerTask[] = [];
 
-    for (const task of orderedTasks) {
-      const duration =
-        task.durationHours ?? 1;
+    const sorted = [...orderedTasks].sort(
+      (a, b) => this.priorityScore(b) - this.priorityScore(a)
+    );
 
-      let start =
-        new Date(projectStart);
+    for (const task of sorted) {
 
-      if (
-        task.dependsOn &&
-        task.dependsOn.length > 0
-      ) {
-        let latest =
-          new Date(projectStart);
+      let remaining = task.durationHours;
+      let date = this.startOfDay(
+        new Date(input.startDate ?? new Date())
+      );
 
-        for (const dep of task.dependsOn) {
-          const parent =
-            scheduled.get(dep);
+      const dependencyEndDates = (task.dependsOn ?? [])
+        .map(dep => result.find(t => t.id === dep)?.endDate)
+        .filter(Boolean) as Date[];
 
-          if (
-            parent &&
-            parent.endDate &&
-            parent.endDate > latest
-          ) {
-            latest =
-              new Date(parent.endDate);
-          }
-        }
+      if (dependencyEndDates.length > 0) {
+        const maxEnd = new Date(
+          Math.max(...dependencyEndDates.map(d => d.getTime()))
+        );
 
-        start = this.addDays(latest, 1);
+        date = this.addDays(maxEnd, 1);
       }
 
-      while (true) {
-        const key =
-          this.formatDate(start);
+      let startDate: Date | null = null;
+      let endDate: Date | null = null;
 
-        const used =
-          workload.get(key) ?? 0;
+      while (remaining > 0) {
 
-        if (used < capacity) break;
+        const key = this.formatDate(date);
+        const used = calendar.get(key) ?? 0;
 
-        start = this.addDays(start, 1);
-      }
-
-      let remainingHours = duration;
-
-      let currentDate =
-        new Date(start);
-
-      let actualStart =
-        new Date(start);
-
-      let actualEnd =
-        new Date(start);
-
-      while (remainingHours > 0) {
-        const dayKey =
-          this.formatDate(currentDate);
-
-        const usedToday =
-          workload.get(dayKey) ?? 0;
-
-        const freeToday =
-          capacity - usedToday;
-
-        if (freeToday <= 0) {
-          currentDate =
-            this.addDays(currentDate, 1);
-
+        if (used >= capacity) {
+          date = this.addDays(date, 1);
           continue;
         }
 
-        const allocated = Math.min(
-          remainingHours,
-          freeToday
-        );
+        const canTake = Math.min(capacity - used, remaining);
 
-        workload.set(
-          dayKey,
-          usedToday + allocated
-        );
+        calendar.set(key, used + canTake);
 
-        remainingHours -= allocated;
+        if (!startDate) startDate = new Date(date);
+        endDate = new Date(date);
 
-        actualEnd =
-          new Date(currentDate);
-
-        if (remainingHours > 0) {
-          currentDate =
-            this.addDays(currentDate, 1);
-        }
+        remaining -= canTake;
       }
 
-      const scheduledTask: PlannerTask = {
+      result.push({
         ...task,
-
-        startDate: actualStart,
-        endDate: actualEnd,
-
-        startDateLabel:
-          this.formatDate(actualStart),
-
-        endDateLabel:
-          this.formatDate(actualEnd),
-
-        allocatedHours:
-          task.durationHours ?? 1,
-      };
-
-      scheduled.set(
-        task.id,
-        scheduledTask
-      );
-
-      result.push(scheduledTask);
+        startDate: startDate!,
+        endDate: endDate!,
+        startDateLabel: this.formatDate(startDate!),
+        endDateLabel: this.formatDate(endDate!),
+        allocatedHours: task.durationHours,
+      });
     }
 
     return result;
@@ -444,6 +377,9 @@ export class AIPlannerService {
 
     const ordered =
       this.topologicalSort(graph);
+
+    const cpm = new CriticalPathService().compute(ordered);
+
 
     const scheduled =
       this.scheduleTasks(
@@ -479,16 +415,49 @@ export class AIPlannerService {
       );
     }
 
+    const enriched = scheduled.map(t => ({
+      ...t,
+      criticality:
+        cpm.get(t.id)?.earliestStart === 0
+          ? "CRITICAL"
+          : "NORMAL"
+    }));
+
     return {
       ...data,
 
-      tasks: scheduled,
+      tasks: enriched,
 
       summary: {
         ...data.summary,
         estimatedDays,
       },
     };
+  }
+
+  private applyDependencyOrder(tasks: PlannerTask[]) {
+    const map = new Map(tasks.map(t => [t.id, t]));
+
+    const visited = new Set<string>();
+    const result: PlannerTask[] = [];
+
+    const dfs = (id: string) => {
+      if (visited.has(id)) return;
+      visited.add(id);
+
+      const task = map.get(id);
+      if (!task) return;
+
+      for (const dep of task.dependsOn ?? []) {
+        dfs(dep);
+      }
+
+      result.push(task);
+    };
+
+    for (const t of tasks) dfs(t.id);
+
+    return result;
   }
 
   // ===================================================
@@ -525,4 +494,68 @@ export class AIPlannerService {
       "en-GB"
     );
   }
+
+  private sanitizeDependencies(tasks: PlannerTask[]): PlannerTask[] {
+    const ids = new Set(tasks.map(t => t.id));
+
+    return tasks.map(task => ({
+      ...task,
+      dependsOn: (task.dependsOn ?? []).filter(dep => ids.has(dep))
+    }));
+  }
+
+  private validateDAG(tasks: PlannerTask[]) {
+    const visited = new Set<string>();
+    const stack = new Set<string>();
+
+    const map = new Map(tasks.map(t => [t.id, t]));
+
+    const dfs = (id: string): boolean => {
+      if (stack.has(id)) return false;
+      if (visited.has(id)) return true;
+
+      visited.add(id);
+      stack.add(id);
+
+      const task = map.get(id);
+      if (!task) return true;
+
+      for (const dep of task.dependsOn ?? []) {
+        if (!dfs(dep)) return false;
+      }
+
+      stack.delete(id);
+      return true;
+    };
+
+    for (const t of tasks) {
+      if (!dfs(t.id)) {
+        throw new Error("Cyclic dependency detected (JIRA ENGINE)");
+      }
+    }
+  }
+
+  private priorityScore(task: PlannerTask): number {
+    let score = 0;
+
+    switch (task.priority) {
+      case "high":
+        score += 3;
+        break;
+      case "medium":
+        score += 2;
+        break;
+      case "low":
+        score += 1;
+        break;
+    }
+
+    score += task.dependsOn?.length ?? 0;
+
+    if (task.risk === "high") score += 2;
+
+    return score;
+  }
+
 }
+
