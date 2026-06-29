@@ -5,6 +5,8 @@ import { mapTaskStatusToPrisma } from "./task.mapper";
 import { assertProjectAccess, assertTeamMember } from "./task.permission";
 import { findMyTasks, findProjectTasks } from "./task.query";
 import { createActivity } from "../activity/activity.service";
+import { createNotification } from "../../modules/notification/notification.service";
+
 
 type UpdateTaskDto = {
   title?: string;
@@ -115,6 +117,14 @@ export const createTaskService = async (data: {
       title: task.title,
       assigneeId: task.assignee_id,
     },
+  });
+
+  await createNotification({
+    receiverId: data.assigneeId!,
+    senderId: data.createdBy,
+    type: "TASK_CREATED",
+    title: "New task assigned to you",
+    message: data.title,
   });
 
   const io = getIO();
@@ -407,6 +417,13 @@ export const updateTaskStatusService = async (
     },
   });
 
+  await createNotification({
+    receiverId: task.assignee_id!,
+    type: "TASK_UPDATED",
+    title: "Task status updated",
+    message: `Status changed to ${status}`,
+  });
+
   const io = getIO();
   io.to(`project_${task.project_id}`).emit("taskUpdated", task);
 
@@ -538,6 +555,13 @@ export const assignTaskService = async (
     payload: {
       assigneeId,
     },
+  });
+
+  await createNotification({
+    receiverId: assigneeId,
+    type: "TASK_ASSIGNED",
+    title: "You were assigned a task",
+    message: task.title,
   });
 
   const io = getIO();

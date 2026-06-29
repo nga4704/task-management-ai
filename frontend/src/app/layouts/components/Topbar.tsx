@@ -16,6 +16,8 @@ import { supabase } from "@/lib/supabase";
 
 // 🔥 NEW hooks (bạn sẽ tạo sau)
 import { useUnreadNotifications } from "@/features/notifications/hooks/useUnreadNotifications";
+import socket from "@/lib/socket";
+import { useEffect } from "react";
 
 type TopbarProps = {
   title: string;
@@ -43,6 +45,12 @@ function Topbar({
     logoutStore();
     navigate("/login");
   };
+
+  useEffect(() => {
+    if (user?.id) {
+      socket.emit("join_user", user.id);
+    }
+  }, [user?.id]);
 
   return (
     <header className="sticky top-0 z-40 border-b border-border/60 bg-background/80 backdrop-blur-xl">
@@ -131,7 +139,7 @@ function Topbar({
                   />
 
                   <div className="absolute right-0 mt-2 z-40 w-52 rounded-md border border-border bg-white shadow-xl overflow-hidden">
-                    
+
                     <div className="px-3 py-2 border-b text-xs text-muted">
                       {user?.email}
                     </div>

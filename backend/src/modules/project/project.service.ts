@@ -14,6 +14,7 @@ import {
   calculateAIScore,
 } from "./project.utils";
 import { createActivity } from "../activity/activity.service";
+import { createNotification } from "../../modules/notification/notification.service";
 
 type UpdateProjectDto = {
   name?: string;
@@ -108,6 +109,13 @@ export const createProjectService =
         name,
         status,
       },
+    });
+
+    await createNotification({
+      receiverId: userId,
+      type: "PROJECT_CREATED",
+      title: "New project created",
+      message: project.name,
     });
 
     // getIO().emit(

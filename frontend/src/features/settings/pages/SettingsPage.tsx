@@ -28,16 +28,16 @@ function SettingsPage() {
           "
         >
           {/* SIDEBAR */}
-          <div className="col-span-12 xl:col-span-3">
+          {/* <div className="col-span-12 xl:col-span-3">
             <SettingsSidebar />
-          </div>
+          </div> */}
 
           {/* CONTENT */}
           <div
             className="
               col-span-12
               space-y-6
-              xl:col-span-9
+              xl:col-span-12
             "
           >
             <AccountSection />

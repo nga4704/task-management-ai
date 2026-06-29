@@ -4,6 +4,7 @@ import { AuthRequest } from "../../middlewares/auth.middleware";
 import {
   getNotificationsService,
   markAsReadService,
+  createNotification
 } from "./notification.service";
 
 import { asyncHandler } from "../../utils/asyncHandler";
@@ -29,3 +30,20 @@ export const markAsRead = asyncHandler(async (req: AuthRequest, res: Response) =
     notification,
   });
 });
+
+export const createNotificationController = async (
+  req: AuthRequest,
+  res: Response
+) => {
+  const { receiver_id, sender_id, type, title, message } = req.body;
+
+  const notification = await createNotification({
+    receiverId: receiver_id,
+    senderId: sender_id,
+    type,
+    title,
+    message,
+  });
+
+  res.status(201).json(notification);
+};

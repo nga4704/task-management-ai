@@ -6,10 +6,13 @@ import api from "./lib/api";
 import { supabase } from "./lib/supabase";
 
 import { useAuthStore } from "./store/authStore";
+import { useNotificationSocket } from "@/features/notifications/hooks/useNotificationSocket";
 
 function App() {
   const setUser = useAuthStore((s) => s.setUser);
   const setLoading = useAuthStore((s) => s.setLoading);
+
+  useNotificationSocket();
 
   useEffect(() => {
     const loadProfile = async () => {

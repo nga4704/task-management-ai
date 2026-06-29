@@ -2,6 +2,7 @@ import prisma from "../../config/prisma";
 import { getIO } from "../../config/socket";
 import { mapProjectList } from "../../modules/project/project.mapper";
 import { AppError } from "../../middlewares/error.middleware";
+import { createNotification } from "../../modules/notification/notification.service";
 
 export const createTeamService = async (
   payload: {
@@ -129,6 +130,13 @@ export const createTeamService = async (
 
     throw error;
   }
+
+  await createNotification({
+    receiverId: ownerId,
+    type: "TEAM_CREATED",
+    title: "Team created successfully",
+    message: `Team "${name}" was created`,
+  });
 
   const io = getIO();
 
@@ -338,13 +346,24 @@ export const addMemberService =
       );
     }
 
-    return prisma.team_members.create({
+    await prisma.team_members.create({
       data: {
         team_id: teamId,
         user_id: user.id,
         role: "member",
       },
     });
+
+    await createNotification({
+      receiverId: user.id,
+      type: "TEAM_INVITED",
+      title: "You were added to a team",
+      message: `You joined team ${team.name}`,
+    });
+
+    return { success: true };
+
+
   };
 
 export const removeMemberService = async (
@@ -395,6 +414,13 @@ export const removeMemberService = async (
     },
   });
 
+  await createNotification({
+    receiverId: userId,
+    type: "TEAM_REMOVED",
+    title: "Removed from team",
+    message: `You were removed from ${team.name}`,
+  });
+
   const io = getIO();
   io.emit("memberRemoved", { teamId, userId });
 };
@@ -427,7 +453,7 @@ export const getTeamProjectsService =
     );
   };
 
-  export const getTeamMembersService = async (teamId: string) => {
+export const getTeamMembersService = async (teamId: string) => {
   return prisma.team_members.findMany({
     where: { team_id: teamId },
     include: {

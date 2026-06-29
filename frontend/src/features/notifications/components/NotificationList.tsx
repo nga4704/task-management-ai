@@ -1,22 +1,25 @@
-// src/features/notifications/components/NotificationList.tsx
-
 import NotificationCard from "./NotificationCard";
-
-import {
-  mockNotifications,
-} from "../data/mockNotifications";
+import { useNotifications } from "../hooks/useNotifications";
 
 function NotificationList() {
+  const { data: notifications = [], isLoading } = useNotifications();
+
+  if (isLoading) {
+    return (
+      <div className="text-muted text-sm">
+        Loading notifications...
+      </div>
+    );
+  }
+
   return (
     <div className="space-y-5">
-      {mockNotifications.map(
-        (notification) => (
-          <NotificationCard
-            key={notification.id}
-            {...notification}
-          />
-        )
-      )}
+      {notifications.map((notification) => (
+        <NotificationCard
+          key={notification.id}
+          {...notification}
+        />
+      ))}
     </div>
   );
 }

@@ -12,6 +12,10 @@ export const initSocket = (httpServer: any) => {
   io.on("connection", (socket) => {
     console.log("Client connected:", socket.id);
 
+    socket.on("join_user", (userId: string) => {
+      socket.join(`user_${userId}`);
+    });
+
     socket.on("join_project", (projectId: string) => {
       socket.join(`project_${projectId}`);
       console.log(`Socket ${socket.id} joined project ${projectId}`);
@@ -29,3 +33,4 @@ export const getIO = () => {
   if (!io) throw new Error("Socket.io not initialized");
   return io;
 };
+

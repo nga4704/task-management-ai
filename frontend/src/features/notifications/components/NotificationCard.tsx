@@ -1,42 +1,40 @@
-// src/features/notifications/components/NotificationCard.tsx
-
 import { Bell } from "lucide-react";
+import { useNavigate } from "react-router-dom";
+import { useMarkAsRead } from "../hooks/useMarkAsRead";
 
-import {
-  notificationLabels,
-  notificationStyles,
-} from "../constants/notification";
-
-import type {
-  Notification,
-} from "../types/notification.types";
-
-import {
-  useNavigate,
-} from "react-router-dom";
-
-type Props = Notification;
+type Props = {
+  id: string;
+  title: string;
+  message: string | null;
+  is_read: boolean;
+  created_at: string;
+  project_id?: string;
+};
 
 function NotificationCard({
+  id,
   title,
-  description,
-  time,
-  type,
-  read,
-  projectId,
+  message,
+  is_read,
+  created_at,
+  project_id,
 }: Props) {
-  const navigate =
-    useNavigate();
+  const navigate = useNavigate();
+  const { mutate: markAsRead } = useMarkAsRead();
+
+  const handleClick = async () => {
+    if (!is_read) {
+      markAsRead(id);
+    }
+
+    if (project_id) {
+      navigate(`/projects/${project_id}`);
+    }
+  };
 
   return (
     <div
-      onClick={() => {
-        if (!projectId) return;
-
-        navigate(
-          `/projects/${projectId}`
-        );
-      }}
+      onClick={handleClick}
       className={`
         cursor-pointer
         rounded-2xl
@@ -45,90 +43,33 @@ function NotificationCard({
         bg-surface
         p-5
         transition-all
-
-        ${
-          !read
-            ? "shadow-soft"
-            : ""
-        }
+        ${!is_read ? "shadow-soft" : ""}
       `}
     >
       <div className="flex gap-4">
-        <div
-          className={`
-            flex
-            h-12
-            w-12
-            shrink-0
-            items-center
-            justify-center
-            rounded-2xl
-
-            ${notificationStyles[type]}
-          `}
-        >
+        <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-primaryLight">
           <Bell size={20} />
         </div>
 
         <div className="flex-1">
           <div className="flex items-start justify-between gap-4">
             <div>
-              <div
-                className="
-                  mb-2
-                  inline-flex
-                  rounded-full
-                  bg-surfaceSecondary
-                  px-3
-                  py-1
-                  text-xs
-                  font-medium
-                "
-              >
-                {notificationLabels[type]}
-              </div>
+              <h3 className="text-lg font-semibold">{title}</h3>
 
-              <h3
-                className="
-                  text-lg
-                  font-semibold
-                "
-              >
-                {title}
-              </h3>
-
-              <p
-                className="
-                  mt-2
-                  leading-7
-                  text-muted
-                "
-              >
-                {description}
-              </p>
+              {message && (
+                <p className="mt-2 leading-7 text-muted">
+                  {message}
+                </p>
+              )}
             </div>
 
-            {!read && (
-              <div
-                className="
-                  mt-2
-                  h-3
-                  w-3
-                  rounded-full
-                  bg-primary
-                "
-              />
+            {!is_read && (
+              <div className="h-3 w-3 rounded-full bg-primary mt-2" />
             )}
           </div>
 
-          <p
-            className="
-              mt-4
-              text-sm
-              text-muted
-            "
-          >
-            {time}
+          <p className="mt-4 text-sm text-muted">
+            {new Date(created_at).toLocaleString("vi-VN")}
           </p>
         </div>
       </div>
