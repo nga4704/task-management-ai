@@ -23,13 +23,7 @@ function MainLayout({
   ] = useState(false);
 
   return (
-    <div
-      className="
-        flex
-        min-h-screen
-        bg-background
-      "
-    >
+    <div className="flex min-h-screen bg-background dark:bg-backgroundDark">
       {/* SIDEBAR */}
       <Sidebar
         mobileOpen={mobileSidebarOpen}
@@ -39,14 +33,7 @@ function MainLayout({
       />
 
       {/* CONTENT */}
-      <div
-        className="
-          flex
-          min-w-0
-          flex-1
-          flex-col
-        "
-      >
+      <div className="flex min-w-0 flex-1 flex-col text-text dark:text-textDark">
         {/* TOPBAR */}
         <Topbar
           title={title}

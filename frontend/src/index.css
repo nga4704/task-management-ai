@@ -2,12 +2,8 @@
 @tailwind components;
 @tailwind utilities;
 
-/* =========================================================
-   BASE
-========================================================= */
-
+/* BASE */
 @layer base {
-
   * {
     @apply box-border;
   }
@@ -17,17 +13,16 @@
   }
 
   body {
-    @apply
-      bg-background
-      text-text
-      font-sans
-      antialiased;
+    @apply bg-background text-text font-sans antialiased;
+  }
+
+  /* DARK MODE (đúng cách Tailwind) */
+  body {
+    @apply bg-background text-text;
   }
 
   button {
-    @apply
-      transition-all
-      duration-200;
+    @apply transition-all duration-200;
   }
 
   input,
@@ -50,239 +45,17 @@
   }
 }
 
-/* =========================================================
-   COMPONENTS
-========================================================= */
-
+/* COMPONENTS (giữ nguyên của bạn) */
 @layer components {
-
-  /* ---------- CARD ---------- */
-
   .card {
-    @apply
-      bg-surface
-      rounded-lg
-      shadow-soft
-      border
-      border-border;
+    @apply bg-surface rounded-lg shadow-soft border border-border;
   }
-
-  .card-glass {
-    @apply
-      bg-white/80
-      backdrop-blur-md
-      border
-      border-white/50
-      rounded-lg
-      shadow-soft;
-  }
-
-  .card-secondary {
-    @apply
-      bg-surfaceSecondary
-      rounded-lg;
-  }
-
-  /* ---------- BUTTON ---------- */
 
   .btn-primary {
-    @apply
-      bg-primary
-      hover:bg-primaryHover
-      text-text
-      font-semibold
-      rounded-full
-      px-5
-      py-3;
+    @apply bg-primary hover:bg-primaryHover text-text font-semibold rounded-full px-5 py-3;
   }
-
-  .btn-secondary {
-    @apply
-      bg-secondary
-      text-white
-      font-semibold
-      rounded-full
-      px-5
-      py-3;
-  }
-
-  .btn-dark {
-    @apply
-      bg-black
-      hover:opacity-90
-      text-white
-      font-semibold
-      rounded-full
-      px-5
-      py-3;
-  }
-
-  .btn-outline {
-    @apply
-      border
-      border-border
-      bg-white
-      hover:bg-surfaceSecondary
-      font-medium
-      rounded-full
-      px-5
-      py-3;
-  }
-
-  .btn-icon {
-    @apply
-      w-11
-      h-11
-      rounded-2xl
-      flex
-      items-center
-      justify-center
-      bg-white
-      border
-      border-border
-      hover:bg-surfaceSecondary;
-  }
-
-  /* ---------- INPUT ---------- */
 
   .input-primary {
-    @apply
-      w-full
-      bg-surfaceSecondary
-      border
-      border-transparent
-      rounded-2xl
-      px-4
-      py-3
-      text-sm
-      focus:border-primary;
+    @apply w-full bg-surfaceSecondary border border-transparent rounded-2xl px-4 py-3 text-sm focus:border-primary;
   }
-
-  /* ---------- BADGE ---------- */
-
-  .badge-success {
-    @apply
-      bg-successLight
-      text-success
-      text-xs
-      font-semibold
-      px-3
-      py-1
-      rounded-full;
-  }
-
-  .badge-warning {
-    @apply
-      bg-warningLight
-      text-warning
-      text-xs
-      font-semibold
-      px-3
-      py-1
-      rounded-full;
-  }
-
-  .badge-danger {
-    @apply
-      bg-dangerLight
-      text-danger
-      text-xs
-      font-semibold
-      px-3
-      py-1
-      rounded-full;
-  }
-
-  .badge-info {
-    @apply
-      bg-infoLight
-      text-info
-      text-xs
-      font-semibold
-      px-3
-      py-1
-      rounded-full;
-  }
-
-  /* ---------- SECTION ---------- */
-
-  .section-title {
-    @apply
-      text-2xl
-      font-bold;
-  }
-
-  .section-subtitle {
-    @apply
-      text-muted
-      mt-2;
-  }
-}
-
-/* =========================================================
-   REACT BIG CALENDAR
-========================================================= */
-
-.modern-calendar {
-  border: none;
-  font-family: Inter, sans-serif;
-}
-
-.modern-calendar .rbc-toolbar {
-  display: none;
-}
-
-.modern-calendar .rbc-month-view,
-.modern-calendar .rbc-time-view {
-  border-radius: 24px;
-  overflow: hidden;
-  border: 1px solid #E5E7EB;
-  background: white;
-}
-
-.modern-calendar .rbc-header {
-  padding: 14px 0;
-  background: #F8FAFC;
-  border-bottom: 1px solid #E5E7EB;
-  font-weight: 600;
-  color: #111827;
-}
-
-.modern-calendar .rbc-date-cell {
-  padding: 10px;
-}
-
-.modern-calendar .rbc-day-bg:hover {
-  background: #F8FAFC;
-}
-
-.modern-calendar .rbc-today {
-  background: #F3F9D2;
-}
-
-.modern-calendar .rbc-off-range-bg {
-  background: #FAFAFA;
-}
-
-.modern-calendar .rbc-button-link {
-  font-weight: 500;
-}
-
-.modern-calendar .rbc-time-content,
-.modern-calendar .rbc-time-header {
-  border-color: #E5E7EB;
-}
-
-.modern-calendar .rbc-event {
-  background: #8B5CF6;
-  border: none;
-  border-radius: 999px;
-  padding: 4px 10px;
-  font-size: 12px;
-  font-weight: 500;
-  color: white;
-}
-
-.modern-calendar .rbc-current-time-indicator {
-  background: #EF4444;
 }

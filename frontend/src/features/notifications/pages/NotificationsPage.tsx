@@ -1,13 +1,19 @@
-// src/features/notifications/pages/NotificationsPage.tsx
-
 import MainLayout from "@/app/layouts/MainLayout";
 
-import NotificationFilter from "../components/NotificationFilter";
 import NotificationHeader from "../components/NotificationHeader";
 import NotificationList from "../components/NotificationList";
 import NotificationStats from "../components/NotificationStats";
+import NotificationFilter from "../components/NotificationFilter";
+
+import { useNotificationFilter } from "../hooks/useNotificationFilter";
+import { useFilteredNotifications } from "../hooks/useFilteredNotifications";
 
 function NotificationsPage() {
+  const { filter, setFilter } = useNotificationFilter();
+
+  const { data: notifications = [] } =
+    useFilteredNotifications(filter);
+
   return (
     <MainLayout
       title="Notifications"
@@ -19,9 +25,14 @@ function NotificationsPage() {
 
         <NotificationStats />
 
-        <NotificationFilter />
+        <NotificationFilter
+          filter={filter}
+          setFilter={setFilter}
+        />
 
-        <NotificationList />
+        <NotificationList
+          notifications={notifications}
+        />
 
       </div>
     </MainLayout>

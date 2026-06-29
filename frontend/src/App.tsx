@@ -8,9 +8,21 @@ import { supabase } from "./lib/supabase";
 import { useAuthStore } from "./store/authStore";
 import { useNotificationSocket } from "@/features/notifications/hooks/useNotificationSocket";
 
+import { useThemeStore } from "@/store/themeStore";
+
 function App() {
   const setUser = useAuthStore((s) => s.setUser);
   const setLoading = useAuthStore((s) => s.setLoading);
+
+  const theme = useThemeStore((s) => s.theme);
+
+  // sync dark class
+  useEffect(() => {
+    document.documentElement.classList.toggle(
+      "dark",
+      theme === "dark"
+    );
+  }, [theme]);
 
   useNotificationSocket();
 
@@ -18,8 +30,9 @@ function App() {
     const loadProfile = async () => {
       setLoading(true);
 
-      const { data: { session } } =
-        await supabase.auth.getSession();
+      const {
+        data: { session },
+      } = await supabase.auth.getSession();
 
       if (!session) {
         setUser(null);
@@ -29,7 +42,6 @@ function App() {
 
       try {
         const profile = await api.get("/users/me");
-
         setUser(profile.data);
       } catch (error) {
         console.error(error);
@@ -41,15 +53,16 @@ function App() {
 
     loadProfile();
 
-    const { data: { subscription } } =
-      supabase.auth.onAuthStateChange((_event, session) => {
-        if (!session) {
-          setUser(null);
-          return;
-        }
+    const {
+      data: { subscription },
+    } = supabase.auth.onAuthStateChange((_event, session) => {
+      if (!session) {
+        setUser(null);
+        return;
+      }
 
-        loadProfile();
-      });
+      loadProfile();
+    });
 
     return () => subscription.unsubscribe();
   }, []);

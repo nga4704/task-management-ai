@@ -1,24 +1,14 @@
-// src/features/settings/components/AppearanceSection.tsx
+import { useThemeStore } from "@/store/themeStore";
 
 function AppearanceSection() {
+  const theme = useThemeStore((s) => s.theme);
+  const setTheme = useThemeStore((s) => s.setTheme);
+
   return (
-    <section
-      className="
-        rounded-3xl
-        border
-        border-border
-        bg-surface
-        p-6
-        shadow-soft
-      "
-    >
+    <section className="rounded-3xl border border-border dark:border-borderDark bg-surface dark:bg-surfaceDark p-6 shadow-soft">
+
       <div>
-        <h2
-          className="
-            text-2xl
-            font-bold
-          "
-        >
+        <h2 className="text-2xl font-bold">
           Appearance
         </h2>
 
@@ -29,31 +19,36 @@ function AppearanceSection() {
 
       <div className="mt-6 flex gap-4">
 
+        {/* LIGHT */}
         <button
-          className="
-            rounded-2xl
-            border-2
-            border-primary
-            bg-white
-            p-5
-            font-medium
-          "
+          onClick={() => setTheme("light")}
+          className={`
+            rounded-2xl border-2 p-5 font-medium transition
+            ${
+              theme === "light"
+                ? "border-primary bg-surface"
+                : "border-border bg-surfaceSecondary"
+            }
+          `}
         >
           Light Mode
         </button>
 
+        {/* DARK */}
         <button
-          className="
-            rounded-2xl
-            border
-            border-border
-            bg-surfaceSecondary
-            p-5
-            font-medium
-          "
+          onClick={() => setTheme("dark")}
+          className={`
+            rounded-2xl border-2 p-5 font-medium transition
+            ${
+              theme === "dark"
+                ? "border-primary bg-surfaceSecondary"
+                : "border-border bg-surfaceSecondary"
+            }
+          `}
         >
           Dark Mode
         </button>
+
       </div>
     </section>
   );

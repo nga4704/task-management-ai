@@ -1,13 +1,15 @@
 import NotificationCard from "./NotificationCard";
-import { useNotifications } from "../hooks/useNotifications";
+import type { Notification } from "../types/notification.types";
 
-function NotificationList() {
-  const { data: notifications = [], isLoading } = useNotifications();
+type Props = {
+  notifications: Notification[];
+};
 
-  if (isLoading) {
+function NotificationList({ notifications }: Props) {
+  if (!notifications?.length) {
     return (
       <div className="text-muted text-sm">
-        Loading notifications...
+        No notifications
       </div>
     );
   }

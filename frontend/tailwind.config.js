@@ -1,5 +1,7 @@
 /** @type {import('tailwindcss').Config} */
 export default {
+  darkMode: "class",
+
   content: [
     "./index.html",
     "./src/**/*.{js,ts,jsx,tsx}",
@@ -11,33 +13,24 @@ export default {
         primary: "#C8E95E",
         primaryHover: "#B9DD47",
 
-        secondary: "#8B5CF6",
-
+        // LIGHT
         background: "#F5F7FB",
-
         surface: "#FFFFFF",
         surfaceSecondary: "#F7F8FA",
         surfaceTertiary: "#EEF2F7",
 
         text: "#111827",
         muted: "#6B7280",
-
         border: "#E5E7EB",
 
-        success: "#22C55E",
-        successLight: "#DCFCE7",
+        // DARK (PHẢI CÓ)
+        backgroundDark: "#0B1220",
+        surfaceDark: "#111827",
+        surfaceSecondaryDark: "#1F2937",
 
-        warning: "#F59E0B",
-        warningLight: "#FEF3C7",
-
-        danger: "#EF4444",
-        dangerLight: "#FEE2E2",
-
-        info: "#3B82F6",
-        infoLight: "#DBEAFE",
-
-        primaryLight: "#DFF5A5",
-        secondaryLight: "#E9DDFF",
+        textDark: "#F9FAFB",
+        mutedDark: "#9CA3AF",
+        borderDark: "#374151",
       },
 
       borderRadius: {
