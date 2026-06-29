@@ -1,36 +1,53 @@
 import { useState } from "react";
-import api from "@/lib/api";
 
-import type { GeneratedTask } from "../types/planner.types";
+import { generateAIPlan } from "../api/planner.api";
+
+import type {
+  PlannerTask,
+  PlannerSummary,
+  PlannerFormValues,
+} from "../types/planner.types";
 
 export function useAIPlanner() {
-  const [plans, setPlans] = useState<GeneratedTask[]>([]);
-  const [summary, setSummary] = useState<any>(null);
-  const [reasoning, setReasoning] = useState<string[]>([]);
-  const [loading, setLoading] = useState(false);
+  const [plans, setPlans] =
+    useState<PlannerTask[]>([]);
 
-  const generatePlan = async (input: {
-    goal: string;
-    deadline: string;
-    workload: string;
-    startDate?: string;
-  }) => {
+  const [summary, setSummary] =
+    useState<PlannerSummary | null>(null);
+
+  const [reasoning, setReasoning] =
+    useState<string[]>([]);
+
+  const [loading, setLoading] =
+    useState(false);
+
+  const generatePlan = async (
+    input: PlannerFormValues
+  ) => {
     try {
       setLoading(true);
 
-      const res = await api.post(
-        "/ai/planner/generate",
-        {
-          ...input,
-          workload: Number(input.workload), // ✅ ensure backend safe
-        }
+      const data =
+        await generateAIPlan(input);
+
+      setPlans(data.tasks);
+
+      setSummary(data.summary);
+
+      setReasoning(data.reasoning);
+    } catch (err) {
+      console.error(
+        "AI Planner Error:",
+        err
       );
 
-      setPlans(res.data.tasks || []);
-      setSummary(res.data.summary || null);
-      setReasoning(res.data.reasoning || []);
-    } catch (err) {
-      console.error("AI Planner error:", err);
+      setPlans([]);
+
+      setSummary(null);
+
+      setReasoning([
+        "Unable to generate AI schedule.",
+      ]);
     } finally {
       setLoading(false);
     }

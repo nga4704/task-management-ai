@@ -1,8 +1,14 @@
-export type TaskPriority = "high" | "medium" | "low";
+// =======================================
+// AI Planner Types
+// =======================================
 
-// ==============================
-// 🧠 INPUT
-// ==============================
+export type TaskPriority = "high" | "medium" | "low";
+export type RiskLevel = "low" | "medium" | "high";
+
+// =======================================
+// Planner Form
+// =======================================
+
 export interface PlannerFormValues {
   goal: string;
   deadline: string;
@@ -10,11 +16,13 @@ export interface PlannerFormValues {
   startDate: string;
 }
 
-// ==============================
-// 🧠 TASK (UNIFIED CONTRACT)
-// ==============================
+// =======================================
+// Planner Task
+// =======================================
+
 export interface PlannerTask {
   id: string;
+
   title: string;
 
   priority: TaskPriority;
@@ -25,31 +33,37 @@ export interface PlannerTask {
 
   dependsOn: string[];
 
-  risk: "low" | "medium" | "high";
+  risk: RiskLevel;
 
-  // ======================
-  // REAL SCHEDULE (BACKEND GENERATED)
-  // ======================
-  startDate: string; // ISO string
-  endDate: string;   // ISO string
+  // Generated schedule
+  startDate: string;
+  endDate: string;
 
-  // ======================
-  // UI DISPLAY
-  // ======================
-  startDateLabel: string; // "28/06/2026"
+  startDateLabel: string;
   endDateLabel: string;
 
   allocatedHours: number;
 }
 
-// ==============================
-// 📊 SUMMARY
-// ==============================
+// Backward compatibility
+export type GeneratedTask = PlannerTask;
+
+// =======================================
+// Planner Summary
+// =======================================
+
 export interface PlannerSummary {
-  riskLevel: "low" | "medium" | "high";
+  riskLevel: RiskLevel;
+
   recommendation: string;
+
   estimatedDays: number;
+
   productivityScore: number;
+
+  confidence?: number;
+
+  issues?: string[];
 
   breakdown: {
     deadlineFit: number;
@@ -58,11 +72,14 @@ export interface PlannerSummary {
   };
 }
 
-// ==============================
-// 📦 RESPONSE
-// ==============================
+// =======================================
+// Planner Response
+// =======================================
+
 export interface PlannerResponse {
   tasks: PlannerTask[];
+
   summary: PlannerSummary;
+
   reasoning: string[];
 }

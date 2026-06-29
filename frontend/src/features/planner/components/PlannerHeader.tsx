@@ -1,4 +1,7 @@
-import { Sparkles, BrainCircuit } from "lucide-react";
+import {
+  BrainCircuit,
+  Sparkles,
+} from "lucide-react";
 
 function PlannerHeader() {
   return (
@@ -8,17 +11,14 @@ function PlannerHeader() {
         border
         border-border
         bg-primaryLight
-        p-6
+        p-8
         shadow-sm
-        backdrop-blur-md
       "
     >
-      <div className="flex items-start justify-between gap-6">
+      <div className="flex flex-col gap-6 lg:flex-row lg:items-center lg:justify-between">
 
-        {/* LEFT CONTENT */}
-        <div className="space-y-4">
+        <div>
 
-          {/* badge */}
           <div
             className="
               inline-flex
@@ -26,59 +26,53 @@ function PlannerHeader() {
               gap-2
               rounded-full
               bg-black
-              text-white
-              px-3
-              py-1.5
+              px-4
+              py-2
               text-xs
-              font-medium
+              font-semibold
+              text-white
             "
           >
             <Sparkles size={14} />
-            AI Planning Assistant Active
+            AI Planning Assistant
           </div>
 
-          {/* title */}
-          <h1
-            className="
-              text-2xl
-              font-bold
-              tracking-tight
-              text-foreground
-            "
-          >
-            AI Smart Planner
+          <h1 className="mt-5 text-3xl font-bold tracking-tight">
+            AI Smart Project Planner
           </h1>
 
-          {/* description */}
           <p
             className="
-              max-w-xl
+              mt-4
+              max-w-2xl
               text-sm
-              leading-6
+              leading-7
               text-muted
             "
           >
-            Generate optimized schedules, prioritize tasks, and improve productivity
-            with AI-powered insights.
+            Automatically decompose project goals,
+            resolve task dependencies,
+            optimize workload allocation,
+            and generate an executable schedule
+            using AI-powered planning algorithms.
           </p>
+
         </div>
 
-        {/* RIGHT ICON */}
         <div
           className="
             flex
-            h-14
-            w-14
+            h-20
+            w-20
             items-center
             justify-center
-            rounded-2xl
+            rounded-3xl
             bg-black
             text-white
-            ring-1
-            ring-black/5
+            shadow-lg
           "
         >
-          <BrainCircuit size={24} />
+          <BrainCircuit size={36} />
         </div>
 
       </div>

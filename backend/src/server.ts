@@ -11,7 +11,6 @@ import teamRoutes from "./modules/team/team.routes";
 import taskRoutes from "./modules/task/task.routes";
 import dashboardRoutes from "./modules/dashboard/dashboard.routes";
 import notificationRoutes from "./modules/notification/notification.routes";
-import aiRoutes from "./modules/ai/ai.routes";
 import activityLogRoutes from "./modules/activityLog/activityLog.routes";
 
 import projectRoutes from "./modules/project/project.routes";
@@ -74,11 +73,6 @@ app.use(
 app.use(
   "/api/v1/notifications",
   notificationRoutes
-);
-
-app.use(
-  "/api/v1/ai",
-  aiRoutes
 );
 
 app.use(
