@@ -82,38 +82,84 @@ AI supports:
 
 ### 1. Clone project
 
-```bash id="clone_step"
 git clone <your-repository-url>
-cd frontend
 
 ### 2. Install dependencies
-// BACKEND
+
+#### Backend
+cd backend
 npm install
 
-// FRONTEND
+#### Frontend
+cd ../frontend
 npm install
 
 ### 3. Setup environment variables
-Create a .env file in the root folder:
-// BACKEND
-PORT=5000
-DATABASE_URL="postgresql://postgres.."
-DIRECT_URL="postgresql://postgres:.."
-SUPABASE_URL=https://..."
-SUPABASE_SERVICE_ROLE_KEY=""
-GROQ_API_KEY=""
 
-// FRONTEND
-VITE_SUPABASE_URL=your_supabase_url
-VITE_SUPABASE_ANON_KEY=your_supabase_anon_key
+Create a `.env` file.
+
+#### Backend (.env)
+
+PORT=5000
+DATABASE_URL="postgresql://..."
+DIRECT_URL="postgresql://..."
+SUPABASE_URL="https://..."
+SUPABASE_SERVICE_ROLE_KEY="..."
+GROQ_API_KEY="..."
+
+#### Frontend (.env)
+
+VITE_SUPABASE_URL=...
+VITE_SUPABASE_ANON_KEY=...
 VITE_API_URL=http://localhost:5000
 
-### 4. Run project in development mode
-// BACKEND
-npm run dev
+### 4. Setup database
 
-// FRONTEND
-npm run dev
+Move to the backend folder:
 
-Then open:
+```bash
+cd backend
+```
+
+Generate Prisma Client:
+
+```bash
+npx prisma generate
+```
+
+Run database migrations:
+
+```bash
+npx prisma migrate deploy
+```
+
+If you don't have existing migrations and only want to synchronize the schema with the database:
+
+```bash
+npx prisma db push
+```
+
+(Optional) Seed demo data:
+
+```bash
+npm run seed
+```
+
+### 5. Run the project
+
+#### Backend
+
+```bash
+npm run dev
+```
+
+#### Frontend
+
+```bash
+cd frontend
+npm run dev
+```
+
+Open:
+
 http://localhost:5173
