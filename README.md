@@ -146,6 +146,7 @@ If you don't have existing migrations and only want to synchronize the schema wi
 
 ```bash
 npx prisma db push
+```
 
 ### 5. Run the project
 
