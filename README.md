@@ -101,17 +101,26 @@ Create a `.env` file.
 #### Backend (.env)
 
 PORT=5000
+
 DATABASE_URL="postgresql://..."
+
 DIRECT_URL="postgresql://..."
+
 SUPABASE_URL="https://..."
+
 SUPABASE_SERVICE_ROLE_KEY="..."
+
 GROQ_API_KEY="..."
+
 
 #### Frontend (.env)
 
 VITE_SUPABASE_URL=...
+
 VITE_SUPABASE_ANON_KEY=...
+
 VITE_API_URL=http://localhost:5000
+
 
 ### 4. Setup database
 
@@ -137,13 +146,6 @@ If you don't have existing migrations and only want to synchronize the schema wi
 
 ```bash
 npx prisma db push
-```
-
-(Optional) Seed demo data:
-
-```bash
-npm run seed
-```
 
 ### 5. Run the project
 
